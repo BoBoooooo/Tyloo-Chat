@@ -138,11 +138,11 @@ export default class Chat extends Vue {
   }
 
   // 添加好友
-  addFriend(friendId: string) {
-    console.log(this.user);
+  addFriend(friend: FriendMap) {
     this.socket.emit('addFriend', {
       userId: this.user.userId,
-      friendId: friendId,
+      friendId: friend.friendId,
+      friendUserName: friend.friendUserName,
       createTime: new Date().valueOf(),
     });
   }

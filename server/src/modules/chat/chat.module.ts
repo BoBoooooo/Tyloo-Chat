@@ -1,3 +1,4 @@
+import { AuthModule } from './../auth/auth.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatGateway } from './chat.gateway';
@@ -11,7 +12,8 @@ import { Repository } from 'typeorm';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Group, GroupMap, GroupMessage, UserMap, FriendMessage])
+    TypeOrmModule.forFeature([User, Group, GroupMap, GroupMessage, UserMap, FriendMessage]),
+    AuthModule
   ],
   providers: [ChatGateway],
 })

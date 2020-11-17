@@ -115,3 +115,7 @@ interface PagingResponse {
   messageArr: GroupMessage[];
   userArr: User[];
 }
+interface FriendMap {
+  friendId?: string,
+  friendUserName?: string,
+}

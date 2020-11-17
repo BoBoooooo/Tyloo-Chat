@@ -32,13 +32,13 @@
       </a-dropdown>
     </div>
 
-    <a-modal v-model="visibleAddGroup" footer="" title="创建群">
+    <a-modal v-model="visibleAddGroup" footer="" title="创建群聊">
       <div style="display:flex">
         <a-input v-model="groupName" placeholder="请输入群名字"></a-input>
         <a-button @click="addGroup" type="primary">确定</a-button>
       </div>
     </a-modal>
-    <a-modal v-model="visibleJoinGroup" footer="" title="搜索群">
+    <a-modal v-model="visibleJoinGroup" footer="" title="搜索群组">
       <div style="display:flex" v-if="visibleJoinGroup">
         <a-select
           show-search
@@ -58,7 +58,7 @@
         <a-button @click="joinGroup" type="primary">加入群</a-button>
       </div>
     </a-modal>
-    <a-modal v-model="visibleAddFriend" footer="" title="搜索用户">
+    <a-modal v-model="visibleAddFriend" footer="" title="创建聊天/搜索用户">
       <div style="display:flex" v-if="visibleAddFriend">
         <a-select
           show-search
@@ -77,6 +77,9 @@
         </a-select>
         <a-button @click="addFriend" type="primary">添加好友</a-button>
       </div>
+      <div>
+        <a-tree :replace-fields="replaceFields" :tree-data="organizationArr" @select="onTreeSelect" />
+      </div>
     </a-modal>
   </div>
 </template>
@@ -88,9 +91,10 @@ import { isContainStr, processReturn } from '@/utils/common.ts';
 import * as apis from '@/api/apis';
 import { nameVerify } from '@/utils/common';
 const chatModule = namespace('chat');
+import axios from 'axios';
 
 @Component
-export default class GenalSearch extends Vue {
+export default class Search extends Vue {
   @chatModule.State('activeRoom') activeRoom: Group & Friend;
   @chatModule.Getter('groupGather') groupGather: GroupGather;
   @chatModule.Getter('friendGather') friendGather: FriendGather;
@@ -102,11 +106,35 @@ export default class GenalSearch extends Vue {
   searchData: Array<Group | Friend> = [];
   groupId: string = '';
   groupArr: Array<Group> = [];
-  friendId: string = '';
+  friend: FriendMap = {};
   userArr: Array<User> = [];
-
+  // 组织架构
+  organizationArr: Array<any> = [];
+  //
+  replaceFields = {
+    children: 'children',
+    title: 'label',
+    key: 'id',
+  };
   created() {
     this.getSearchData();
+    axios.post('http://116.62.78.229:8082/FlowWJBackend/dept/treeDeptUsers').then((res) => {
+      this.organizationArr = res.data.data;
+    });
+  }
+
+  onTreeSelect(selectedKeys: any, info: any) {
+    const {
+      node: {
+        dataRef: { parentid, id, label },
+      },
+    } = info;
+    // 如果parentid为null表示为叶子结点(即用户)
+    if (!parentid) {
+      this.friend.friendId = id;
+      this.friend.friendUserName = label;
+      this.addFriend();
+    }
   }
 
   @Watch('groupGather')
@@ -168,7 +196,7 @@ export default class GenalSearch extends Vue {
   }
 
   handleUserSelect(friend: Friend) {
-    this.friendId = friend.userId;
+    this.friend.friendId = friend.userId;
   }
 
   handleUserChange() {
@@ -197,8 +225,8 @@ export default class GenalSearch extends Vue {
 
   addFriend() {
     this.visibleAddFriend = false;
-    this.$emit('addFriend', this.friendId);
-    this.friendId = '';
+    this.$emit('addFriend', this.friend);
+    this.friend = {};
   }
 }
 </script>
