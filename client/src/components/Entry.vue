@@ -42,8 +42,9 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
-import Emoji from './Emoji.vue';
 import { namespace } from 'vuex-class';
+import Emoji from './Emoji.vue';
+
 const chatModule = namespace('chat');
 const appModule = namespace('app');
 
@@ -54,15 +55,21 @@ const appModule = namespace('app');
 })
 export default class Entry extends Vue {
   @appModule.Getter('user') user: User;
+
   @appModule.Getter('mobile') mobile: boolean;
 
   @chatModule.State('activeRoom') activeRoom: Group & Friend;
+
   @chatModule.Getter('socket') socket: SocketIOClient.Socket;
+
   @chatModule.Getter('dropped') dropped: boolean;
+
   @chatModule.Getter('groupGather') groupGather: GroupGather;
+
   @chatModule.Getter('userGather') userGather: FriendGather;
 
   text: string = '';
+
   lastTime: number = 0;
 
   mounted() {
@@ -84,8 +91,7 @@ export default class Entry extends Vue {
    */
   initPaste() {
     document.addEventListener('paste', (event) => {
-      let items = event.clipboardData && event.clipboardData.items;
-      let url = window.URL || window.webkitURL;
+      const items = event.clipboardData && event.clipboardData.items;
       let file = null;
       if (items && items.length) {
         // 检索剪切板items
@@ -106,7 +112,7 @@ export default class Entry extends Vue {
    * 消息发送节流
    */
   throttle(fn: Function, file?: File) {
-    let nowTime = +new Date();
+    const nowTime = +new Date();
     if (nowTime - this.lastTime < 500) {
       return this.$message.error('消息发送太频繁！');
     }
@@ -213,8 +219,7 @@ export default class Entry extends Vue {
    * @params file
    */
   async handleImgUpload(imageFile: File) {
-    const isJpgOrPng =
-      imageFile.type === 'image/jpeg' || imageFile.type === 'image/png' || imageFile.type === 'image/jpg' || imageFile.type === 'image/gif';
+    const isJpgOrPng = imageFile.type === 'image/jpeg' || imageFile.type === 'image/png' || imageFile.type === 'image/jpg' || imageFile.type === 'image/gif';
     if (!isJpgOrPng) {
       return this.$message.error('请选择jpeg/jpg/png/gif格式的图片!');
     }
@@ -222,11 +227,11 @@ export default class Entry extends Vue {
     if (!isLt1M) {
       return this.$message.error('图片必须小于500K!');
     }
-    let image = new Image();
-    let url = window.URL || window.webkitURL;
+    const image = new Image();
+    const url = window.URL || window.webkitURL;
     image.src = url.createObjectURL(imageFile);
     image.onload = () => {
-      let imageSize: ImageSize = this.getImageSize({ width: image.width, height: image.height });
+      const imageSize: ImageSize = this.getImageSize({ width: image.width, height: image.height });
       this.sendMessage({
         type: this.activeRoom.groupId ? 'group' : 'friend',
         message: imageFile,

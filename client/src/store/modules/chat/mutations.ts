@@ -1,4 +1,6 @@
 import Vue from 'vue';
+import { MutationTree } from 'vuex';
+import { DEFAULT_GROUP } from '@/const';
 import {
   SET_SOCKET,
   SET_DROPPED,
@@ -17,8 +19,6 @@ import {
   LOSE_UNREAD_GATHER,
 } from './mutation-types';
 import { ChatState } from './state';
-import { MutationTree } from 'vuex';
-import { DEFAULT_GROUP } from '@/const';
 
 const mutations: MutationTree<ChatState> = {
   // 保存socket
@@ -34,8 +34,9 @@ const mutations: MutationTree<ChatState> = {
   // 设置群在线人数
   [SET_ACTIVE_GROUP_USER](state, payload: ActiveGroupUser) {
     state.activeGroupUser = payload;
-    let userGather = state.userGather;
-    for (let user of Object.values(payload[DEFAULT_GROUP])) {
+    const { userGather } = state;
+    // eslint-disable-next-line no-restricted-syntax
+    for (const user of Object.values(payload[DEFAULT_GROUP])) {
       // 如果当前userGather没有该在线用户, 应该马上存储, 不然该在下雨用户发消息, 就看不见他的信息
       Vue.set(userGather, user.userId, user);
     }
@@ -61,26 +62,24 @@ const mutations: MutationTree<ChatState> = {
   // 新增一条私聊消息
   [ADD_FRIEND_MESSAGE](state, payload: FriendMessage) {
     // @ts-ignore
-    let userId = this.getters['app/user'].userId;
+    const { userId } = this.getters['app/user'];
     if (payload.friendId === userId) {
       if (state.friendGather[payload.userId].messages) {
         state.friendGather[payload.userId].messages!.push(payload);
       } else {
         Vue.set(state.friendGather[payload.userId], 'messages', [payload]);
       }
-    } else {
-      if (state.friendGather[payload.friendId].messages) {
+    } else if (state.friendGather[payload.friendId].messages) {
         state.friendGather[payload.friendId].messages!.push(payload);
-      } else {
-        Vue.set(state.friendGather[payload.friendId], 'messages', [payload]);
-      }
+    } else {
+      Vue.set(state.friendGather[payload.friendId], 'messages', [payload]);
     }
   },
 
   // 设置私聊记录
   [SET_FRIEND_MESSAGES](state, payload: FriendMessage[]) {
     // @ts-ignore
-    let userId = this.getters['app/user'].userId;
+    const { userId } = this.getters['app/user'];
     if (payload && payload.length) {
       if (payload[0].friendId === userId) {
         Vue.set(state.friendGather[payload[0].userId], 'messages', payload);

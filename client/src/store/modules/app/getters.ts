@@ -1,11 +1,13 @@
 import { GetterTree } from 'vuex';
+import cookie from 'js-cookie';
 import { AppState } from './state';
 import { RootState } from '../../index';
-import cookie from 'js-cookie';
+
 const getters: GetterTree<AppState, RootState> = {
   user(state) {
+    // eslint-disable-next-line no-unused-expressions
     state.user;
-    let user = cookie.get('user');
+    const user = cookie.get('user');
     if (!user) {
       return {};
     }
@@ -16,6 +18,7 @@ const getters: GetterTree<AppState, RootState> = {
     return state.mobile;
   },
   background(state) {
+    // eslint-disable-next-line no-unused-expressions
     state.background;
     return localStorage.getItem('background');
   },

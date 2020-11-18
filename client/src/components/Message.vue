@@ -46,14 +46,15 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
+import * as api from '@/api/apis';
+import { namespace } from 'vuex-class';
+import { isUrl, parseText, processReturn } from '@/utils/common';
 import Avatar from './Avatar.vue';
 import Panel from './Panel.vue';
 import Entry from './Entry.vue';
-import * as api from '@/api/apis';
-import { namespace } from 'vuex-class';
+
 const chatModule = namespace('chat');
 const appModule = namespace('app');
-import { isUrl, parseText, processReturn } from '@/utils/common';
 
 @Component({
   components: {
@@ -64,28 +65,47 @@ import { isUrl, parseText, processReturn } from '@/utils/common';
 })
 export default class Message extends Vue {
   @appModule.Getter('user') user: User;
+
   @appModule.Getter('mobile') mobile: boolean;
 
   @chatModule.State('activeRoom') activeRoom: Group & Friend;
+
   @chatModule.Getter('socket') socket: SocketIOClient.Socket;
+
   @chatModule.Getter('dropped') dropped: boolean;
+
   @chatModule.Getter('groupGather') groupGather: GroupGather;
+
   @chatModule.Getter('userGather') userGather: FriendGather;
+
   @chatModule.Mutation('set_dropped') set_dropped: Function;
+
   @chatModule.Mutation('set_group_messages') set_group_messages: Function;
+
   @chatModule.Mutation('set_friend_messages') set_friend_messages: Function;
+
   @chatModule.Mutation('set_user_gather') set_user_gather: Function;
 
   text: string = '';
+
   needScrollToBottom: boolean = true;
+
   messageDom: HTMLElement;
+
   messageContentDom: HTMLElement;
+
   headerDom: HTMLElement;
+
   messageOpacity: number = 1;
+
   lastMessagePosition: number = 0;
+
   spinning: boolean = false;
+
   pageSize: number = 30;
+
   isNoData: boolean = false;
+
   lastTime: number = 0;
 
   mounted() {
@@ -99,9 +119,8 @@ export default class Message extends Vue {
   get chatName() {
     if (this.groupGather[this.activeRoom.groupId]) {
       return this.groupGather[this.activeRoom.groupId].groupName;
-    } else {
-      return this.userGather[this.activeRoom.userId].username;
     }
+    return this.userGather[this.activeRoom.userId].username;
   }
 
   /**
@@ -150,10 +169,10 @@ export default class Message extends Vue {
   addMessage() {
     if (this.activeRoom.messages) {
       // 新消息来了只有是自己发的消息和消息框本身在底部才会滚动到底部
-      let messages = this.activeRoom.messages;
+      const { messages } = this.activeRoom;
       if (
-        messages[messages.length - 1].userId === this.user.userId ||
-        (this.messageDom && this.messageDom.scrollTop + this.messageDom.offsetHeight + 100 > this.messageContentDom.scrollHeight)
+        messages[messages.length - 1].userId === this.user.userId
+        || (this.messageDom && this.messageDom.scrollTop + this.messageDom.offsetHeight + 100 > this.messageContentDom.scrollHeight)
       ) {
         this.scrollToBottom();
       }
@@ -168,7 +187,7 @@ export default class Message extends Vue {
       // 只有有消息且滚动到顶部时才进入
       if (this.messageDom.scrollTop === 0) {
         this.lastMessagePosition = this.messageContentDom.offsetHeight;
-        let messages = this.activeRoom.messages;
+        const { messages } = this.activeRoom;
         if (messages && messages.length >= this.pageSize && !this.spinning) {
           this.getMoreMessage();
         }
@@ -180,7 +199,7 @@ export default class Message extends Vue {
    * 消息获取节流
    */
   throttle(fn: Function, file?: File) {
-    let nowTime = +new Date();
+    const nowTime = +new Date();
     if (nowTime - this.lastTime < 1000) {
       return this.$message.error('消息获取太频繁！');
     }
@@ -213,15 +232,15 @@ export default class Message extends Vue {
    * 获取群聊消息
    */
   async getGroupMessages() {
-    let groupId = this.activeRoom.groupId;
-    let current = this.activeRoom.messages!.length;
-    let currentMessage = this.activeRoom.messages ? this.activeRoom.messages : [];
-    let data: PagingResponse = processReturn(
+    const { groupId } = this.activeRoom;
+    const current = this.activeRoom.messages!.length;
+    const currentMessage = this.activeRoom.messages ? this.activeRoom.messages : [];
+    const data: PagingResponse = processReturn(
       await api.getGroupMessages({
         groupId,
         current,
         pageSize: this.pageSize,
-      })
+      }),
     );
     if (data) {
       if (!data.messageArr.length || data.messageArr.length < this.pageSize) {
@@ -229,7 +248,8 @@ export default class Message extends Vue {
       }
       this.needScrollToBottom = false;
       this.set_group_messages([...data.messageArr, ...currentMessage]);
-      for (let user of data.userArr) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const user of data.userArr) {
         if (!this.userGather[user.userId]) {
           this.set_user_gather(user);
         }
@@ -241,17 +261,17 @@ export default class Message extends Vue {
    * 获取私聊消息
    */
   async getFriendMessages() {
-    let userId = this.user.userId;
-    let friendId = this.activeRoom.userId;
-    let current = this.activeRoom.messages!.length;
-    let currentMessage = this.activeRoom.messages ? this.activeRoom.messages : [];
-    let data: PagingResponse = processReturn(
+    const { userId } = this.user;
+    const friendId = this.activeRoom.userId;
+    const current = this.activeRoom.messages!.length;
+    const currentMessage = this.activeRoom.messages ? this.activeRoom.messages : [];
+    const data: PagingResponse = processReturn(
       await api.getFriendMessage({
         userId,
         friendId,
         current,
         pageSize: this.pageSize,
-      })
+      }),
     );
     if (data) {
       if (!data.messageArr.length || data.messageArr.length < this.pageSize) {
@@ -276,7 +296,7 @@ export default class Message extends Vue {
    * 根据图片url设置图片框宽高, 注意是图片框
    */
   getImageStyle(src: string) {
-    let arr = src.split('$');
+    const arr = src.split('$');
     let width = Number(arr[2]);
     let height = Number(arr[3]);
     if (this.mobile) {

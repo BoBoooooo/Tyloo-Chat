@@ -8,13 +8,17 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import { DEFAULT_BACKGROUND } from '@/const';
+
 const appModule = namespace('app');
 
 @Component
 export default class Chat extends Vue {
   @appModule.Getter('user') user: User;
+
   @appModule.Getter('background') background: string;
+
   @appModule.Mutation('set_mobile') setMobile: Function;
+
   @appModule.Mutation('set_background') set_background: Function;
 
   mounted() {
@@ -25,8 +29,8 @@ export default class Chat extends Vue {
   }
 
   isMobile() {
-    let flag = navigator.userAgent.match(
-      /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
+    const flag = navigator.userAgent.match(
+      /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i,
     );
     return flag && flag.length;
   }

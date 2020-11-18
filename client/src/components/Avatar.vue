@@ -27,29 +27,36 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
+import {
+  Component, Vue, Prop,
+} from 'vue-property-decorator';
 import * as api from '@/api/apis';
 import { namespace } from 'vuex-class';
+import { formatTime } from '@/utils/common';
+
 const chatModule = namespace('chat');
 const appModule = namespace('app');
-import { formatTime } from '@/utils/common';
-import { processReturn } from '@/utils/common.ts';
 
 @Component
 export default class Avatar extends Vue {
   @Prop() data: User; // 用户信息
+
   @Prop({ default: true }) showTime: boolean; // 是否显示时间
 
   @appModule.Getter('user') user: User;
+
   @chatModule.Getter('userGather') userGather: FriendGather;
+
   @chatModule.Getter('friendGather') friendGather: FriendGather;
+
   @chatModule.Getter('socket') socket: SocketIOClient.Socket;
+
   @chatModule.Mutation('set_active_room') setActiveRoom: Function;
 
   addFriend(friendId: string) {
     this.socket.emit('addFriend', {
       userId: this.user.userId,
-      friendId: friendId,
+      friendId,
       createTime: new Date().valueOf(),
     });
   }
@@ -59,12 +66,11 @@ export default class Avatar extends Vue {
   }
 
   async deleteUser(userId: string) {
-    let res = await api.deleteUser({
+    await api.deleteUser({
       uid: this.user.userId,
       psw: this.user.password,
       did: userId,
     });
-    let data = processReturn(res);
   }
 
   _setActiveRoom(userId: string) {

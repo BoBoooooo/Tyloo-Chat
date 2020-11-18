@@ -1,6 +1,8 @@
 const Host = 'http://localhost:3000';
 const webpack = require('webpack');
 
+const isDev = process.env.NODE_ENV === 'development';
+
 // cdn链接
 const cdn = {
   css: [
@@ -29,7 +31,7 @@ module.exports = {
 
     // 配置cdn引入
     if (process.env.NODE_ENV === 'production') {
-      let externals = {
+      const externals = {
         vue: 'Vue',
         axios: 'axios',
         'vue-router': 'VueRouter',
@@ -39,6 +41,7 @@ module.exports = {
       config.externals(externals);
       // 通过 html-webpack-plugin 将 cdn 注入到 index.html 之中
       config.plugin('html').tap((args) => {
+        // eslint-disable-next-line no-param-reassign
         args[0].cdn = cdn;
         return args;
       });
@@ -47,22 +50,26 @@ module.exports = {
   configureWebpack: (config) => {
     // 代码 gzip
     const productionGzipExtensions = ['html', 'js', 'css'];
-    config.plugins.push(
-      new CompressionWebpackPlugin({
-        filename: '[path].gz[query]',
-        algorithm: 'gzip',
-        test: new RegExp('\\.(' + productionGzipExtensions.join('|') + ')$'),
-        threshold: 10240, // 只有大小大于该值的资源会被处理 10240
-        minRatio: 0.8, // 只有压缩率小于这个值的资源才会被处理
-        deleteOriginalAssets: false, // 删除原文件
-      })
-    );
+    // 开发模式下不走gzip
+    if (!isDev) {
+      config.plugins.push(
+        new CompressionWebpackPlugin({
+          filename: '[path].gz[query]',
+          algorithm: 'gzip',
+          test: new RegExp(`\\.(${productionGzipExtensions.join('|')})$`),
+          threshold: 10240, // 只有大小大于该值的资源会被处理 10240
+          minRatio: 0.8, // 只有压缩率小于这个值的资源才会被处理
+          deleteOriginalAssets: false, // 删除原文件
+        }),
+      );
+    }
 
     // 不打包moment的语言包
     config.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/));
 
     // 去除console
     if (process.env.NODE_ENV === 'production') {
+      // eslint-disable-next-line no-param-reassign
       config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true;
     }
   },

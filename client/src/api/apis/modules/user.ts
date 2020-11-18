@@ -4,11 +4,9 @@ import axios from '@/api/axios';
  * 更新用户名
  * @param params
  */
-export const patchUserName = (params: User) => {
-  return axios.patch(`/user/username`, {
-    ...params,
-  });
-};
+export const patchUserName = (params: User) => axios.patch('/user/username', {
+  ...params,
+});
 
 /**
  * 更新用户密码
@@ -16,11 +14,9 @@ export const patchUserName = (params: User) => {
  * @param password
  *
  */
-export const patchPassword = (user: User, password: string) => {
-  return axios.patch(`/user/password?password=${password}`, {
-    ...user,
-  });
-};
+export const patchPassword = (user: User, password: string) => axios.patch(`/user/password?password=${password}`, {
+  ...user,
+});
 
 /**
  * 用户名模糊搜索用户
@@ -35,7 +31,7 @@ export function getUsersByName(username: string) {
  * @param params
  */
 export function setUserAvatar(params: FormData) {
-  return axios.post(`/user/avatar`, params, {
+  return axios.post('/user/avatar', params, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -47,5 +43,5 @@ export function setUserAvatar(params: FormData) {
  * @param params
  */
 export function deleteUser(params: any) {
-  return axios.delete(`/user`, { params: params });
+  return axios.delete('/user', { params });
 }

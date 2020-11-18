@@ -4,7 +4,7 @@ import { AxiosResponse } from 'axios';
 // 处理所有后端返回的数据
 export function processReturn(res: AxiosResponse<ServerRes>) {
   // code 0:成功 1:错误 2:后端报错
-  let { code, msg, data } = res.data;
+  const { code, msg, data } = res.data;
   if (code) {
     Vue.prototype.$message.error(msg);
     return;
@@ -34,6 +34,7 @@ export function parseText(text: string) {
  */
 export function isUrl(text: string) {
   // 解析网址
+  // eslint-disable-next-line no-useless-escape
   const UrlReg = new RegExp(/http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/);
   return UrlReg.test(text);
 }
@@ -43,7 +44,7 @@ export function isUrl(text: string) {
  * @param time
  */
 export function formatTime(time: number) {
-  let moment = Vue.prototype.$moment;
+  const moment = Vue.prototype.$moment;
   // 大于昨天
   if (
     moment()
@@ -54,7 +55,7 @@ export function formatTime(time: number) {
   }
   // 昨天
   if (moment().startOf('day') > time) {
-    return '昨天 ' + moment(time).format('HH:mm');
+    return `昨天 ${moment(time).format('HH:mm')}`;
   }
   // 大于五分钟不显示秒
   if (new Date().valueOf() > time + 300000) {
@@ -68,7 +69,7 @@ export function formatTime(time: number) {
  * @param name
  */
 export function nameVerify(name: string): boolean {
-  let nameReg = /^(?!_)(?!.*?_$)[a-zA-Z0-9_\u4e00-\u9fa5]+$/;
+  const nameReg = /^(?!_)(?!.*?_$)[a-zA-Z0-9_\u4e00-\u9fa5]+$/;
   if (name.length === 0) {
     Vue.prototype.$message.error('请输入名字');
     return false;

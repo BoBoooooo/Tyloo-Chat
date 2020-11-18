@@ -1,7 +1,9 @@
-import { SET_USER, CLEAR_USER, SET_TOKEN, SET_MOBILE, SET_BACKGROUND } from './mutation-types';
-import { AppState } from './state';
 import cookie from 'js-cookie';
 import { MutationTree } from 'vuex';
+import {
+  SET_USER, CLEAR_USER, SET_TOKEN, SET_MOBILE, SET_BACKGROUND,
+} from './mutation-types';
+import { AppState } from './state';
 
 const mutations: MutationTree<AppState> = {
   [SET_USER](state, payload: User) {

@@ -1,8 +1,9 @@
 import { ActionTree } from 'vuex';
-import { ChatState } from './state';
-import { RootState } from '../../index';
 import io from 'socket.io-client';
 import Vue from 'vue';
+import { DEFAULT_GROUP } from '@/const/index';
+import { ChatState } from './state';
+import { RootState } from '../../index';
 import {
   SET_SOCKET,
   SET_DROPPED,
@@ -18,13 +19,14 @@ import {
   DEL_FRIEND,
   ADD_UNREAD_GATHER,
 } from './mutation-types';
-import { DEFAULT_GROUP } from '@/const/index';
 
 const actions: ActionTree<ChatState, RootState> = {
   // 初始化socket连接和监听socket事件
-  async connectSocket({ commit, state, dispatch, rootState }, callback) {
-    let user = rootState.app.user;
-    let socket: SocketIOClient.Socket = io.connect(`/?userId=${user.userId}`, { reconnection: true });
+  async connectSocket({
+    commit, state, dispatch, rootState,
+  }, callback) {
+    const { user } = rootState.app;
+    const socket: SocketIOClient.Socket = io.connect(`/?userId=${user.userId}`, { reconnection: true });
     console.log(user);
     socket.on('connect', async () => {
       console.log('连接成功');
@@ -58,38 +60,38 @@ const actions: ActionTree<ChatState, RootState> = {
       if (res.code) {
         return Vue.prototype.$message.error(res.msg);
       }
-      let newUser = res.data.user;
-      let group = res.data.group;
-      if (newUser.userId != user.userId) {
+      const newUser = res.data.user;
+      const { group } = res.data;
+      if (newUser.userId !== user.userId) {
         commit(SET_USER_GATHER, newUser);
         return Vue.prototype.$message.info(`${newUser.username}加入群${group.groupName}`);
-      } else {
-        console.log(state.groupGather, group.groupId);
-        // 是用户自己 则加入到某个群
-        if (!state.groupGather[group.groupId]) {
-          commit(SET_GROUP_GATHER, group);
-          // 获取群里面所有用户的用户信息
-          socket.emit('chatData', user);
-        }
-        Vue.prototype.$message.info(`成功加入群${group.groupName}`);
-        commit(SET_ACTIVE_ROOM, state.groupGather[group.groupId]);
       }
+      console.log(state.groupGather, group.groupId);
+      // 是用户自己 则加入到某个群
+      if (!state.groupGather[group.groupId]) {
+        commit(SET_GROUP_GATHER, group);
+        // 获取群里面所有用户的用户信息
+        socket.emit('chatData', user);
+      }
+      Vue.prototype.$message.info(`成功加入群${group.groupName}`);
+      commit(SET_ACTIVE_ROOM, state.groupGather[group.groupId]);
     });
-    // 
+    //
     socket.on('joinGroupSocket', (res: ServerRes) => {
       console.log('on joinGroupSocket', res);
       if (res.code) {
         return Vue.prototype.$message.error(res.msg);
       }
-      let newUser: Friend = res.data.user;
-      let group: Group = res.data.group;
-      let friendGather = state.friendGather;
-      if (newUser.userId != user.userId) {
+      const newUser: Friend = res.data.user;
+      const { group } = res.data;
+      const { friendGather } = state;
+      if (newUser.userId !== user.userId) {
         commit(SET_USER_GATHER, newUser);
         if (friendGather[newUser.userId]) {
           // 当用户的好友更新了用户信息
           let messages;
           if (friendGather[newUser.userId].messages) {
+            // eslint-disable-next-line prefer-destructuring
             messages = friendGather[newUser.userId].messages;
           }
           commit(SET_FRIEND_GATHER, newUser);
@@ -102,19 +104,18 @@ const actions: ActionTree<ChatState, RootState> = {
         // @ts-ignore
         window.msg = newUser.userId;
         return Vue.prototype.$message.info(`${newUser.username}加入群${group.groupName}`);
-      } else {
-        if (!state.groupGather[group.groupId]) {
-          commit(SET_GROUP_GATHER, group);
-        }
-        commit(SET_USER_GATHER, newUser);
       }
+      if (!state.groupGather[group.groupId]) {
+        commit(SET_GROUP_GATHER, group);
+      }
+      commit(SET_USER_GATHER, newUser);
     });
 
     socket.on('groupMessage', (res: ServerRes) => {
       console.log('on groupMessage', res);
       if (!res.code) {
         commit(ADD_GROUP_MESSAGE, res.data);
-        let activeRoom = state.activeRoom;
+        const { activeRoom } = state;
         if (activeRoom && activeRoom.groupId !== res.data.groupId) {
           commit(ADD_UNREAD_GATHER, res.data.groupId);
         }
@@ -151,7 +152,7 @@ const actions: ActionTree<ChatState, RootState> = {
         if (res.data.friendId === user.userId || res.data.userId === user.userId) {
           console.log('ADD_FRIEND_MESSAGE', res.data);
           commit(ADD_FRIEND_MESSAGE, res.data);
-          let activeRoom = state.activeRoom;
+          const { activeRoom } = state;
           if (activeRoom && activeRoom.userId !== res.data.userId && activeRoom.userId !== res.data.friendId) {
             commit(ADD_UNREAD_GATHER, res.data.userId);
           }
@@ -192,15 +193,18 @@ const actions: ActionTree<ChatState, RootState> = {
     });
   },
 
-  async handleChatData({ commit, dispatch, state, rootState }, payload) {
-    let user = rootState.app.user;
-    let socket = state.socket;
-    let groupGather = state.groupGather;
-    let groupArr = payload.groupData;
-    let friendArr = payload.friendData;
-    let userArr = payload.userData;
+  async handleChatData({
+    commit, dispatch, state, rootState,
+  }, payload) {
+    const { user } = rootState.app;
+    const { socket } = state;
+    const { groupGather } = state;
+    const groupArr = payload.groupData;
+    const friendArr = payload.friendData;
+    const userArr = payload.userData;
     if (groupArr.length) {
-      for (let group of groupArr) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const group of groupArr) {
         socket.emit('joinGroupSocket', {
           groupId: group.groupId,
           userId: user.userId,
@@ -209,7 +213,8 @@ const actions: ActionTree<ChatState, RootState> = {
       }
     }
     if (friendArr.length) {
-      for (let friend of friendArr) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const friend of friendArr) {
         socket.emit('joinFriendSocket', {
           userId: user.userId,
           friendId: friend.userId,
@@ -218,8 +223,9 @@ const actions: ActionTree<ChatState, RootState> = {
       }
     }
     if (userArr.length) {
-      for (let user of userArr) {
-        commit(SET_USER_GATHER, user);
+      // eslint-disable-next-line no-restricted-syntax
+      for (const user_ of userArr) {
+        commit(SET_USER_GATHER, user_);
       }
     }
 
@@ -228,9 +234,9 @@ const actions: ActionTree<ChatState, RootState> = {
      * 这里需要根据老的activeGather找到最新的gather对象,这样才能使得vue的watch监听新gather
      */
 
-    let activeRoom = state.activeRoom;
-    let groupGather2 = state.groupGather;
-    let friendGather2 = state.friendGather;
+    const { activeRoom } = state;
+    const groupGather2 = state.groupGather;
+    const friendGather2 = state.friendGather;
     if (!activeRoom) {
       // 更新完数据没有默认activeRoom设置群为'阿童木聊天室'
       return commit(SET_ACTIVE_ROOM, groupGather[DEFAULT_GROUP]);

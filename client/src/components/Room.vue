@@ -52,19 +52,27 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
+import {
+  Component, Vue, Watch,
+} from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
-const chatModule = namespace('chat');
 import { parseText } from '@/utils/common';
-import { DEFAULT_GROUP,DEFAULT_ROBOT } from '@/const';
+import { DEFAULT_GROUP, DEFAULT_ROBOT } from '@/const';
+
+const chatModule = namespace('chat');
 
 @Component
 export default class Room extends Vue {
   @chatModule.State('activeRoom') activeRoom: Group & Friend;
+
   @chatModule.Getter('groupGather') groupGather: GroupGather;
+
   @chatModule.Getter('friendGather') friendGather: FriendGather;
+
   @chatModule.Getter('unReadGather') unReadGather: UnReadGather;
+
   @chatModule.Getter('activeGroupUser') activeGroupUser: ActiveGroupUser;
+
   @chatModule.Mutation('lose_unread_gather') lose_unread_gather: Function;
 
   chatArr: Array<Group | Friend> = [];
@@ -87,14 +95,14 @@ export default class Room extends Vue {
     return this.activeGroupUser[DEFAULT_GROUP];
   }
 
-  avatarOffLine(chat){
+  avatarOffLine(chat: any) {
     return chat.userId !== DEFAULT_ROBOT ? !this.activeUserGather[chat.userId] : false;
   }
 
   sortChat() {
     this.chatArr = [];
-    let groups = Object.values(this.groupGather);
-    let friends = Object.values(this.friendGather);
+    const groups = Object.values(this.groupGather);
+    const friends = Object.values(this.friendGather);
     this.chatArr = [...groups, ...friends];
     // 对聊天窗进行排序(根据最新消息时间)
     this.chatArr = this.chatArr.sort((a: Group | Friend, b: Group | Friend) => {

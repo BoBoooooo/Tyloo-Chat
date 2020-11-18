@@ -54,8 +54,11 @@ import { nameVerify } from '@/utils/common';
 @Component
 export default class Login extends Vue {
   @Prop() showModal: boolean;
+
   form: any = null;
+
   type: string = 'login';
+
   buttonText: string = '登录';
 
   created() {
@@ -76,10 +79,11 @@ export default class Login extends Vue {
     this.form.validateFields((err: any, user: User) => {
       if (!err) {
         if (this.type === 'register') {
+          // eslint-disable-next-line no-param-reassign
           user.createTime = new Date().valueOf();
         }
-        // @ts-ignore
-        delete user.remember;
+        // eslint-disable-next-line no-param-reassign
+        delete (user as any).remember;
         if (!nameVerify(user.username)) {
           return;
         }

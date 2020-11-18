@@ -1,5 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
-import { requestSuccess, requestFail, responseSuccess, responseFail } from './interceptors';
+import {
+  requestSuccess, requestFail, responseSuccess, responseFail,
+} from './interceptors';
 import { socketUrl } from './config';
 
 const fetch: AxiosInstance = axios.create({

@@ -1,16 +1,16 @@
-import { SET_USER, SET_TOKEN } from './mutation-types';
 import { ActionTree } from 'vuex';
+import axios from '@/api/axios';
+import { processReturn } from '@/utils/common';
+import { SET_USER, SET_TOKEN } from './mutation-types';
 import { AppState } from './state';
 import { RootState } from '../../index';
-import axios from '@/api/axios';
-import { processReturn } from '@/utils/common.ts';
 
 const actions: ActionTree<AppState, RootState> = {
   async register({ commit }, payload) {
-    let res = await axios.post('/auth/register', {
+    const res = await axios.post('/auth/register', {
       ...payload,
     });
-    let data = processReturn(res);
+    const data = processReturn(res);
     if (data) {
       commit(SET_USER, data.user);
       commit(SET_TOKEN, data.token);
@@ -18,10 +18,10 @@ const actions: ActionTree<AppState, RootState> = {
     }
   },
   async login({ commit }, payload) {
-    let res = await axios.post('/auth/login', {
+    const res = await axios.post('/auth/login', {
       ...payload,
     });
-    let data = processReturn(res);
+    const data = processReturn(res);
     if (data) {
       commit(SET_USER, data.user);
       commit(SET_TOKEN, data.token);

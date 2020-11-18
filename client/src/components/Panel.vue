@@ -38,9 +38,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
-import Avatar from './Avatar.vue';
+import {
+  Component, Vue, Prop, Watch,
+} from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
+import Avatar from './Avatar.vue';
+
 const chatModule = namespace('chat');
 const appModule = namespace('app');
 
@@ -55,7 +58,9 @@ export default class Panel extends Vue {
   @appModule.Getter('user') user: User;
 
   @chatModule.State('activeRoom') activeRoom: Group & Friend;
+
   @chatModule.State('socket') socket: SocketIOClient.Socket;
+
   @chatModule.Getter('activeGroupUser') activeGroupUser: ActiveGroupUser;
 
   showGroupUser: boolean = false;
@@ -71,7 +76,7 @@ export default class Panel extends Vue {
     return Object.keys(this.activeGroupUser[this.activeRoom.groupId]).length;
   }
 
-  get isRobot(){
+  get isRobot() {
     return this.activeRoom.userId === '小冰机器人';
   }
 

@@ -13,7 +13,7 @@ const chatState: ChatState = {
   // @ts-ignore
   socket: null,
   dropped: false,
-  activeGroupUser: {}, 
+  activeGroupUser: {},
   activeRoom: null, // 当前访问房间
   groupGather: {}, // 群组列表
   userGather: {}, // 设置群在线用户列表

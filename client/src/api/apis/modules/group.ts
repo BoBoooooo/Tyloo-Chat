@@ -13,7 +13,8 @@ export function getGroupsByName(groupName: string) {
  * @param params
  */
 export async function getGroupMessages(params: PagingParams) {
-  return await axios.get(`/group/groupMessages`, {
+  // eslint-disable-next-line no-return-await
+  return await axios.get('/group/groupMessages', {
     params,
   });
 }

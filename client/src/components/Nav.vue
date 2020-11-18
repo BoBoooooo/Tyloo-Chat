@@ -136,27 +136,37 @@ import { setUserAvatar } from '@/api/apis';
 import { DEFAULT_BACKGROUND, DEFAULT_GROUP } from '@/const/index';
 import { namespace } from 'vuex-class';
 import * as apis from '@/api/apis';
-import { processReturn, nameVerify, passwordVerify } from '@/utils/common.ts';
+import { processReturn, nameVerify, passwordVerify } from '@/utils/common';
+
 const appModule = namespace('app');
 const chatModule = namespace('chat');
 
 @Component
 export default class Tool extends Vue {
   @appModule.Getter('user') user: User;
+
   @appModule.Mutation('set_background') setBackground: Function;
+
   @appModule.Mutation('set_user') setUser: Function;
 
   @chatModule.Getter('socket') socket: SocketIOClient.Socket;
+
   @chatModule.Mutation('set_user_gather') setUserGather: Function;
 
   showUpload: boolean = false;
+
   showUserModal: boolean = false;
+
   showBackgroundModal: boolean = false;
 
   username: string = '';
+
   password: string = '';
+
   background: string = '';
+
   uploading: boolean = false;
+
   avatar: any = '';
 
   @Watch('user')
@@ -183,10 +193,10 @@ export default class Tool extends Vue {
     if (!nameVerify(this.username)) {
       return;
     }
-    let user: User = JSON.parse(JSON.stringify(this.user));
+    const user: User = JSON.parse(JSON.stringify(this.user));
     user.username = this.username;
-    let res = await apis.patchUserName(user);
-    let data = processReturn(res);
+    const res = await apis.patchUserName(user);
+    const data = processReturn(res);
     if (data) {
       console.log(data);
       this.setUser(data);
@@ -203,9 +213,9 @@ export default class Tool extends Vue {
     if (!passwordVerify(this.password)) {
       return;
     }
-    let user: User = JSON.parse(JSON.stringify(this.user));
-    let res = await apis.patchPassword(user, this.password);
-    let data = processReturn(res);
+    const user: User = JSON.parse(JSON.stringify(this.user));
+    const res = await apis.patchPassword(user, this.password);
+    const data = processReturn(res);
     if (data) {
       this.setUser(data);
       this.setUserGather(data);
@@ -232,7 +242,7 @@ export default class Tool extends Vue {
     formData.append('avatar', this.avatar);
     formData.append('userId', this.user.userId);
     formData.append('password', this.user.password);
-    let data = processReturn(await setUserAvatar(formData));
+    const data = processReturn(await setUserAvatar(formData));
     if (data) {
       this.setUser(data);
       this.setUserGather(data);

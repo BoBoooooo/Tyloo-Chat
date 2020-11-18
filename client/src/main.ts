@@ -6,13 +6,14 @@
  */
 
 import Vue from 'vue';
+import Viewer from 'v-viewer'; // 图片预览插件
+import moment from 'moment'; // 引入moment
 import App from './App.vue';
 import router from './router';
 import store from './store';
-import Viewer from 'v-viewer'; // 图片预览插件
+// eslint-disable-next-line import/no-extraneous-dependencies
 import 'viewerjs/dist/viewer.css';
 import './ant-desigin'; // 引入ant-desigin
-import moment from 'moment'; // 引入moment
 
 Vue.config.productionTip = false;
 // 使用中文时间
@@ -40,5 +41,5 @@ Vue.use(Viewer, {
 new Vue({
   router,
   store,
-  render: (h) => h(App),
+  render: h => h(App),
 }).$mount('#app');

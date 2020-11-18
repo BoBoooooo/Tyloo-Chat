@@ -44,6 +44,7 @@ import Room from '@/components/Room.vue';
 import Message from '@/components/Message.vue';
 import Search from '@/components/Search.vue';
 import { namespace } from 'vuex-class';
+
 const appModule = namespace('app');
 const chatModule = namespace('chat');
 
@@ -58,20 +59,31 @@ const chatModule = namespace('chat');
 })
 export default class Chat extends Vue {
   @appModule.Getter('user') user: User;
+
   @appModule.Mutation('clear_user') clearUser: Function;
+
   @appModule.Action('login') login: Function;
+
   @appModule.Action('register') register: Function;
+
   @appModule.Getter('background') background: string;
 
   @chatModule.Getter('socket') socket: SocketIOClient.Socket;
+
   @chatModule.Getter('userGather') userGather: FriendGather;
+
   @chatModule.Getter('groupGather') groupGather: GroupGather;
+
   @chatModule.Getter('activeRoom') activeRoom: Friend & Group;
+
   @chatModule.Mutation('set_active_room') _setActiveRoom: Function;
+
   @chatModule.Action('connectSocket') connectSocket: Function;
 
   showModal: boolean = false;
+
   visibleDrawer: boolean = false;
+
   visibleNav: boolean = true;
 
   created() {
@@ -87,18 +99,16 @@ export default class Chat extends Vue {
           this.handleJoin();
         }
       });
+    } else if (!this.user.userId) {
+      this.showModal = true;
     } else {
-      if (!this.user.userId) {
-        this.showModal = true;
-      } else {
-        this.handleJoin();
-      }
+      this.handleJoin();
     }
   }
 
   // 登录
   async handleLogin(user: User) {
-    let res = await this.login(user);
+    const res = await this.login(user);
     if (res) {
       // 进入系统事件
       this.handleJoin();
@@ -107,7 +117,7 @@ export default class Chat extends Vue {
 
   // 注册
   async handleRegister(user: User) {
-    let res = await this.register(user);
+    const res = await this.register(user);
     if (res) {
       // 进入系统事件
       this.handleJoin();
@@ -124,7 +134,7 @@ export default class Chat extends Vue {
   addGroup(groupName: string) {
     this.socket.emit('addGroup', {
       userId: this.user.userId,
-      groupName: groupName,
+      groupName,
       createTime: new Date().valueOf(),
     });
   }
@@ -133,7 +143,7 @@ export default class Chat extends Vue {
   joinGroup(groupId: string) {
     this.socket.emit('joinGroup', {
       userId: this.user.userId,
-      groupId: groupId,
+      groupId,
     });
   }
 

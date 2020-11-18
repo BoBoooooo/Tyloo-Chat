@@ -85,40 +85,58 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
+import {
+  Component, Vue, Watch,
+} from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
-import { isContainStr, processReturn } from '@/utils/common.ts';
+import { isContainStr, processReturn, nameVerify } from '@/utils/common';
 import * as apis from '@/api/apis';
-import { nameVerify } from '@/utils/common';
-const chatModule = namespace('chat');
+
 import axios from 'axios';
+
+const chatModule = namespace('chat');
 
 @Component
 export default class Search extends Vue {
   @chatModule.State('activeRoom') activeRoom: Group & Friend;
+
   @chatModule.Getter('groupGather') groupGather: GroupGather;
+
   @chatModule.Getter('friendGather') friendGather: FriendGather;
 
   visibleAddGroup: boolean = false;
+
   visibleJoinGroup: boolean = false;
+
   visibleAddFriend: boolean = false;
+
   groupName: string = '';
+
   searchData: Array<Group | Friend> = [];
+
   groupId: string = '';
+
   groupArr: Array<Group> = [];
+
   friend: FriendMap = {};
+
   userArr: Array<User> = [];
+
   // 组织架构
   organizationArr: Array<any> = [];
-  //
+
+  // 组织架构API_URL
+  orgUrl: string = 'http://116.62.78.229:8082/FlowWJBackend/dept/treeDeptUsers';
+
   replaceFields = {
     children: 'children',
     title: 'label',
     key: 'id',
   };
+
   created() {
     this.getSearchData();
-    axios.post('http://116.62.78.229:8082/FlowWJBackend/dept/treeDeptUsers').then((res) => {
+    axios.post(this.orgUrl).then((res) => {
       this.organizationArr = res.data.data;
     });
   }
@@ -152,17 +170,15 @@ export default class Search extends Vue {
   }
 
   handleSearch(value: string) {
-    let mySearchData = [];
+    const mySearchData = [];
     this.searchData = [...Object.values(this.groupGather), ...Object.values(this.friendGather)];
-    for (let chat of this.searchData) {
-      // @ts-ignore
-      if (chat.username) {
-        // @ts-ignore
-        if (isContainStr(value, chat.username)) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const chat of this.searchData) {
+      if ((chat as Friend).username) {
+        if (isContainStr(value, (chat as Friend).username)) {
           mySearchData.push(chat);
         }
-        // @ts-ignore
-      } else if (isContainStr(value, chat.groupName)) {
+      } else if (isContainStr(value, (chat as Group).groupName)) {
         mySearchData.push(chat);
       }
     }
@@ -173,8 +189,8 @@ export default class Search extends Vue {
     if (!value) {
       return;
     }
-    let res = await apis.getGroupsByName(value);
-    let data = processReturn(res);
+    const res = await apis.getGroupsByName(value);
+    const data = processReturn(res);
     this.groupArr = data;
   }
 
@@ -190,8 +206,8 @@ export default class Search extends Vue {
     if (!value) {
       return;
     }
-    let res = await apis.getUsersByName(value);
-    let data = processReturn(res);
+    const res = await apis.getUsersByName(value);
+    const data = processReturn(res);
     this.userArr = data;
   }
 
