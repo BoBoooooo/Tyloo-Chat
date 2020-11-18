@@ -77,8 +77,8 @@
         </a-select>
         <a-button @click="addFriend" type="primary">添加好友</a-button>
       </div>
-      <div>
-        <a-tree :replace-fields="replaceFields" :tree-data="organizationArr" @select="onTreeSelect" />
+      <div class="tree-container">
+        <a-tree show-icon :default-expanded-keys="['2f8447de-5732-4fa4-8286-9a71b41dd1e7']" :replace-fields="replaceFields" :tree-data="organizationArr" @select="onTreeSelect" />
       </div>
     </a-modal>
   </div>
@@ -259,5 +259,9 @@ export default class Search extends Vue {
       background-color: skyblue;
     }
   }
+}
+.tree-container {
+  max-height: 500px;
+  overflow: auto;
 }
 </style>

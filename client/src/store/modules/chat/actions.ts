@@ -25,7 +25,7 @@ const actions: ActionTree<ChatState, RootState> = {
   async connectSocket({ commit, state, dispatch, rootState }, callback) {
     let user = rootState.app.user;
     let socket: SocketIOClient.Socket = io.connect(`/?userId=${user.userId}`, { reconnection: true });
-console.log(user);
+    console.log(user);
     socket.on('connect', async () => {
       console.log('连接成功');
 

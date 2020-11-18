@@ -285,10 +285,12 @@ export default class Tool extends Vue {
     }
   }
   .tool-tip {
-    bottom: 190px;
+    // bottom: 190px;
+    bottom: 130px;
   }
   .tool-skin {
-    bottom: 130px;
+    // bottom: 130px;
+    bottom: 70px;
   }
   .tool-github {
     color: rgba(255, 255, 255, 0.85);
