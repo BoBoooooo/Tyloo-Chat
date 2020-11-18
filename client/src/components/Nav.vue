@@ -14,13 +14,13 @@
     </div>
     <a-tooltip placement="topLeft" arrow-point-at-center>
       <div slot="title">
-        <div>请文明聊天</div>
+        <div>有问题咨询客服</div>
         <div>截图粘贴可发送图片</div>
       </div>
       <a-icon type="bulb" class="tool-tip icon" />
     </a-tooltip>
     <a-icon type="skin" class="tool-skin icon" @click="showBackgroundModal = true" />
-    <a href="https://github.com/BoBoooooo/tyloo-chat" target="_blank" class="tool-github icon"><a-icon type="github"/></a>
+    <!-- <a href="https://github.com/BoBoooooo/tyloo-chat" target="_blank" class="tool-github icon"><a-icon type="github"/></a> -->
     <a-icon class="tool-out icon" type="poweroff" @click="logout" />
     <a-modal title="用户信息" :visible="showUserModal" footer="" @cancel="showUserModal = false">
       <div class="tool-user">
