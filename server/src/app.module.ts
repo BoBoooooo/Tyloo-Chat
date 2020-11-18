@@ -1,3 +1,4 @@
+import { DictionaryModule } from './modules/dictionary/dictionary.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
@@ -23,7 +24,8 @@ import { AuthModule } from './modules/auth/auth.module';
     ChatModule,
     FriendModule,
     GroupModule,
-    AuthModule
+    AuthModule,
+    DictionaryModule
   ],
 })
 export class AppModule {}

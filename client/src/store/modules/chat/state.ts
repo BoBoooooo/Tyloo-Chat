@@ -13,12 +13,12 @@ const chatState: ChatState = {
   // @ts-ignore
   socket: null,
   dropped: false,
-  activeGroupUser: {},
-  activeRoom: null,
-  groupGather: {},
-  userGather: {},
-  friendGather: {},
-  unReadGather: {},
+  activeGroupUser: {}, 
+  activeRoom: null, // 当前访问房间
+  groupGather: {}, // 群组列表
+  userGather: {}, // 设置群在线用户列表
+  friendGather: {}, // 好友列表
+  unReadGather: {}, // 所有会话未读消息集合
 };
 
 export default chatState;

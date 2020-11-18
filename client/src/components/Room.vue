@@ -34,7 +34,7 @@
         @click="changeActiveRoom(chat)"
       >
         <a-badge class="room-card-badge" :count="unReadGather[chat.userId]" />
-        <img class="room-card-type" :src="friendGather[chat.userId].avatar" :class="{ offLine: !activeUserGather[chat.userId] }" alt="" />
+        <img class="room-card-type" :src="friendGather[chat.userId].avatar" :class="{ offLine: avatarOffLine(chat) }" alt="" />
         <div class="room-card-message">
           <div class="room-card-name">{{ chat.username }}</div>
           <div class="room-card-new" v-if="chat.messages">
@@ -56,7 +56,7 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 const chatModule = namespace('chat');
 import { parseText } from '@/utils/common';
-import { DEFAULT_GROUP } from '@/const';
+import { DEFAULT_GROUP,DEFAULT_ROBOT } from '@/const';
 
 @Component
 export default class Room extends Vue {
@@ -85,6 +85,10 @@ export default class Room extends Vue {
 
   get activeUserGather() {
     return this.activeGroupUser[DEFAULT_GROUP];
+  }
+
+  avatarOffLine(chat){
+    return chat.userId !== DEFAULT_ROBOT ? !this.activeUserGather[chat.userId] : false;
   }
 
   sortChat() {

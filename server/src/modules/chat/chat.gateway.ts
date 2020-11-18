@@ -1,3 +1,4 @@
+import { DictionaryService } from './../dictionary/dictionary.service';
 import { AuthService } from './../auth/auth.service';
 import {
   MessageBody,
@@ -18,6 +19,7 @@ import { createWriteStream } from 'fs';
 import { join } from 'path';
 import { RCode } from 'src/common/constant/rcode';
 import { nameVerify } from 'src/common/tool/utils';
+const axios = require('axios');
 
 // 用户好友DTO
 interface UserFriendMap {
@@ -42,8 +44,10 @@ export class ChatGateway {
     @InjectRepository(FriendMessage)
     private readonly friendMessageRepository: Repository<FriendMessage>,
     private readonly authService: AuthService,
+    private readonly dictionaryService: DictionaryService,
+
   ) {
-    this.defaultGroup = '阿童木聊天室';
+    this.defaultGroup = '用户问题反馈群';
   }
 
   defaultPassword = '123456';
@@ -57,7 +61,7 @@ export class ChatGateway {
   // socket连接钩子
   async handleConnection(client: Socket): Promise<string> {
     const userRoom = client.handshake.query.userId;
-    // 连接默认加入"阿童木聊天室"房间
+    // 连接默认加入"用户问题反馈群"房间
     client.join(this.defaultGroup);
     // 进来统计一下在线人数
     this.getActiveGroupUser();
@@ -273,6 +277,11 @@ export class ChatGateway {
               password: this.defaultPassword,
             });
             friend = res.data.user;
+            // 默认添加小冰机器人为好友
+            await this.friendRepository.save({
+              userId: friend.userId,
+              friendId: '小冰机器人'
+            });
           } else {
             this.server.to(data.userId).emit('addFriend', {
               code: RCode.FAIL,
@@ -377,15 +386,24 @@ export class ChatGateway {
           const randomName = `${Date.now()}$${roomId}$${data.width}$${
             data.height
           }`;
+          // 聊天图片保存至服务器static文件夹下
           const stream = createWriteStream(join('public/static', randomName));
           stream.write(data.content);
           data.content = randomName;
         }
+        console.log(roomId);
+        console.log(data.friendId);
+
         data.time = new Date().valueOf();
         await this.friendMessageRepository.save(data);
         this.server
           .to(roomId)
           .emit('friendMessage', { code: RCode.OK, msg: '', data });
+        // 如果friendID 为小冰机器人,则需要自动回复
+        // 获取自动回复内容
+        if(data.friendId === '小冰机器人'){
+          this.autoReply(data, roomId);
+        }
       }
     } else {
       this.server.to(data.userId).emit('friendMessage', {
@@ -394,6 +412,34 @@ export class ChatGateway {
         data,
       });
     }
+  }
+
+  // 小冰机器人自动回复
+  async autoReply(data, roomId){
+    // 获取自动回复内容
+    // const message = await this.dictionaryService.getReplyMessage(data.content);
+    // 走api机器人
+    // http://i.itpk.cn/api.php?question=123&api_key=68b8fafef36d3906f8f8b0e71b29d277&api_secret=4rdiunvqd0xw
+    const url = 'http://i.itpk.cn/api.php?api_key=68b8fafef36d3906f8f8b0e71b29d277&api_secret=4rdiunvqd0xw';  
+    const res = await axios({
+      url,
+      method: 'get',
+      params: {
+        question: data.content
+      }
+    })
+    const reply = {
+      time :new Date().valueOf(),
+      content : res.data,
+      userId: '小冰机器人',
+      friendId: data.userId,
+      messageType: 'text'
+    };
+    // 保存至好友消息表
+    await this.friendMessageRepository.save(reply);
+    this.server
+    .to(roomId)
+    .emit('friendMessage', { code: RCode.OK, msg: '', data: reply});
   }
 
   // 获取所有群和好友数据

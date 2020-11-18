@@ -1,3 +1,5 @@
+import { FriendMessage } from './../friend/entity/friendMessage.entity';
+import { UserMap } from './../friend/entity/friend.entity';
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { PassportModule } from '@nestjs/passport';
@@ -12,7 +14,7 @@ import { GroupMap } from '../group/entity/group.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, GroupMap]),
+    TypeOrmModule.forFeature([User, GroupMap, UserMap, FriendMessage]),
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '3d' },

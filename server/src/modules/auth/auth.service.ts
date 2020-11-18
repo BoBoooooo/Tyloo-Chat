@@ -1,3 +1,5 @@
+import { FriendMessage } from './../friend/entity/friendMessage.entity';
+import { UserMap } from './../friend/entity/friend.entity';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,6 +10,7 @@ import { nameVerify, passwordVerify } from 'src/common/tool/utils';
 import { RCode } from 'src/common/constant/rcode';
 
 const defaultPassword = '123456'
+const defaultWelcomeMessage = '欢迎使用小冰机器人,有什么能帮您的呢?😃';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +19,10 @@ export class AuthService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(GroupMap)
     private readonly groupUserRepository: Repository<GroupMap>,
+    @InjectRepository(UserMap)
+    private readonly userMapRepository: Repository<UserMap>,
+    @InjectRepository(FriendMessage)
+    private readonly friendMessageRepository: Repository<FriendMessage>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -62,10 +69,24 @@ export class AuthService {
     user.userId = user.userId
     const newUser = await this.userRepository.save(user);
     const payload = {userId: newUser.userId, password: newUser.password};
+    // 默认加入群组
     await this.groupUserRepository.save({
       userId: newUser.userId,
       groupId: '用户问题反馈群',
     });
+    // 默认添加小冰机器人为好友
+    await this.userMapRepository.save({
+      userId: newUser.userId,
+      friendId: '小冰机器人'
+    });
+    // 小冰机器人欢迎语(默认留言)
+    await this.friendMessageRepository.save({
+      userId: '小冰机器人',
+      friendId: newUser.userId,
+      content: defaultWelcomeMessage,
+      messageType: 'text',
+      time: new Date().valueOf()
+    })
     return {
       msg:'注册成功',
       data: { 

@@ -29,7 +29,7 @@
         </div>
       </a-drawer>
     </div>
-    <div v-else>
+    <div v-else-if="!isRobot">
       <a-popconfirm title="确定要删除该好友吗？" placement="bottomRight" ok-text="Yes" cancel-text="No" @confirm="exitFriend">
         <a-icon type="user-delete" class="active-button" />
       </a-popconfirm>
@@ -69,6 +69,10 @@ export default class Panel extends Vue {
 
   get activeNum() {
     return Object.keys(this.activeGroupUser[this.activeRoom.groupId]).length;
+  }
+
+  get isRobot(){
+    return this.activeRoom.userId === '小冰机器人';
   }
 
   toggleGroupUser() {
