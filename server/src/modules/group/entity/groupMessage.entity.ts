@@ -1,22 +1,22 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
 export class GroupMessage {
   @PrimaryGeneratedColumn()
-  _id: number;
+  _id: number
 
   @Column()
-  userId: string;
+  userId: string
 
   @Column()
-  groupId: string;
+  groupId: string
 
   @Column()
-  content: string;
+  content: string
 
   @Column()
-  messageType: string;
+  messageType: string
 
   @Column('double')
-  time: number;
+  time: number
 }
