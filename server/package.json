@@ -30,8 +30,10 @@
     "@nestjs/platform-socket.io": "^7.2.0",
     "@nestjs/typeorm": "^7.1.0",
     "@nestjs/websockets": "^7.2.0",
+    "axios": "^0.21.0",
     "mongodb": "^3.5.9",
     "mysql": "^2.18.1",
+    "nodejieba": "^2.4.2",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
@@ -39,8 +41,7 @@
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
     "typeorm": "^0.2.25",
-    "uuid": "^8.2.0",
-    "axios": "^0.21.0"
+    "uuid": "^8.2.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.0.0",
@@ -56,7 +57,10 @@
     "eslint": "7.1.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.3.0",
     "jest": "26.0.1",
+    "lint-staged": "^10.5.1",
     "prettier": "^1.19.1",
     "supertest": "^4.0.2",
     "ts-jest": "26.1.0",
@@ -64,6 +68,18 @@
     "ts-node": "^8.6.2",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^3.7.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,ts}": [
+      "prettier --write",
+      "eslint --fix",
+      "git add"
+    ]
   },
   "jest": {
     "moduleFileExtensions": [
