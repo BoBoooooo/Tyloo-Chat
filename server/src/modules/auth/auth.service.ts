@@ -1,3 +1,7 @@
+import {
+  defaultPassword,
+  defaultWelcomeMessage
+} from 'src/common/constant/global'
 import { FriendMessage } from './../friend/entity/friendMessage.entity'
 import { UserMap } from './../friend/entity/friend.entity'
 import { Injectable } from '@nestjs/common'
@@ -8,9 +12,6 @@ import { User } from '../user/entity/user.entity'
 import { GroupMap } from '../group/entity/group.entity'
 import { nameVerify, passwordVerify } from 'src/common/tool/utils'
 import { RCode } from 'src/common/constant/rcode'
-
-const defaultPassword = '123456'
-const defaultWelcomeMessage = '欢迎使用小冰机器人,有什么能帮您的呢?😃'
 
 @Injectable()
 export class AuthService {

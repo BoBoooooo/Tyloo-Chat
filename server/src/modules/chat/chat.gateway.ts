@@ -19,14 +19,8 @@ import { createWriteStream } from 'fs'
 import { join } from 'path'
 import { RCode } from 'src/common/constant/rcode'
 import { nameVerify } from 'src/common/tool/utils'
+import { defaultPassword } from 'src/common/constant/global'
 // const axios = require('axios');
-
-// 用户好友DTO
-interface UserFriendMap {
-  userId: string
-  friendId: string
-  friendUserName: string
-}
 
 @WebSocketGateway()
 export class ChatGateway {
@@ -48,8 +42,6 @@ export class ChatGateway {
   ) {
     this.defaultGroup = '用户问题反馈群'
   }
-
-  defaultPassword = '123456'
 
   @WebSocketServer()
   server: Server
@@ -273,7 +265,7 @@ export class ChatGateway {
               tag: '',
               status: 'on',
               createTime: new Date().valueOf(),
-              password: this.defaultPassword
+              password: defaultPassword
             })
             friend = res.data.user
             // 默认添加小冰机器人为好友

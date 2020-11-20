@@ -40,3 +40,10 @@ interface FriendMessageDto {
   messageType: string
   time: number
 }
+
+// 自定义好友DTO
+interface UserFriendMap {
+  userId: string
+  friendId: string
+  friendUserName: string
+}
