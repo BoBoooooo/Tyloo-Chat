@@ -1,5 +1,7 @@
 import {
   defaultPassword,
+  defaultRobot,
+  defaultGroup,
   defaultWelcomeMessage
 } from 'src/common/constant/global'
 import { FriendMessage } from './../friend/entity/friendMessage.entity'
@@ -75,16 +77,16 @@ export class AuthService {
     // 默认加入群组
     await this.groupUserRepository.save({
       userId: newUser.userId,
-      groupId: '用户问题反馈群'
+      groupId: defaultGroup
     })
     // 默认添加小冰机器人为好友
     await this.userMapRepository.save({
       userId: newUser.userId,
-      friendId: '小冰机器人'
+      friendId: defaultRobot
     })
     // 小冰机器人欢迎语(默认留言)
     await this.friendMessageRepository.save({
-      userId: '小冰机器人',
+      userId: defaultRobot,
       friendId: newUser.userId,
       content: defaultWelcomeMessage,
       messageType: 'text',

@@ -10,6 +10,7 @@ import { UserMap } from '../friend/entity/friend.entity'
 import { FriendMessage } from '../friend/entity/friendMessage.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { defaultRobot } from 'src/common/constant/global'
 
 @Module({
   imports: [
@@ -49,13 +50,13 @@ export class ChatModule {
     }
 
     // 默认新建机器人
-    const defaultRobot = await this.userRepository.find({
-      username: '小冰机器人'
+    const defaultRobotArr = await this.userRepository.find({
+      username: defaultRobot
     })
-    if (!defaultRobot.length) {
+    if (!defaultRobotArr.length) {
       await this.userRepository.save({
-        userId: '小冰机器人',
-        username: '小冰机器人',
+        userId: defaultRobot,
+        username: defaultRobot,
         avatar: 'api/avatar/robot(0).png',
         role: 'robot',
         tag: '',
@@ -63,7 +64,7 @@ export class ChatModule {
         createTime: new Date().valueOf(),
         password: 'robot'
       })
-      console.log('create default robot 小冰机器人')
+      console.log('create default robot ' + defaultRobot)
     }
   }
 }

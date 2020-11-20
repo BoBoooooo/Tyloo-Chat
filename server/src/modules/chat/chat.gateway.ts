@@ -1,3 +1,4 @@
+import { defaultGroup, defaultRobot } from './../../common/constant/global'
 import { DictionaryService } from './../dictionary/dictionary.service'
 import { AuthService } from './../auth/auth.service'
 import {
@@ -39,21 +40,16 @@ export class ChatGateway {
     private readonly friendMessageRepository: Repository<FriendMessage>,
     private readonly authService: AuthService,
     private readonly dictionaryService: DictionaryService
-  ) {
-    this.defaultGroup = '用户问题反馈群'
-  }
+  ) {}
 
   @WebSocketServer()
   server: Server
-
-  // 默认群
-  defaultGroup: string
 
   // socket连接钩子
   async handleConnection(client: Socket): Promise<string> {
     const userRoom = client.handshake.query.userId
     // 连接默认加入"用户问题反馈群"房间
-    client.join(this.defaultGroup)
+    client.join(defaultGroup)
     // 进来统计一下在线人数
     this.getActiveGroupUser()
     // 用户独有消息房间 根据userId
@@ -271,7 +267,7 @@ export class ChatGateway {
             // 默认添加小冰机器人为好友
             await this.friendRepository.save({
               userId: friend.userId,
-              friendId: '小冰机器人'
+              friendId: defaultRobot
             })
           } else {
             this.server.to(data.userId).emit('addFriend', {
@@ -392,7 +388,7 @@ export class ChatGateway {
           .emit('friendMessage', { code: RCode.OK, msg: '', data })
         // 如果friendID 为小冰机器人,则需要自动回复
         // 获取自动回复内容
-        if (data.friendId === '小冰机器人') {
+        if (data.friendId === defaultRobot) {
           this.autoReply(data, roomId)
         }
       }
@@ -422,7 +418,7 @@ export class ChatGateway {
     const reply = {
       time: new Date().valueOf(),
       content: message,
-      userId: '小冰机器人',
+      userId: defaultRobot,
       friendId: data.userId,
       messageType: 'text'
     }
@@ -541,7 +537,7 @@ export class ChatGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() groupMap: GroupMap
   ): Promise<any> {
-    if (groupMap.groupId === this.defaultGroup) {
+    if (groupMap.groupId === defaultGroup) {
       return this.server
         .to(groupMap.userId)
         .emit('exitGroup', { code: RCode.FAIL, msg: '默认群不可退' })
@@ -625,7 +621,7 @@ export class ChatGateway {
       }
     }
 
-    this.server.to(this.defaultGroup).emit('activeGroupUser', {
+    this.server.to(defaultGroup).emit('activeGroupUser', {
       msg: 'activeGroupUser',
       data: activeGroupUserGather
     })
