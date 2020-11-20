@@ -13,7 +13,6 @@ import {
   Body,
   Query,
   Patch,
-  Param,
   Delete,
   UseGuards
 } from '@nestjs/common'

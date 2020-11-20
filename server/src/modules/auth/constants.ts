@@ -1,3 +1,3 @@
 export const jwtConstants = {
-  secret: 'genal-chat'
+  secret: 'tyloo-chat'
 }

@@ -1,3 +1,9 @@
+/*
+ * @file: 权限登陆模块
+ * @author: BoBo
+ * @copyright: NanJing Anshare Tech .Com
+ * @Date: 2020-11-18 09:18:10
+ */
 import { Body, Controller, Post } from '@nestjs/common'
 import { AuthService } from './auth.service'
 
