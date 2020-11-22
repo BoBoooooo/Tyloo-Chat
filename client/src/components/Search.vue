@@ -89,8 +89,6 @@ import { namespace } from 'vuex-class';
 import { isContainStr, processReturn, nameVerify } from '@/utils/common';
 import * as apis from '@/api/apis';
 
-import axios from 'axios';
-
 const chatModule = namespace('chat');
 
 @Component
@@ -121,9 +119,6 @@ export default class Search extends Vue {
 
   created() {
     this.getSearchData();
-    axios.post(this.orgUrl).then((res) => {
-      this.organizationArr = res.data.data;
-    });
   }
 
   @Watch('groupGather')
