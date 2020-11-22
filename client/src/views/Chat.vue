@@ -7,12 +7,17 @@
   >
     <!-- 左侧导航栏 -->
     <div class="chat-part1" v-if="visibleNav">
-      <Nav @logout="logout"></Nav>
+      <Nav @logout="logout" @tab-change="navTabChange"></Nav>
     </div>
-    <!-- 消息列表 -->
+    <!-- 消息列表/通讯人列表 -->
     <div class="chat-part2">
-      <Search @addGroup="addGroup" @joinGroup="joinGroup" @addFriend="addFriend" @setActiveRoom="setActiveRoom"> </Search>
-      <Room @setActiveRoom="setActiveRoom"></Room>
+      <template v-if="activeTabName === 'message'">
+        <Search @addGroup="addGroup" @joinGroup="joinGroup" @addFriend="addFriend" @setActiveRoom="setActiveRoom"> </Search>
+        <Room @setActiveRoom="setActiveRoom"></Room>
+      </template>
+      <template v-else>
+        <Contact @addFriend="addFriend" @setActiveRoom="setActiveRoom"></Contact>
+      </template>
     </div>
     <!-- 右侧聊天窗口 -->
     <div class="chat-part3">
@@ -43,6 +48,7 @@ import Login from '@/components/Login.vue';
 import Room from '@/components/Room.vue';
 import Message from '@/components/Message.vue';
 import Search from '@/components/Search.vue';
+import Contact from '@/components/Contact.vue';
 import { namespace } from 'vuex-class';
 
 const appModule = namespace('app');
@@ -55,6 +61,7 @@ const chatModule = namespace('chat');
     Room,
     Message,
     Search,
+    Contact,
   },
 })
 export default class Chat extends Vue {
@@ -85,6 +92,8 @@ export default class Chat extends Vue {
   visibleDrawer: boolean = false;
 
   visibleNav: boolean = true;
+
+  activeTabName: string = 'message';
 
   created() {
     // 获取url链接中传递的userName
@@ -147,7 +156,7 @@ export default class Chat extends Vue {
     });
   }
 
-  // 添加好友
+  // 添加好友/发起私聊窗口
   addFriend(friend: FriendMap) {
     this.socket.emit('addFriend', {
       userId: this.user.userId,
@@ -155,6 +164,8 @@ export default class Chat extends Vue {
       friendUserName: friend.friendUserName,
       createTime: new Date().valueOf(),
     });
+    // 此处激活聊天窗口
+    this.activeTabName = 'message';
   }
 
   // 设置当前聊天窗
@@ -174,6 +185,10 @@ export default class Chat extends Vue {
 
   toggleNav() {
     this.visibleNav = !this.visibleNav;
+  }
+
+  navTabChange(val: string) {
+    this.activeTabName = val;
   }
 }
 </script>

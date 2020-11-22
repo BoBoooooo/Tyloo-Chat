@@ -6,18 +6,27 @@
 -->
 <template>
   <div class="tool">
+    <!-- 顶部头像区域 -->
     <div class="tool-avatar">
       <div class="tool-avatar-img" @click="showUserInfo('showUserModal')">
         <img v-if="user" :src="user.avatar" alt="" />
       </div>
       <div class="tool-avatar-name">{{ user.username }}</div>
     </div>
+    <!-- 底部工具栏 -->
     <a-tooltip placement="topLeft" arrow-point-at-center>
       <div slot="title">
         <div>有问题咨询客服</div>
         <div>截图粘贴可发送图片</div>
       </div>
       <a-icon type="bulb" class="tool-tip icon" />
+    </a-tooltip>
+    <!-- 消息列表/通讯录切换 -->
+    <a-tooltip placement="topLeft" title="消息列表" arrow-point-at-center>
+      <a-icon type="message" class="tool-message icon" @click="activeTabName = 'message'" />
+    </a-tooltip>
+    <a-tooltip placement="topLeft" title="通讯录" arrow-point-at-center>
+      <a-icon type="contacts" class="tool-contacts icon" @click="activeTabName = 'contacts'" />
     </a-tooltip>
     <a-icon type="skin" class="tool-skin icon" @click="showBackgroundModal = true" />
     <!-- <a href="https://github.com/BoBoooooo/tyloo-chat" target="_blank" class="tool-github icon"><a-icon type="github"/></a> -->
@@ -169,10 +178,19 @@ export default class Tool extends Vue {
 
   avatar: any = '';
 
+  // 当前选中tab名
+  activeTabName: string = 'message';
+
   @Watch('user')
   userChange() {
     this.username = this.user.username;
     this.password = this.user.password;
+  }
+
+  @Watch('activeTabName')
+  activeTabNameChange(val: string) {
+    this.activeTabName = val;
+    this.$emit('tab-change', val);
   }
 
   created() {
@@ -306,6 +324,12 @@ export default class Tool extends Vue {
     color: rgba(255, 255, 255, 0.85);
     bottom: 70px;
   }
+  .tool-message {
+    top: 120px;
+  }
+  .tool-contacts {
+    top: 180px;
+  }
   .tool-out {
     bottom: 10px;
   }
@@ -314,6 +338,7 @@ export default class Tool extends Vue {
     flex-direction: column;
     position: absolute;
     left: 25px;
+    color: white;
     font-size: 25px;
     cursor: pointer;
     z-index: 100;

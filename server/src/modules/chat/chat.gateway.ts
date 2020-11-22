@@ -238,7 +238,7 @@ export class ChatGateway {
 
         if (relation1 || relation2) {
           this.server.to(data.userId).emit('addFriend', {
-            code: RCode.FAIL,
+            code: RCode.OK,
             msg: '已经有该好友',
             data: data
           })

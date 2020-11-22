@@ -77,9 +77,6 @@
         </a-select>
         <a-button @click="addFriend" type="primary">添加好友</a-button>
       </div>
-      <div class="tree-container">
-        <a-tree show-icon :default-expanded-keys="['2f8447de-5732-4fa4-8286-9a71b41dd1e7']" :replace-fields="replaceFields" :tree-data="organizationArr" @select="onTreeSelect" />
-      </div>
     </a-modal>
   </div>
 </template>
@@ -122,37 +119,11 @@ export default class Search extends Vue {
 
   userArr: Array<User> = [];
 
-  // 组织架构
-  organizationArr: Array<any> = [];
-
-  // 组织架构API_URL
-  orgUrl: string = 'http://116.62.78.229:8082/FlowWJBackend/dept/treeDeptUsers';
-
-  replaceFields = {
-    children: 'children',
-    title: 'label',
-    key: 'id',
-  };
-
   created() {
     this.getSearchData();
     axios.post(this.orgUrl).then((res) => {
       this.organizationArr = res.data.data;
     });
-  }
-
-  onTreeSelect(selectedKeys: any, info: any) {
-    const {
-      node: {
-        dataRef: { parentid, id, label },
-      },
-    } = info;
-    // 如果parentid为null表示为叶子结点(即用户)
-    if (!parentid) {
-      this.friend.friendId = id;
-      this.friend.friendUserName = label;
-      this.addFriend();
-    }
   }
 
   @Watch('groupGather')
@@ -275,9 +246,5 @@ export default class Search extends Vue {
       background-color: skyblue;
     }
   }
-}
-.tree-container {
-  max-height: 500px;
-  overflow: auto;
 }
 </style>
