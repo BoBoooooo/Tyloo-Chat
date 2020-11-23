@@ -1,3 +1,4 @@
+import { defaultGroup as defaultGroupName } from './../../common/constant/global'
 import { DictionaryModule } from './../dictionary/dictionary.module'
 import { AuthModule } from './../auth/auth.module'
 import { Module } from '@nestjs/common'
@@ -37,16 +38,16 @@ export class ChatModule {
   async onModuleInit() {
     // 默认新增群组 用户问题反馈群
     const defaultGroup = await this.groupRepository.find({
-      groupName: '用户问题反馈群'
+      groupName: defaultGroupName
     })
     if (!defaultGroup.length) {
       await this.groupRepository.save({
-        groupId: '用户问题反馈群',
-        groupName: '用户问题反馈群',
-        userId: 'admin',
+        groupId: defaultGroupName,
+        groupName: defaultGroupName,
+        userId: defaultGroupName,
         createTime: new Date().valueOf()
       })
-      console.log('create default group 用户问题反馈群')
+      console.log('create default group ' + defaultGroupName)
     }
 
     // 默认新建机器人
