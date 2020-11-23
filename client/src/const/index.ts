@@ -8,6 +8,6 @@
 // 默认群组
 export const DEFAULT_GROUP = '系统问题反馈群';
 // 默认背景图片
-export const DEFAULT_BACKGROUND = 'https://images.weserv.nl/?url=https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/453b8ebcdefa46a69c620da13f346ce2~tplv-k3u1fbpfcp-zoom-1.image?imageView2/2/w/800/q/85';
+export const DEFAULT_BACKGROUND = 'https://pic2.zhimg.com/v2-f76706d67343c66b08c937ec6bc42942_r.jpg?source=1940ef5c';
 // 默认机器人名称
 export const DEFAULT_ROBOT = '智能助手';

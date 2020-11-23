@@ -32,7 +32,6 @@
       placeholder="say hello..."
       v-model="text"
       ref="input"
-      autoFocus
       style="color:#000;"
       @pressEnter="throttle(preSendMessage)"
     />
@@ -74,6 +73,7 @@ export default class Entry extends Vue {
 
   mounted() {
     this.initPaste();
+    this.focusInput();
   }
 
   /**
@@ -113,7 +113,9 @@ export default class Entry extends Vue {
    */
   throttle(fn: Function, file?: File) {
     const nowTime = +new Date();
-    if (nowTime - this.lastTime < 500) {
+    console.log(this.lastTime);
+    console.log(nowTime);
+    if (nowTime - this.lastTime < 200) {
       return this.$message.error('消息发送太频繁！');
     }
     fn(file);
@@ -146,7 +148,6 @@ export default class Entry extends Vue {
    */
   sendMessage(data: SendMessage) {
     if (data.type === 'group') {
-      console.log(this.text);
       this.socket.emit('groupMessage', {
         userId: this.user.userId,
         groupId: this.activeRoom.groupId,
@@ -246,12 +247,17 @@ export default class Entry extends Vue {
 <style lang="scss" scoped>
 .message-input {
   display: flex;
+  // border-top: 1px solid #d1d1d1;
+  background: #f1f1f1;
   flex-wrap: nowrap;
   position: absolute;
   width: 100%;
   bottom: 0px;
-  input {
-    height: 40px;
+  textarea {
+    border-left: none!important;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0;
   }
   .message-input-button {
     width: 30px;
@@ -261,10 +267,10 @@ export default class Entry extends Vue {
     top: 4px;
   }
 }
-
 //输入框样式
 .ant-input {
   padding: 0 50px 0 50px;
+  height: 40px;
 }
 // 消息工具样式
 .messagte-tool-icon {

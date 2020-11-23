@@ -90,11 +90,12 @@ export default class Avatar extends Vue {
   }
   .avatar-name {
     margin-left: 5px;
+    color: #808080;
   }
   .avatar-time {
     font-size: 12px;
-    color: rgb(255, 255, 255, 0.75);
-    margin-left: 3px;
+    margin-left: 6px;
+    color: #808080;
   }
 }
 .avatar-card {

@@ -22,11 +22,26 @@
       <a-icon type="bulb" class="tool-tip icon" />
     </a-tooltip>
     <!-- 消息列表/通讯录切换 -->
-    <a-tooltip placement="topLeft" title="消息列表" arrow-point-at-center>
-      <a-icon type="message" class="tool-message icon" @click="activeTabName = 'message'" />
+    <a-tooltip placement="left" title="消息列表" arrow-point-at-center>
+      <a-icon
+        type="message"
+        theme="filled"
+        class="tool-message icon"
+        :class="{
+          'tool-active': activeTabName === 'message',
+        }"
+        @click="setActiveTabName('message')"
+      />
     </a-tooltip>
-    <a-tooltip placement="topLeft" title="通讯录" arrow-point-at-center>
-      <a-icon type="contacts" class="tool-contacts icon" @click="activeTabName = 'contacts'" />
+    <a-tooltip placement="left" theme="filled" title="通讯录" arrow-point-at-center>
+      <a-icon
+        :class="{
+          'tool-active': activeTabName === 'contacts',
+        }"
+        type="contacts"
+        class="tool-contacts icon"
+        @click="setActiveTabName('contacts')"
+      />
     </a-tooltip>
     <a-icon type="skin" class="tool-skin icon" @click="showBackgroundModal = true" />
     <!-- <a href="https://github.com/BoBoooooo/tyloo-chat" target="_blank" class="tool-github icon"><a-icon type="github"/></a> -->
@@ -154,9 +169,13 @@ const chatModule = namespace('chat');
 export default class Tool extends Vue {
   @appModule.Getter('user') user: User;
 
+  @appModule.Getter('activeTabName') activeTabName: string;
+
   @appModule.Mutation('set_background') setBackground: Function;
 
   @appModule.Mutation('set_user') setUser: Function;
+
+  @appModule.Mutation('set_activeTabName') setActiveTabName: Function;
 
   @chatModule.Getter('socket') socket: SocketIOClient.Socket;
 
@@ -178,9 +197,6 @@ export default class Tool extends Vue {
 
   avatar: any = '';
 
-  // 当前选中tab名
-  activeTabName: string = 'message';
-
   @Watch('user')
   userChange() {
     this.username = this.user.username;
@@ -189,8 +205,7 @@ export default class Tool extends Vue {
 
   @Watch('activeTabName')
   activeTabNameChange(val: string) {
-    this.activeTabName = val;
-    this.$emit('tab-change', val);
+    this.setActiveTabName(val);
   }
 
   created() {
@@ -289,6 +304,9 @@ export default class Tool extends Vue {
   padding: 10px 5px;
   height: 98%;
   position: relative;
+  .tool-active {
+    color: #09b955 !important;
+  }
   .tool-avatar {
     margin-top: 3px;
     .tool-avatar-img {

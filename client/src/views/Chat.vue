@@ -7,7 +7,7 @@
   >
     <!-- 左侧导航栏 -->
     <div class="chat-part1" v-if="visibleNav">
-      <Nav @logout="logout" @tab-change="navTabChange"></Nav>
+      <Nav @logout="logout"></Nav>
     </div>
     <!-- 消息列表/通讯人列表 -->
     <div class="chat-part2">
@@ -75,6 +75,10 @@ export default class Chat extends Vue {
 
   @appModule.Getter('background') background: string;
 
+  @appModule.Getter('activeTabName') activeTabName: string;
+
+  @appModule.Mutation('set_activeTabName') setActiveTabName: Function;
+
   @chatModule.Getter('socket') socket: SocketIOClient.Socket;
 
   @chatModule.Getter('userGather') userGather: FriendGather;
@@ -92,8 +96,6 @@ export default class Chat extends Vue {
   visibleDrawer: boolean = false;
 
   visibleNav: boolean = true;
-
-  activeTabName: string = 'message';
 
   created() {
     // 获取url链接中传递的userName
@@ -165,7 +167,7 @@ export default class Chat extends Vue {
       createTime: new Date().valueOf(),
     });
     // 此处激活聊天窗口
-    this.activeTabName = 'message';
+    this.setActiveTabName('message');
   }
 
   // 设置当前聊天窗
@@ -186,10 +188,6 @@ export default class Chat extends Vue {
   toggleNav() {
     this.visibleNav = !this.visibleNav;
   }
-
-  navTabChange(val: string) {
-    this.activeTabName = val;
-  }
 }
 </script>
 <style lang="scss" scoped>
@@ -200,13 +198,13 @@ export default class Chat extends Vue {
   min-width: 300px;
   width: 100%;
   height: 80%;
-  max-height: 900px;
+  max-height: 800px;
   min-height: 470px;
   position: relative;
   margin: auto 20px;
   box-shadow: 10px 20px 80px rgba(0, 0, 0, 0.8);
   display: flex;
-  border-radius: 5px;
+  border-radius: 8px;
   overflow: hidden;
   .chat-part1 {
     width: 74px;
@@ -214,9 +212,10 @@ export default class Chat extends Vue {
     background-color: rgb(0, 0, 0, 0.7);
   }
   .chat-part2 {
-    width: 230px;
+    width: 260px;
     height: 100%;
     background-color: rgb(0, 0, 0, 0.3);
+    border-right: 1px solid #d6d6d6;
   }
   .chat-part3 {
     flex: 1;

@@ -3,6 +3,7 @@
     <div class="search-select">
       <a-select
         show-search
+        size="small"
         placeholder="搜索聊天组"
         :default-active-first-option="false"
         :show-arrow="false"
@@ -10,6 +11,7 @@
         :not-found-content="null"
         @search="handleSearch"
       >
+        <a-icon slot="suffixIcon" type="search" />
         <a-select-option v-for="(chat, index) in searchData" :key="index" @click="selectChat(chat)">
           <div v-if="chat.username">{{ chat.username }}</div>
           <div v-if="chat.groupName">{{ chat.groupName }}</div>
@@ -17,7 +19,7 @@
       </a-select>
 
       <a-dropdown class="search-dropdown">
-        <a-icon type="plus-circle" class="search-dropdown-button" />
+        <a-icon type="plus-square" class="search-dropdown-button" />
         <a-menu slot="overlay">
           <a-menu-item>
             <div @click="() => (visibleAddGroup = !visibleAddGroup)">创建群</div>
@@ -214,23 +216,22 @@ export default class Search extends Vue {
 </script>
 <style lang="scss" scoped>
 .search {
+  background: #fbfbfb;
   position: relative;
   height: 60px;
   padding: 10px;
   display: flex;
   align-items: center;
   .search-select {
-    width: 100%;
+    width: 80%;
     .ant-select {
       width: 100%;
     }
   }
   .search-dropdown {
     position: absolute;
-    right: 10px;
+    right: 15px;
     top: 13px;
-    width: 40px;
-    height: 34px;
     font-size: 20px;
     cursor: pointer;
     line-height: 40px;

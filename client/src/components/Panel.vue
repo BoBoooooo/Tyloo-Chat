@@ -7,7 +7,7 @@
 <template>
   <div class="active">
     <div v-if="type === 'group'">
-      <a-icon type="team" @click="toggleGroupUser" class="active-button" :class="{ heightLight: showGroupUser }" />
+      <a-icon type="more" @click="toggleGroupUser" class="active-button" style="transform: rotate(90deg)" :class="{ heightLight: showGroupUser }" />
       <a-drawer
         placement="right"
         :closable="false"
@@ -31,7 +31,7 @@
     </div>
     <div v-else-if="!isRobot">
       <a-popconfirm title="确定要删除该好友吗？" placement="bottomRight" ok-text="Yes" cancel-text="No" @confirm="exitFriend">
-        <a-icon type="user-delete" class="active-button" />
+        <a-icon type="more" style="transform: rotate(90deg)" class="active-button" />
       </a-popconfirm>
     </div>
   </div>
@@ -113,9 +113,10 @@ export default class Panel extends Vue {
   .active-button {
     position: absolute;
     z-index: 999;
-    top: -43px;
+    top: 18px;
     right: 20px;
     font-size: 25px;
+    color:#2b2b2b;
     cursor: pointer;
     &:active {
       color: skyblue;

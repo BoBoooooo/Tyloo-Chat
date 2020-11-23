@@ -338,16 +338,22 @@ export default class Message extends Vue {
   overflow: hidden;
   height: 100%;
   position: relative;
+  background: #f1f1f1;
   .message-header {
     height: 60px;
     line-height: 60px;
     z-index: 100;
-    background-color: rgb(0, 0, 0, 0.6);
+    background: #f0f0f0;
+    border-bottom: 1px solid #d6d6d6;
     .message-header-text {
-      color: #fff;
+      color: #2b2b2b;
+      font-weight: bold;
+      float: left;
+      margin-left: 20px;
     }
     .message-header-icon {
       margin-left: 5px;
+      color: #2b2b2b;
     }
   }
   .message-loading {

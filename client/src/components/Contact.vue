@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="tree-container">
-    <a-tree class="tree" show-icon :replace-fields="replaceFields" :tree-data="organizationArr" @select="onTreeSelect" />
+    <a-tree class="tree" show-line :replace-fields="replaceFields" :tree-data="organizationArr" @select="onTreeSelect"/>
   </div>
 </template>
 
@@ -66,19 +66,13 @@ export default class Search extends Vue {
   }
 }
 </script>
-<style scoped>
-.tree >>> .ant-tree-title {
-  color: white;
-}
-.tree >>> .ant-tree-switcher-icon {
-  color: white;
-}
-</style>
+
 <style lang="scss" scoped>
 .tree-container {
-  height: 80%;
+  height: 100%;
   overflow: auto;
   text-align: left;
+  background: #fbfbfb;
   .tree {
     .ant-tree-title {
       color: white;

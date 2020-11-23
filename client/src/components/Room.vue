@@ -52,9 +52,7 @@
 </template>
 
 <script lang="ts">
-import {
-  Component, Vue, Watch,
-} from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import { parseText } from '@/utils/common';
 import { DEFAULT_GROUP, DEFAULT_ROBOT } from '@/const';
@@ -143,22 +141,24 @@ $background: rgba(81, 79, 78, 0.7);
 .room {
   height: calc(100% - 60px);
   overflow: auto;
+  background: #fbfbfb;
   .room-card {
     position: relative;
     min-height: 70px;
     display: flex;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid #d9d9d9!important;
+    // background-color: rgba(0, 0, 0, 0.2);
     padding: 5px 10px;
     text-align: left;
     transition: all 0.2s linear;
     cursor: pointer;
     &:hover {
-      background-color: rgb(0, 0, 0, 0.4);
+      background-color: #d6d6d6;
     }
     &.active {
-      background-color: rgb(0, 0, 0, 0.5);
-      @include button(rgb(0, 0, 0, 0.5), '~@/assets/animate.png', 3000%, 100%, none, #fff);
+      background-color: #d6d6d6;
+      @include button(#d6d6d6, '~@/assets/animate.png', 3000%, 100%, none, #fff);
       -webkit-animation: ani 2s steps(29) forwards;
       animation: ani 0.5s steps(29) forwards;
     }
@@ -189,6 +189,11 @@ $background: rgba(81, 79, 78, 0.7);
         overflow: hidden; //超出的文本隐藏
         text-overflow: ellipsis; //溢出用省略号显示
         white-space: nowrap; //溢出不换行
+        color: #474747;
+        font-weight: bold;
+      }
+      .text {
+        color: #a9a9a9;
       }
       .room-card-new {
         > * {

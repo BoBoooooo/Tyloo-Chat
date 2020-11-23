@@ -58,10 +58,10 @@ export function formatTime(time: number) {
     return `昨天 ${moment(time).format('HH:mm')}`;
   }
   // 大于五分钟不显示秒
-  if (new Date().valueOf() > time + 300000) {
-    return moment(time).format('HH:mm');
-  }
-  return moment(time).format('HH:mm:ss');
+  // if (new Date().valueOf() > time + 300000) {
+  //   return moment(time).format('HH:mm');
+  // }
+  return moment(time).format('HH:mm');
 }
 
 /**
