@@ -403,10 +403,6 @@ export class ChatGateway {
 
   // 小冰机器人自动回复
   async autoReply(data, roomId) {
-    // 获取自动回复内容
-    // const message = await this.dictionaryService.getReplyMessage(data.content)
-    // 走api机器人
-    // http://i.itpk.cn/api.php?question=123&api_key=68b8fafef36d3906f8f8b0e71b29d277&api_secret=4rdiunvqd0xw
     const url =
       'http://i.itpk.cn/api.php?api_key=68b8fafef36d3906f8f8b0e71b29d277&api_secret=4rdiunvqd0xw'
     const res = await axios({

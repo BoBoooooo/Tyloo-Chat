@@ -5,8 +5,6 @@ import { Dictionary } from './entity/dictionary.entity'
 import { RCode } from 'src/common/constant/rcode'
 import { getElasticData } from 'src/common/middleware/elasticsearch'
 
-const nodejieba = require('nodejieba')
-
 @Injectable()
 export class DictionaryService {
   constructor(
@@ -75,38 +73,6 @@ export class DictionaryService {
       return { code: RCode.FAIL, msg: '删除词条失败' }
     } catch (e) {
       return { code: RCode.ERROR, msg: '删除词条失败', data: e }
-    }
-  }
-
-  // 通过输入内容模糊匹配自动回复词条
-  async getReplyMessage(content: string) {
-    const failMessage = '小冰不知道你在说什么。'
-    try {
-      // 此处引用分词器进行中文分词
-      // nodejieba
-      // https://github.com/yanyiwu/nodejieba
-      const splitWords = nodejieba.cut(content).join(' ')
-      console.log(splitWords)
-      const res = await getElasticData(splitWords)
-      console.log(res.data)
-      const result = res.data.hits.hits
-      if (result.length > 0) {
-        return result[0]._source.title
-      }
-      // if (content) {
-      //   const dict = await this.dictionaryRepository.find({
-      //     where: { keyWords: Like(`%${content}%`) },
-      //   });
-      //   if (dict && dict.length > 0) {
-      //     const [{ message }] = dict;
-      //     return message;
-      //   } else {
-      //     return failMessage;
-      //   }
-      // }
-      return failMessage
-    } catch (e) {
-      return failMessage
     }
   }
 }
