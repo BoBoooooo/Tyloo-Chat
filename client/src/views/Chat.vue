@@ -220,7 +220,8 @@ export default class Chat extends Vue {
   .chat-part3 {
     flex: 1;
     height: 100%;
-    background-color: rgb(0, 0, 0, 0.2);
+    background:#fbfbfb;
+    // background-color: rgb(0, 0, 0, 0.2);
     overflow-y: hidden;
     position: relative;
     .chat-group {
