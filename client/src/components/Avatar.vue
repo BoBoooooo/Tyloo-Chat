@@ -85,8 +85,8 @@ export default class Avatar extends Vue {
   height: 37px;
   .avatar-img {
     cursor: pointer;
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
   }
   .avatar-name {
     margin-left: 5px;

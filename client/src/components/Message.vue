@@ -384,10 +384,12 @@ export default class Message extends Vue {
         .message-content-image {
           max-width: 600px;
           display: inline-block;
+          margin-left: 35px;
           overflow: hidden;
           margin-top: 4px;
           padding: 6px;
-          background-color: rgba(0, 0, 0, 0.4);
+          background-color: white;
+          color: #080808;
           font-size: 16px;
           border-radius: 5px;
           text-align: left;
