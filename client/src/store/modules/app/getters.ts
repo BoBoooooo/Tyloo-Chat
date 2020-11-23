@@ -22,6 +22,9 @@ const getters: GetterTree<AppState, RootState> = {
     state.background;
     return localStorage.getItem('background');
   },
+  activeTabName(state) {
+    return state.activeTabName;
+  },
 };
 
 export default getters;

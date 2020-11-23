@@ -3,6 +3,7 @@ export interface AppState {
   token: string;
   mobile: boolean;
   background: string;
+  activeTabName: 'message' | 'contacts';
 }
 
 const appState: AppState = {
@@ -16,6 +17,7 @@ const appState: AppState = {
   token: '',
   mobile: false,
   background: '',
+  activeTabName: 'message',
 };
 
 export default appState;
