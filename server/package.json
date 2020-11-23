@@ -32,7 +32,6 @@
     "axios": "^0.21.0",
     "mongodb": "^3.5.9",
     "mysql": "^2.18.1",
-    "nodejieba": "^2.4.2",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
