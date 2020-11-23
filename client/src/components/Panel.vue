@@ -14,10 +14,15 @@
         :visible="showGroupUser"
         :get-container="getElement"
         @close="toggleGroupUser"
-        :wrap-style="{ position: 'absolute' }"
+        :wrap-style="{ position: 'absolute',top: '60px' }"
       >
         <div class="active-content" v-if="activeGroupUser[activeRoom.groupId]">
-          <div class="actiev-content-title">群聊管理</div>
+          <div class="active-content-title">
+            <div class="active-content-title-label">群名</div>
+            <div>{{activeRoom.groupName}}</div>
+            <div class="active-content-title-label">群公告</div>
+            <div>{{activeRoom.notice}}</div>
+          </div>
           <div class="active-content-sum">在线人数: {{ activeNum }}</div>
           <div class="active-content-users">
             <div class="active-content-user" v-for="data in activeGroupUser[activeRoom.groupId]" :key="data.userId">
@@ -25,7 +30,7 @@
               {{ data.username }}
             </div>
           </div>
-          <a-button type="danger" class="active-content-out" @click="exitGroup">退出</a-button>
+          <a-button type="danger" class="active-content-out" @click="exitGroup">退出群聊</a-button>
         </div>
       </a-drawer>
     </div>

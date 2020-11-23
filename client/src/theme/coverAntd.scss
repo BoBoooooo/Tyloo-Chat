@@ -5,9 +5,9 @@
 
 // 抽屉组件重写样式
 .ant-drawer-content-wrapper {
-  background-color: rgba(54, 50, 50, 0.4)!important;
+  background-color: rgba(248, 248, 248, 0.8)!important;
   .ant-drawer-content {
-    background-color: rgba(0, 0, 0, 0.4)!important;
+    background-color: rgba(248, 248, 248, 0.8)!important;
     .ant-drawer-body {
       padding: 0!important;
       // 移动端群组部分
@@ -18,32 +18,44 @@
         background-color: rgba(115, 165, 200, 0.35);
       }
       .room-card-name {
-        color: rgba(255, 255, 255, 0.85);
+        color: #080808;
       }
       .text {
-        color: rgb(238, 214, 214);
+        color: #080808;
       }
 
       // 在线人数部分
       .active-content {
         height: 100%;
         overflow-y: scroll;
-        border-radius: 0 0 5px 5px;
+        border-radius: 0;
         text-align: left;
-        .actiev-content-title {
-          text-align: center;
-          height: 60px;
-          line-height: 60px;
+        padding: 10px;
+        position: relative;
+        .active-content-title {
+          text-align: left;
+          height: 100px;
+          line-height: 20px;
           padding: 0 12px;
-          font-size: 16px;
-          color: #fff;
-          border-bottom: 0.5px solid rgba(0, 0, 0, 1);
+          font-size: 14px;
+          color: #080808;
+          border-bottom: 1px solid #d9d9d9!important;
+          .active-content-title-label{
+            font-size: 12px;
+            color: #888;
+          }
+          &>div{
+            overflow: hidden; //超出的文本隐藏
+            text-overflow: ellipsis; //溢出用省略号显示
+            white-space: nowrap; //溢出不换行
+          }
         }
         .active-content-sum {
-          font-weight: bold;
+          // font-weight: bold;
           height: 40px;
           line-height: 40px;
           padding: 0 12px;
+          color: #080808;
         }
         .active-content-users {
           max-height: calc(100% - 180px);
@@ -56,11 +68,23 @@
             text-align: left;
             height: 40px;
             line-height: 40px;
+            color: #080808;
             padding: 0 12px;
           }
         }
         .active-content-out {
-          margin: 12px 0 0 12px;
+          position: absolute;
+          bottom: 0;
+          font-size: 18px;
+          left: 0;
+          height: 50px;
+          color: #e23b38;
+          background: #f8f8f8;
+          border: none;
+          border-radius: 0!important;
+          box-shadow: none!important;
+          width: 100%;
+          right: 0;
         }
       }
     }
