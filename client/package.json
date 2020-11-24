@@ -1,6 +1,8 @@
 {
-  "name": "chat-client",
+  "name": "tyloo-chat-client",
   "version": "0.1.0",
+  "author": "boboooooo159@gmail.com",
+  "license": "MIT",
   "scripts": {
     "start": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -24,7 +26,8 @@
     "vue-property-decorator": "^8.4.2",
     "vue-router": "^3.2.0",
     "vuex": "^3.4.0",
-    "vuex-class": "^0.3.2"
+    "vuex-class": "^0.3.2",
+    "cnchar": "^2.2.7"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.26.0",

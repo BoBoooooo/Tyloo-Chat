@@ -144,10 +144,10 @@ $background: rgba(81, 79, 78, 0.7);
   background: #fbfbfb;
   .room-card {
     position: relative;
-    min-height: 70px;
+    min-height: 65px;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #d9d9d9!important;
+    border-bottom: 1px solid #e8e8e8!important;
     // background-color: rgba(0, 0, 0, 0.2);
     padding: 5px 10px;
     text-align: left;
@@ -171,10 +171,10 @@ $background: rgba(81, 79, 78, 0.7);
       }
     }
     .room-card-type {
-      width: 35px;
-      height: 35px;
-      margin-right: 5px;
-      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      margin-right: 10px;
+      // border-radius: 50%;
       object-fit: cover;
       &.offLine {
         filter: grayscale(90%);
