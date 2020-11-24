@@ -238,7 +238,7 @@ const actions: ActionTree<ChatState, RootState> = {
     const groupGather2 = state.groupGather;
     const friendGather2 = state.friendGather;
     if (!activeRoom) {
-      // 更新完数据没有默认activeRoom设置群为'阿童木聊天室'
+      // 更新完数据没有默认activeRoom设置群为DEFAULT_GROUP
       return commit(SET_ACTIVE_ROOM, groupGather[DEFAULT_GROUP]);
     }
     commit(SET_ACTIVE_ROOM, groupGather2[activeRoom.groupId] || friendGather2[activeRoom.userId]);

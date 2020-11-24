@@ -25,7 +25,7 @@
           <div class="message-content-noData" v-if="isNoData">没有更多消息了~</div>
         </transition>
         <template v-for="item in activeRoom.messages">
-          <div class="message-content-message" :key="item.userId + item.time" :class="{ 'text-right': item.userId === user.userId }">
+          <div class="message-content-message" :key="item.userId +'-'+ item.time" :class="{ 'text-right': item.userId === user.userId }">
             <Avatar :data="item"></Avatar>
             <div>
               <a class="message-content-text" v-if="_isUrl(item.content)" :href="item.content" target="_blank">{{ item.content }}</a>
@@ -120,7 +120,10 @@ export default class Message extends Vue {
     if (this.groupGather[this.activeRoom.groupId]) {
       return this.groupGather[this.activeRoom.groupId].groupName;
     }
-    return this.userGather[this.activeRoom.userId].username;
+    if (this.userGather[this.activeRoom.userId]) {
+      return this.userGather[this.activeRoom.userId].username;
+    }
+    return '';
   }
 
   /**
@@ -171,7 +174,7 @@ export default class Message extends Vue {
       // 新消息来了只有是自己发的消息和消息框本身在底部才会滚动到底部
       const { messages } = this.activeRoom;
       if (
-        messages[messages.length - 1].userId === this.user.userId
+        (messages.length > 0 && (messages[messages.length - 1].userId === this.user.userId))
         || (this.messageDom && this.messageDom.scrollTop + this.messageDom.offsetHeight + 100 > this.messageContentDom.scrollHeight)
       ) {
         this.scrollToBottom();

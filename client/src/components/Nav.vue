@@ -44,7 +44,7 @@
       />
     </a-tooltip>
     <a-icon type="skin" class="tool-skin icon" @click="showBackgroundModal = true" />
-    <!-- <a href="https://github.com/BoBoooooo/tyloo-chat" target="_blank" class="tool-github icon"><a-icon type="github"/></a> -->
+    <a v-if="isDemo" href="https://github.com/BoBoooooo/tyloo-chat" target="_blank" class="tool-github icon"><a-icon type="github"/></a>
     <a-icon class="tool-out icon" type="poweroff" @click="logout" />
     <a-modal title="用户信息" :visible="showUserModal" footer="" @cancel="showUserModal = false">
       <div class="tool-user">
@@ -297,6 +297,10 @@ export default class Tool extends Vue {
     }
     this.showBackgroundModal = false;
   }
+
+  get isDemo() {
+    return window.location.host.includes('server.boboooooo.top:9999') || process.env.NODE_ENV === 'development';
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -340,7 +344,7 @@ export default class Tool extends Vue {
   }
   .tool-github {
     color: rgba(255, 255, 255, 0.85);
-    bottom: 70px;
+    bottom: 190px;
   }
   .tool-message {
     top: 120px;

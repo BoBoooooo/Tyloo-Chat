@@ -8,9 +8,8 @@
   <div class="contact-container">
     <div class="contact-list" v-for="(value, key, index) in contactList" :key="index">
       <span class="contact-letter">{{ key }}</span>
-      <div class="contact-box" v-for="(friend, sindex) in value" :key="sindex">
+      <div class="contact-box" v-for="(friend, sindex) in value" :key="sindex" @click="chooseFriend(friend)">
         <a-avatar :src="friend.avatar" class="contact-avatar" :size="40"></a-avatar>
-
         <span class="contact-name">{{ friend.username }}</span>
       </div>
     </div>
@@ -28,12 +27,20 @@ import axios from 'axios';
 import cnchar from 'cnchar';
 
 const chatModule = namespace('chat');
+const appModule = namespace('app');
 
 @Component
 export default class Contact extends Vue {
   @chatModule.Getter('friendGather') friendGather: FriendGather;
 
-  friend: FriendMap = {};
+  @chatModule.Mutation('set_active_room') _setActiveRoom: Function;
+
+  @appModule.Mutation('set_activeTabName') _setActiveTabName: Function;
+
+  friend: FriendMap = {
+    friendId: '',
+    friendUserName: '',
+  };
 
   userArr: Array<User> = [];
 
@@ -97,17 +104,21 @@ export default class Contact extends Vue {
       this.friend.friendId = id;
       this.friend.friendUserName = label;
       this.addFriend();
+      this._setActiveTabName('message');
     }
+  }
+
+  chooseFriend(friend: Friend) {
+    this._setActiveTabName('message');
+    this._setActiveRoom(friend);
   }
 
   addFriend() {
     this.$emit('addFriend', this.friend);
-    // this.$emit('setActiveRoom', {
-    //   userId: this.friend.friendId,
-    //   username: this.friend.friendUserName,
-    // });
-
-    this.friend = {};
+    this.friend = {
+      friendId: '',
+      friendUserName: '',
+    };
   }
 }
 </script>

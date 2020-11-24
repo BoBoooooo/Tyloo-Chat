@@ -82,7 +82,7 @@ export default class Chat extends Vue {
 
   @appModule.Getter('activeTabName') activeTabName: string;
 
-  @appModule.Mutation('set_activeTabName') setActiveTabName: Function;
+  @appModule.Mutation('set_activeTabName') _setActiveTabName: Function;
 
   @chatModule.Getter('socket') socket: SocketIOClient.Socket;
 
@@ -171,12 +171,18 @@ export default class Chat extends Vue {
       friendUserName: friend.friendUserName,
       createTime: new Date().valueOf(),
     });
+    // this.setActiveRoom({
+    //   userId: friend.friendId,
+    //   username: friend.friendUserName,
+    //   messages: [],
+    // });
     // 此处激活聊天窗口
-    this.setActiveTabName('message');
+    // this._setActiveTabName('message');
   }
 
   // 设置当前聊天窗
-  setActiveRoom(room: Friend & Group) {
+  setActiveRoom(room: Friend | Group) {
+    console.log(room);
     this._setActiveRoom(room);
   }
 

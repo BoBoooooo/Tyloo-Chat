@@ -39,11 +39,11 @@ interface FriendGather {
 interface Friend {
   userId: string;
   username: string;
-  avatar: string;
+  avatar?: string;
   role?: string;
   tag?: string;
   messages?: FriendMessage[];
-  createTime: number;
+  createTime?: number;
 }
 
 // 用户与好友关联表
@@ -116,6 +116,6 @@ interface PagingResponse {
   userArr: User[];
 }
 interface FriendMap {
-  friendId?: string,
-  friendUserName?: string,
+  friendId: string,
+  friendUserName: string,
 }
