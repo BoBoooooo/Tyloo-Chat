@@ -141,6 +141,8 @@ const actions: ActionTree<ChatState, RootState> = {
 
     socket.on('joinFriendSocket', (res: ServerRes) => {
       console.log('on joinFriendSocket', res);
+      // 添加好友之后默认进入好友聊天房间
+      commit(SET_ACTIVE_ROOM, state.friendGather[res.data.friendId]);
       if (!res.code) {
         console.log('成功加入私聊房间');
       }
