@@ -34,8 +34,13 @@
     <!-- 移动端兼容 -->
     <a-drawer placement="left" :closable="false" :visible="visibleDrawer" @close="toggleDrawer" style="height:100%">
       <div class="chat-drawer">
-        <Search @addGroup="addGroup" @joinGroup="joinGroup" @addFriend="addFriend" @setActiveRoom="setActiveRoom"> </Search>
-        <Room @setActiveRoom="setActiveRoom"></Room>
+        <template v-if="activeTabName === 'message'">
+          <Search @addGroup="addGroup" @joinGroup="joinGroup" @addFriend="addFriend" @setActiveRoom="setActiveRoom"> </Search>
+          <Room @setActiveRoom="setActiveRoom"></Room>
+        </template>
+        <template v-else>
+          <Contact @addFriend="addFriend" @setActiveRoom="setActiveRoom"></Contact>
+        </template>
       </div>
     </a-drawer>
   </div>
@@ -220,7 +225,7 @@ export default class Chat extends Vue {
   .chat-part3 {
     flex: 1;
     height: 100%;
-    background:#fbfbfb;
+    background: #fbfbfb;
     // background-color: rgb(0, 0, 0, 0.2);
     overflow-y: hidden;
     position: relative;
@@ -260,9 +265,10 @@ export default class Chat extends Vue {
     .chat-team {
       display: block !important;
       position: absolute;
-      font-size: 25px;
-      top: 17px;
-      left: 60px;
+      font-size: 20px;
+      top: 20px;
+      color: #080808;
+      right: 100px;
       z-index: 999;
       &:active {
         color: skyblue;
@@ -271,9 +277,10 @@ export default class Chat extends Vue {
     .chat-nav {
       display: block !important;
       position: absolute;
-      font-size: 25px;
-      top: 13px;
-      left: 20px;
+      font-size: 20px;
+      top: 16px;
+      color: #080808;
+      right: 62px;
       z-index: 999;
       &:active {
         color: skyblue;
