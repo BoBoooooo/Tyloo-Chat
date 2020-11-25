@@ -227,6 +227,7 @@ export default class Chat extends Vue {
     height: 100%;
     background-color: rgb(0, 0, 0, 0.3);
     border-right: 1px solid #d6d6d6;
+    background: #fbfbfb;
   }
   .chat-part3 {
     flex: 1;

@@ -5,19 +5,35 @@
  * @Date: 2020-11-22 17:32:28
 -->
 <template>
-  <div class="contact-container">
-    <div class="contact-list" v-for="(value, key, index) in contactList" :key="index">
-      <span class="contact-letter">{{ key }}</span>
-      <div class="contact-box" v-for="(friend, sindex) in value" :key="sindex" @click="chooseFriend(friend)">
-        <a-avatar :src="friend.avatar" class="contact-avatar" :size="40"></a-avatar>
-        <span class="contact-name">{{ friend.username }}</span>
+  <a-collapse>
+    <a-collapse-panel key="contact" header="联系人">
+      <div class="contact-container">
+        <div class="contact-list" v-for="(value, key, index) in contactList" :key="index">
+          <span class="contact-letter">{{ key }}</span>
+          <div class="contact-box" v-for="(friend, sindex) in value" :key="sindex" @click="chooseObject(friend)">
+            <a-avatar :src="friend.avatar" class="contact-avatar" :size="40"></a-avatar>
+            <span class="contact-name">{{ friend.username }}</span>
+          </div>
+        </div>
       </div>
-    </div>
-    <!-- 此处嵌入第三方组织架构目录 -->
-    <div class="tree-container" v-if="organizationArr.length > 0">
-      <a-tree show-line :replace-fields="replaceFields" :tree-data="organizationArr" @select="onTreeSelect" />
-    </div>
-  </div>
+    </a-collapse-panel>
+    <a-collapse-panel key="organization" header="组织架构" :disabled="false">
+      <!-- 此处嵌入第三方组织架构目录 -->
+      <div class="tree-container" v-if="organizationArr.length > 0">
+        <a-tree show-line :replace-fields="replaceFields" :tree-data="organizationArr" @select="onTreeSelect" />
+      </div>
+    </a-collapse-panel>
+    <a-collapse-panel key="group" header="群组">
+      <div class="contact-container" style="padding-top:0">
+        <div class="contact-list" v-for="(group, index) in groupList" :key="index">
+          <div class="contact-box" @click="chooseObject(group)">
+            <img  class="contact-avatar" src="~@/assets/group.png" alt="" />
+            <span class="contact-name">{{ group.groupName }}</span>
+          </div>
+        </div>
+      </div>
+    </a-collapse-panel>
+  </a-collapse>
 </template>
 
 <script lang="ts">
@@ -32,6 +48,8 @@ const appModule = namespace('app');
 @Component
 export default class Contact extends Vue {
   @chatModule.Getter('friendGather') friendGather: FriendGather;
+
+  @chatModule.Getter('groupGather') groupGather: GroupGather;
 
   @chatModule.Mutation('set_active_room') _setActiveRoom: Function;
 
@@ -93,6 +111,12 @@ export default class Contact extends Vue {
     return contactObj;
   }
 
+  // 获取群组列表
+  get groupList() {
+    const list = Object.values(this.groupGather);
+    return list;
+  }
+
   onTreeSelect(selectedKeys: any, info: any) {
     const {
       node: {
@@ -108,7 +132,7 @@ export default class Contact extends Vue {
     }
   }
 
-  chooseFriend(friend: Friend) {
+  chooseObject(friend: Friend | Group) {
     this._setActiveTabName('message');
     this._setActiveRoom(friend);
   }
@@ -130,7 +154,7 @@ $color: #6f6f6f;
   height: 100%;
   overflow: auto;
   text-align: left;
-  padding: 20px;
+  padding: 5px 20px;
   background: #fbfbfb;
   .contact-list {
     .contact-letter {
@@ -155,11 +179,13 @@ $color: #6f6f6f;
       }
       .contact-avatar {
         border-radius: 0 !important;
+        width: 40px;
       }
     }
   }
-  .tree-container {
-    border-top: 1px solid rgb(198, 198, 198);
-  }
+}
+.tree-container {
+  text-align: left;
+  padding-left: 20px;
 }
 </style>

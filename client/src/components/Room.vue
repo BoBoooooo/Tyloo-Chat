@@ -32,7 +32,15 @@
         class="room-card"
         :class="{ active: activeRoom && !activeRoom.groupId && activeRoom.userId === chat.userId }"
         @click="changeActiveRoom(chat)"
+        v-contextmenu:contextmenu
       >
+        <!-- 自定义右键菜单 -->
+        <v-contextmenu ref="contextmenu">
+          <v-contextmenu-item @click="handleCommand('top', chat)">置顶</v-contextmenu-item>
+          <v-contextmenu-item @click="handleCommand('isRead', chat)">标记已读</v-contextmenu-item>
+          <v-contextmenu-item divider></v-contextmenu-item>
+          <v-contextmenu-item @click="handleCommand('remove', chat)">删除</v-contextmenu-item>
+        </v-contextmenu>
         <a-badge class="room-card-badge" :count="unReadGather[chat.userId]" />
         <img class="room-card-type" :src="friendGather[chat.userId].avatar" :class="{ offLine: avatarOffLine(chat) }" alt="" />
         <div class="room-card-message">
@@ -93,10 +101,15 @@ export default class Room extends Vue {
     return this.activeGroupUser[DEFAULT_GROUP];
   }
 
+  handleCommand(type: string, chat: Group | Friend) {
+    console.log(type, chat);
+  }
+
   avatarOffLine(chat: any) {
     return chat.userId !== DEFAULT_ROBOT ? !this.activeUserGather[chat.userId] : false;
   }
 
+  // 获取消息列表数据
   sortChat() {
     this.chatArr = [];
     const groups = Object.values(this.groupGather);
@@ -147,7 +160,7 @@ $background: rgba(81, 79, 78, 0.7);
     min-height: 65px;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #e8e8e8!important;
+    border-bottom: 1px solid #e8e8e8 !important;
     // background-color: rgba(0, 0, 0, 0.2);
     padding: 5px 10px;
     text-align: left;

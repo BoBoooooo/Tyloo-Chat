@@ -27,6 +27,7 @@ import {
   Popconfirm,
   Badge,
   Tree,
+  Collapse,
 } from 'ant-design-vue';
 
 Vue.use(Avatar);
@@ -48,4 +49,5 @@ Vue.use(Drawer);
 Vue.use(Popconfirm);
 Vue.use(Badge);
 Vue.use(Tree);
+Vue.use(Collapse);
 Vue.prototype.$message = message;
