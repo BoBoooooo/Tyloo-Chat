@@ -74,6 +74,18 @@ const mutations: MutationTree<ChatState> = {
     } else {
       Vue.set(state.friendGather[payload.friendId], 'messages', [payload]);
     }
+
+    // 新增私聊信息需要检测本地是否已删除聊天,如已删除需要恢复
+    const deletedChat = localStorage.getItem(`${userId}-deletedChatId`);
+    if (deletedChat) {
+      let deletedChatArr = deletedChat.split(',');
+      if (payload.friendId === userId) {
+        deletedChatArr = deletedChatArr.filter(id => id !== payload.userId);
+      } else {
+        deletedChatArr = deletedChatArr.filter(id => id !== payload.friendId);
+      }
+      localStorage.setItem(`${userId}-deletedChatId`, deletedChatArr.join(','));
+    }
   },
 
   // 设置私聊记录
@@ -91,7 +103,17 @@ const mutations: MutationTree<ChatState> = {
 
   // 设置当前聊天对象(群或好友)
   [SET_ACTIVE_ROOM](state, payload: Friend & Group) {
+    // @ts-ignore
+    const { userId } = this.getters['app/user'];
+
     state.activeRoom = payload;
+    // 激活聊天窗口,如果已删除需要重新恢复
+    const deletedChat = localStorage.getItem(`${userId}-deletedChatId`);
+    if (deletedChat) {
+      let deletedChatArr = deletedChat.split(',');
+      deletedChatArr = deletedChatArr.filter(id => id !== payload.userId);
+      localStorage.setItem(`${userId}-deletedChatId`, deletedChatArr.join(','));
+    }
   },
 
   // 设置所有的群的群详细信息(头像,群名字等)

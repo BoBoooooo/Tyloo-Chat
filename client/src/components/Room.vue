@@ -12,7 +12,15 @@
         class="room-card"
         :class="{ active: activeRoom && activeRoom.groupId === chat.groupId }"
         @click="changeActiveRoom(chat)"
+        v-contextmenu="'groupmenu'+chat.userId"
       >
+         <!-- 自定义右键菜单 -->
+        <v-contextmenu :ref="'groupmenu'+chat.userId">
+          <v-contextmenu-item @click="handleCommand('TOP', chat)">置顶</v-contextmenu-item>
+          <v-contextmenu-item @click="handleCommand('READ', chat)">标记已读</v-contextmenu-item>
+          <v-contextmenu-item divider></v-contextmenu-item>
+          <v-contextmenu-item @click="handleCommand('DELETE', chat)">删除</v-contextmenu-item>
+        </v-contextmenu>
         <a-badge class="room-card-badge" :count="unReadGather[chat.groupId]" />
         <img class="room-card-type" src="~@/assets/group.png" alt="" />
         <div class="room-card-message">
@@ -32,14 +40,14 @@
         class="room-card"
         :class="{ active: activeRoom && !activeRoom.groupId && activeRoom.userId === chat.userId }"
         @click="changeActiveRoom(chat)"
-        v-contextmenu:contextmenu
+        v-contextmenu="'contextmenu'+chat.userId"
       >
         <!-- 自定义右键菜单 -->
-        <v-contextmenu ref="contextmenu">
-          <v-contextmenu-item @click="handleCommand('top', chat)">置顶</v-contextmenu-item>
-          <v-contextmenu-item @click="handleCommand('isRead', chat)">标记已读</v-contextmenu-item>
+        <v-contextmenu :ref="'contextmenu'+chat.userId">
+          <v-contextmenu-item @click="handleCommand('TOP', chat)">置顶</v-contextmenu-item>
+          <v-contextmenu-item @click="handleCommand('READ', chat)">标记已读</v-contextmenu-item>
           <v-contextmenu-item divider></v-contextmenu-item>
-          <v-contextmenu-item @click="handleCommand('remove', chat)">删除</v-contextmenu-item>
+          <v-contextmenu-item @click="handleCommand('DELETE', chat)">删除</v-contextmenu-item>
         </v-contextmenu>
         <a-badge class="room-card-badge" :count="unReadGather[chat.userId]" />
         <img class="room-card-type" :src="friendGather[chat.userId].avatar" :class="{ offLine: avatarOffLine(chat) }" alt="" />
@@ -66,7 +74,7 @@ import { parseText } from '@/utils/common';
 import { DEFAULT_GROUP, DEFAULT_ROBOT } from '@/const';
 
 const chatModule = namespace('chat');
-
+const appModule = namespace('app');
 @Component
 export default class Room extends Vue {
   @chatModule.State('activeRoom') activeRoom: Group & Friend;
@@ -80,6 +88,8 @@ export default class Room extends Vue {
   @chatModule.Getter('activeGroupUser') activeGroupUser: ActiveGroupUser;
 
   @chatModule.Mutation('lose_unread_gather') lose_unread_gather: Function;
+
+  @appModule.Getter('user') user: User;
 
   chatArr: Array<Group | Friend> = [];
 
@@ -101,11 +111,41 @@ export default class Room extends Vue {
     return this.activeGroupUser[DEFAULT_GROUP];
   }
 
-  handleCommand(type: string, chat: Group | Friend) {
-    console.log(type, chat);
+  get currentUserId() {
+    return this.user.userId;
   }
 
+  handleCommand(type: string, chat: Group & User) {
+    if (type === 'TOP') {
+      console.log(type, chat);
+    } else if (type === 'READ') {
+      console.log(type, chat);
+    } else if (type === 'DELETE') {
+      if (this.chatArr.length > 1) {
+        // 先查询本地时候有删除记录
+        let deletedChat = localStorage.getItem(`${this.currentUserId}-deletedChatId`);
+        if (deletedChat) {
+          if (!deletedChat.split(',').includes(chat.userId)) {
+            deletedChat += `,${chat.userId}`;
+          }
+          localStorage.setItem(`${this.currentUserId}-deletedChatId`, deletedChat);
+        } else {
+        // 本地删除聊天(非删除好友,本地记录)
+          localStorage.setItem(`${this.currentUserId}-deletedChatId`, `${chat.userId}`);
+        }
+        // 删除聊天窗口后默认激活第一个聊天窗口
+        this.sortChat();
+        this.$message.success(`已删除${chat.groupName || chat.username}聊天窗口`);
+        this.changeActiveRoom(this.chatArr[0] as (User | Group));
+      } else {
+        this.$message.error('无法删除');
+      }
+    }
+  }
+
+  // 是否在线
   avatarOffLine(chat: any) {
+    // 机器人默认在线
     return chat.userId !== DEFAULT_ROBOT ? !this.activeUserGather[chat.userId] : false;
   }
 
@@ -115,6 +155,13 @@ export default class Room extends Vue {
     const groups = Object.values(this.groupGather);
     const friends = Object.values(this.friendGather);
     this.chatArr = [...groups, ...friends];
+    // 此处需要过滤本地已删除的会话
+
+    const deletedChat = localStorage.getItem(`${this.currentUserId}-deletedChatId`);
+    if (deletedChat) {
+      this.chatArr = this.chatArr.filter(chat => !deletedChat.split(',').some(d => d === chat.userId));
+    }
+
     // 对聊天窗进行排序(根据最新消息时间)
     this.chatArr = this.chatArr.sort((a: Group | Friend, b: Group | Friend) => {
       if (a.messages && b.messages) {
@@ -128,9 +175,9 @@ export default class Room extends Vue {
     });
   }
 
-  changeActiveRoom(activeRoom: User & Group) {
+  changeActiveRoom(activeRoom: User | Group) {
     this.$emit('setActiveRoom', activeRoom);
-    this.lose_unread_gather(activeRoom.groupId || activeRoom.userId);
+    this.lose_unread_gather((activeRoom as Group).groupId || (activeRoom as User).userId);
   }
 
   _parseText(text: string) {
