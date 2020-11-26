@@ -58,7 +58,7 @@
           color: #080808;
         }
         .active-content-users {
-          max-height: calc(100% - 180px);
+          max-height: calc(100% - 200px);
           overflow-y: scroll;
           .active-content-user {
             width: 260px;
@@ -70,11 +70,19 @@
             line-height: 40px;
             color: #080808;
             padding: 0 12px;
+            position: relative;
+            .icon{
+              font-size: 16px;
+              color: #080808;
+              position: absolute;
+              top: 9px;
+              right: 35px;
+            }
           }
         }
         .active-content-out {
           position: absolute;
-          bottom: 0;
+          bottom: 60px;
           font-size: 18px;
           left: 0;
           height: 50px;

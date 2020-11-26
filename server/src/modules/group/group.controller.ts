@@ -17,6 +17,7 @@ export class GroupController {
     return this.groupService.getUserGroups(userId)
   }
 
+  // 获取群组内所有成员
   @Get('/groupUser')
   getGroupUsers(@Query('groupId') groupId: string) {
     return this.groupService.getGroupUsers(groupId)

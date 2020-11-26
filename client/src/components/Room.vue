@@ -263,7 +263,7 @@ export default class Room extends Vue {
       // border-radius: 50%;
       object-fit: cover;
       &.offLine {
-        filter: grayscale(90%);
+        filter: grayscale(100%);
       }
     }
     .room-card-message {

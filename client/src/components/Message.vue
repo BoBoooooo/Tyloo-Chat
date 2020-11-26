@@ -8,9 +8,13 @@
   <div class="message">
     <div class="message-header">
       <div class="message-header-box">
-        <span class="message-header-text">{{ chatName }}</span>
+        <span class="message-header-text">{{ chatName }}
+          <template v-if="groupGather[activeRoom.groupId]">
+            ({{groupUserList.length}})
+          </template>
+        </span>
         <a-icon type="sync" spin class="message-header-icon" v-if="dropped" />
-        <Panel v-if="groupGather[activeRoom.groupId]" type="group"></Panel>
+        <Panel :groupUserList="groupUserList" v-if="groupGather[activeRoom.groupId]" type="group"></Panel>
         <Panel v-else type="friend"></Panel>
       </div>
     </div>
@@ -26,7 +30,7 @@
         </transition>
         <template v-for="item in activeRoom.messages">
           <div class="message-content-message" :key="item.userId +'-'+ item.time" :class="{ 'text-right': item.userId === user.userId }">
-            <Avatar :data="item"></Avatar>
+            <Avatar highLight :data="item"></Avatar>
             <div>
               <a class="message-content-text" v-if="_isUrl(item.content)" :href="item.content" target="_blank">{{ item.content }}</a>
               <div class="message-content-text" v-text="_parseText(item.content)" v-else-if="item.messageType === 'text'"></div>
@@ -108,6 +112,8 @@ export default class Message extends Vue {
 
   lastTime: number = 0;
 
+  groupUserList: Array<User> = [];
+
   mounted() {
     this.messageDom = document.getElementsByClassName('message-main')[0] as HTMLElement;
     this.messageContentDom = document.getElementsByClassName('message-content')[0] as HTMLElement;
@@ -146,6 +152,15 @@ export default class Message extends Vue {
         FriendMessage[];
     }
     this.scrollToBottom();
+  }
+
+  // 切换至群组聊天窗口时需要获取当前群组所有人员
+  @Watch('activeRoom.groupId', {
+    immediate: true,
+  })
+  async activeRoomChange(val: string) {
+    const res = await api.getGroupUser(val);
+    this.groupUserList = res.data.data.list;
   }
 
   /**

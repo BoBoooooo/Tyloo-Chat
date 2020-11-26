@@ -52,7 +52,17 @@ export class GroupService {
     try {
       let data
       if (groupId) {
-        data = await this.groupUserRepository.find({ groupId: groupId })
+        // groupUser join users表 返回群内所有成员信息
+        const qb = this.groupUserRepository
+          .createQueryBuilder('group_map')
+          .innerJoin('user', 'user', 'user.userId = group_map.userId')
+        qb.select('group_map.*').addSelect('user.username', 'username')
+        const list = await qb.getRawMany()
+        const total = await qb.getCount()
+        data = {
+          list,
+          total
+        }
         return { msg: '获取群的所有用户成功', data }
       }
     } catch (e) {

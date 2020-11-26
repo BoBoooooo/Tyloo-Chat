@@ -65,6 +65,7 @@ export class ChatGateway {
   }
 
   // 创建群组
+  // 待优化,可以不走ws放入http请求
   @SubscribeMessage('addGroup')
   async addGroup(
     @ConnectedSocket() client: Socket,
@@ -585,6 +586,8 @@ export class ChatGateway {
   }
 
   // 获取在线用户
+  // 此处待优化
+  // 目前写法为获取所有在线用户的所有群组全部返回
   async getActiveGroupUser() {
     // 从socket中找到连接人数
     // @ts-ignore;
@@ -595,6 +598,7 @@ export class ChatGateway {
     // 数组去重
     userIdArr = Array.from(new Set(userIdArr))
 
+    // 群内在线人员列表
     const activeGroupUserGather = {}
     for (const userId of userIdArr) {
       const userGroupArr = await this.groupUserRepository.find({

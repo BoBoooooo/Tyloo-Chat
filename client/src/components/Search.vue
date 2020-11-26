@@ -247,7 +247,7 @@ export default class Search extends Vue {
     transition: 0.2s all linear;
     border-radius: 4px;
     &:hover {
-      background-color: $primary-color;
+      color: $primary-color;
     }
   }
 }

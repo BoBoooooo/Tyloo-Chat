@@ -6,4 +6,5 @@ interface User {
   role?: string;
   tag?: string;
   createTime: number;
+  online?: boolean; // 是否在线
 }

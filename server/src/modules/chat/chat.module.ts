@@ -42,9 +42,9 @@ export class ChatModule {
     })
     if (!defaultGroup.length) {
       await this.groupRepository.save({
-        groupId: defaultGroupName,
+        groupId: 'group',
         groupName: defaultGroupName,
-        userId: defaultGroupName,
+        userId: 'robot', // 群主默认为智能助手
         createTime: new Date().valueOf()
       })
       console.log('create default group ' + defaultGroupName)
@@ -56,7 +56,7 @@ export class ChatModule {
     })
     if (!defaultRobotArr.length) {
       await this.userRepository.save({
-        userId: defaultRobot,
+        userId: 'robot',
         username: defaultRobot,
         avatar: 'api/avatar/robot(0).png',
         role: 'robot',
