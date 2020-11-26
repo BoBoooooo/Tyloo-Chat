@@ -16,7 +16,8 @@
       >
          <!-- 自定义右键菜单 -->
         <v-contextmenu :ref="'groupmenu'+chat.userId">
-          <v-contextmenu-item @click="handleCommand('TOP', chat)">置顶</v-contextmenu-item>
+          <v-contextmenu-item v-if="chat.isTop === true" @click="handleCommand('TOP-REVERT', chat)">取消置顶</v-contextmenu-item>
+          <v-contextmenu-item v-else @click="handleCommand('TOP', chat)">置顶</v-contextmenu-item>
           <v-contextmenu-item @click="handleCommand('READ', chat)">标记已读</v-contextmenu-item>
           <v-contextmenu-item divider></v-contextmenu-item>
           <v-contextmenu-item @click="handleCommand('DELETE', chat)">删除</v-contextmenu-item>
@@ -44,7 +45,8 @@
       >
         <!-- 自定义右键菜单 -->
         <v-contextmenu :ref="'contextmenu'+chat.userId">
-          <v-contextmenu-item @click="handleCommand('TOP', chat)">置顶</v-contextmenu-item>
+          <v-contextmenu-item v-if="chat.isTop === true" @click="handleCommand('TOP-REVERT', chat)">取消置顶</v-contextmenu-item>
+          <v-contextmenu-item v-else @click="handleCommand('TOP', chat)">置顶</v-contextmenu-item>
           <v-contextmenu-item @click="handleCommand('READ', chat)">标记已读</v-contextmenu-item>
           <v-contextmenu-item divider></v-contextmenu-item>
           <v-contextmenu-item @click="handleCommand('DELETE', chat)">删除</v-contextmenu-item>
@@ -115,9 +117,19 @@ export default class Room extends Vue {
     return this.user.userId;
   }
 
+  // 右键菜单
   handleCommand(type: string, chat: Group & User) {
     if (type === 'TOP') {
-      console.log(type, chat);
+      localStorage.setItem(`${this.currentUserId}-topChatId`, chat.userId);
+      this.sortChat();
+      this.$message.success('置顶成功');
+    } else if (type === 'TOP-REVERT') {
+      localStorage.removeItem(`${this.currentUserId}-topChatId`);
+      // 删除isTop属性,取消置顶
+      // eslint-disable-next-line no-param-reassign
+      delete chat.isTop;
+      this.sortChat();
+      this.$message.info('取消置顶');
     } else if (type === 'READ') {
       this.lose_unread_gather((chat as Group).groupId || (chat as User).userId);
     } else if (type === 'DELETE') {
@@ -173,6 +185,19 @@ export default class Room extends Vue {
       }
       return 1;
     });
+
+    // 查看是否有需要置顶列表
+    const topChatId = localStorage.getItem(`${this.currentUserId}-topChatId`);
+    if (topChatId) {
+      // 找到需要置顶的窗口
+      const chat = this.chatArr.find(c => c.userId === topChatId);
+      if (chat) {
+        // 移动至第一位
+        this.chatArr = this.chatArr.filter(k => k.userId !== topChatId);
+        chat.isTop = true;
+        this.chatArr.unshift(chat);
+      }
+    }
   }
 
   changeActiveRoom(activeRoom: User | Group) {

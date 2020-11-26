@@ -13,6 +13,7 @@ interface Group {
   notice: string;
   messages?: GroupMessage[];
   createTime: number;
+  isTop?: boolean; // 是否置顶聊天
 }
 
 // 群与用户关联表
@@ -44,6 +45,7 @@ interface Friend {
   tag?: string;
   messages?: FriendMessage[];
   createTime?: number;
+  isTop?: boolean; // 是否置顶聊天
 }
 
 // 用户与好友关联表
