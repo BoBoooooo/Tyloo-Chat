@@ -119,7 +119,7 @@ export default class Room extends Vue {
     if (type === 'TOP') {
       console.log(type, chat);
     } else if (type === 'READ') {
-      console.log(type, chat);
+      this.lose_unread_gather((chat as Group).groupId || (chat as User).userId);
     } else if (type === 'DELETE') {
       if (this.chatArr.length > 1) {
         // 先查询本地时候有删除记录
@@ -177,6 +177,7 @@ export default class Room extends Vue {
 
   changeActiveRoom(activeRoom: User | Group) {
     this.$emit('setActiveRoom', activeRoom);
+    // 激活聊天室时清空未读消息列表
     this.lose_unread_gather((activeRoom as Group).groupId || (activeRoom as User).userId);
   }
 
