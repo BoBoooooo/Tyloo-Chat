@@ -14,7 +14,7 @@ import router from './router';
 import store from './store';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'viewerjs/dist/viewer.css';
-import './ant-desigin'; // 引入ant-desigin
+import './plugins/ant-desigin'; // 引入ant-desigin
 import 'v-contextmenu/dist/index.css';
 
 Vue.use(contentmenu);

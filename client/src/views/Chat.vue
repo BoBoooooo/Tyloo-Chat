@@ -202,6 +202,8 @@ export default class Chat extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@import '@/styles/theme';
+
 .chat {
   font-size: 16px;
   z-index: 999;
@@ -227,12 +229,12 @@ export default class Chat extends Vue {
     height: 100%;
     background-color: rgb(0, 0, 0, 0.3);
     border-right: 1px solid #d6d6d6;
-    background: #fbfbfb;
+    background: $room-bg-color;
   }
   .chat-part3 {
     flex: 1;
     height: 100%;
-    background: #fbfbfb;
+    background: $room-bg-color;
     // background-color: rgb(0, 0, 0, 0.2);
     overflow-y: hidden;
     position: relative;
@@ -278,7 +280,7 @@ export default class Chat extends Vue {
       right: 100px;
       z-index: 999;
       &:active {
-        color: skyblue;
+        color: $primary-color;
       }
     }
     .chat-nav {
@@ -290,7 +292,7 @@ export default class Chat extends Vue {
       right: 62px;
       z-index: 999;
       &:active {
-        color: skyblue;
+        color: $primary-color;
       }
     }
   }

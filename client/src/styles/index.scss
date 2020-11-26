@@ -1,0 +1,42 @@
+@import './coverAntd.scss';
+
+.message {
+  // 滚动条样式
+  ::-webkit-scrollbar-track-piece {
+    background-color: rgba(54, 50, 50, 0.4);
+  }
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+    display: block;
+  }
+  ::-webkit-scrollbar-thumb {
+    height: 50px;
+    background-color: rgba(0, 200, 255, 0.4);
+    outline-offset: -2px;
+    filter: alpha(opacity = 50);
+    -moz-opacity: 0.5;
+    opacity: 0.5;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 200, 255, 0.6);
+  }
+}  
+::-webkit-scrollbar {
+  display: none;
+}
+
+// * {
+//   // 禁止文字被鼠标选中
+//   moz-user-select: -moz-none;
+//   -moz-user-select: none;
+//   -o-user-select:none;
+//   -webkit-user-select:none;
+//   -ms-user-select:none;
+//   user-select:none;
+// }
+
+.viewer-button {
+  background-color: rgba(231, 226, 226, 0.6)!important;
+}

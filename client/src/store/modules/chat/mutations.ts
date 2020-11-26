@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import { MutationTree } from 'vuex';
-import { DEFAULT_GROUP } from '@/const';
+import { DEFAULT_GROUP } from '@/common';
 import {
   SET_SOCKET,
   SET_DROPPED,

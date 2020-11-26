@@ -157,7 +157,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { setUserAvatar } from '@/api/apis';
-import { DEFAULT_BACKGROUND, DEFAULT_GROUP } from '@/const/index';
+import { DEFAULT_BACKGROUND, DEFAULT_GROUP } from '@/common/index';
 import { namespace } from 'vuex-class';
 import * as apis from '@/api/apis';
 import { processReturn, nameVerify, passwordVerify } from '@/utils/common';
@@ -304,12 +304,14 @@ export default class Tool extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@import '@/styles/theme';
+
 .tool {
   padding: 10px 5px;
   height: 98%;
   position: relative;
   .tool-active {
-    color: #09b955 !important;
+    color: $primary-color !important;
   }
   .tool-avatar {
     margin-top: 3px;
@@ -365,7 +367,7 @@ export default class Tool extends Vue {
     cursor: pointer;
     z-index: 100;
     &:hover {
-      color: skyblue;
+      color: $primary-color;
     }
   }
 }

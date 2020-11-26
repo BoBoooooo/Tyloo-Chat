@@ -221,8 +221,10 @@ export default class Search extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@import '@/styles/theme';
+
 .search {
-  background: #fbfbfb;
+  background: $room-bg-color;
   position: relative;
   height: 60px;
   padding: 10px;
@@ -245,7 +247,7 @@ export default class Search extends Vue {
     transition: 0.2s all linear;
     border-radius: 4px;
     &:hover {
-      background-color: skyblue;
+      background-color: $primary-color;
     }
   }
 }

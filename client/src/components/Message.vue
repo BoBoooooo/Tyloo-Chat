@@ -337,11 +337,13 @@ export default class Message extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@import '@/styles/theme';
+
 .message {
   overflow: hidden;
   height: 100%;
   position: relative;
-  background: #f1f1f1;
+  background: $message-bg-color;
   .message-header {
     height: 60px;
     line-height: 60px;

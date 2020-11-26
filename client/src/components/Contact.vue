@@ -148,6 +148,8 @@ export default class Contact extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/theme';
+
 $font-size: 16px;
 $color: #6f6f6f;
 .contact-container {
@@ -155,7 +157,7 @@ $color: #6f6f6f;
   overflow: auto;
   text-align: left;
   padding: 5px 20px;
-  background: #fbfbfb;
+  background: $room-bg-color;
   .contact-list {
     .contact-letter {
       color: $color;

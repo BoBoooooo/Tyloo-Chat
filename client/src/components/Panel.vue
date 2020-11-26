@@ -82,7 +82,7 @@ export default class Panel extends Vue {
   }
 
   get isRobot() {
-    return this.activeRoom.userId === '小冰机器人';
+    return this.activeRoom.userId === '智能助手';
   }
 
   toggleGroupUser() {
@@ -109,6 +109,8 @@ export default class Panel extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@import '@/styles/theme';
+
 .active {
   position: absolute;
   width: 170px;
@@ -124,11 +126,11 @@ export default class Panel extends Vue {
     color:#2b2b2b;
     cursor: pointer;
     &:active {
-      color: skyblue;
+      color: $primary-color;
     }
   }
   .active-button.heightLight {
-    color: skyblue;
+    color: $primary-color;
   }
 }
 ::-webkit-scrollbar {

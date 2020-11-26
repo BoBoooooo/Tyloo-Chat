@@ -71,7 +71,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import { parseText } from '@/utils/common';
-import { DEFAULT_GROUP, DEFAULT_ROBOT } from '@/const';
+import { DEFAULT_GROUP, DEFAULT_ROBOT } from '@/common';
 
 const chatModule = namespace('chat');
 const appModule = namespace('app');
@@ -186,7 +186,7 @@ export default class Room extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-$background: rgba(81, 79, 78, 0.7);
+@import '@/styles/theme';
 
 @mixin button($bcolor, $url, $x1, $y1, $bor, $col) {
   background: $bcolor;
@@ -201,7 +201,7 @@ $background: rgba(81, 79, 78, 0.7);
 .room {
   height: calc(100% - 60px);
   overflow: auto;
-  background: #fbfbfb;
+  background: $room-bg-color;
   .room-card {
     position: relative;
     min-height: 65px;

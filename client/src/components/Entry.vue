@@ -245,10 +245,12 @@ export default class Entry extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@import '@/styles/theme';
+
 .message-input {
   display: flex;
   // border-top: 1px solid #d1d1d1;
-  background: #f1f1f1;
+  background: $message-bg-color;
   flex-wrap: nowrap;
   position: absolute;
   width: 100%;

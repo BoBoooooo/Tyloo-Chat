@@ -7,7 +7,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
-import { DEFAULT_BACKGROUND } from '@/const';
+import { DEFAULT_BACKGROUND } from '@/common';
 
 const appModule = namespace('app');
 

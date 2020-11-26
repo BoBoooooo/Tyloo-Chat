@@ -1,7 +1,7 @@
 import { ActionTree } from 'vuex';
 import io from 'socket.io-client';
 import Vue from 'vue';
-import { DEFAULT_GROUP } from '@/const/index';
+import { DEFAULT_GROUP } from '@/common/index';
 import { ChatState } from './state';
 import { RootState } from '../../index';
 import {
