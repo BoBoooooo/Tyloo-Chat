@@ -17,6 +17,7 @@ import {
   DEL_FRIEND,
   ADD_UNREAD_GATHER,
   LOSE_UNREAD_GATHER,
+  REVOKE_MESSAGE,
 } from './mutation-types';
 import { ChatState } from './state';
 
@@ -153,6 +154,35 @@ const mutations: MutationTree<ChatState> = {
   // 给某个聊天组清空未读消息
   [LOSE_UNREAD_GATHER](state, payload: string) {
     Vue.set(state.unReadGather, payload, 0);
+  },
+
+  // 消息撤回
+  [REVOKE_MESSAGE](state, payload: FriendMessage & GroupMessage & { username:string }) {
+    // @ts-ignore
+    const { userId } = this.getters['app/user'];
+    // 撤回的为群消息
+    if (payload.groupId) {
+      const { messages } = state.groupGather[payload.groupId];
+      // 将该消息设置为isRevoke,并设置撤回人姓名
+      if (messages) {
+        const msg = messages.find(message => message._id === payload._id);
+        if (msg) {
+          Vue.set(msg, 'isRevoke', true);
+          Vue.set(msg, 'revokeUserName', payload.username);
+        }
+      }
+    } else {
+      const { messages } = state.friendGather[payload.friendId === userId
+        ? payload.userId : payload.friendId];
+      // 将该消息设置为isRevoke,并设置撤回人姓名
+      if (messages) {
+        const msg = messages.find(message => message._id === payload._id);
+        if (msg) {
+          Vue.set(msg, 'isRevoke', true);
+          Vue.set(msg, 'revokeUserName', payload.username);
+        }
+      }
+    }
   },
 };
 

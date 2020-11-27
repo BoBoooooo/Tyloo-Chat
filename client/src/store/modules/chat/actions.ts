@@ -18,6 +18,7 @@ import {
   DEL_GROUP,
   DEL_FRIEND,
   ADD_UNREAD_GATHER,
+  REVOKE_MESSAGE,
 } from './mutation-types';
 
 const actions: ActionTree<ChatState, RootState> = {
@@ -189,6 +190,15 @@ const actions: ActionTree<ChatState, RootState> = {
         commit(DEL_FRIEND, res.data);
         commit(SET_ACTIVE_ROOM, state.groupGather[DEFAULT_GROUP]);
         Vue.prototype.$message.success(res.msg);
+      } else {
+        Vue.prototype.$message.error(res.msg);
+      }
+    });
+
+    // 消息撤回
+    socket.on('revokeMessage', (res: ServerRes) => {
+      if (!res.code) {
+        commit(REVOKE_MESSAGE, res.data);
       } else {
         Vue.prototype.$message.error(res.msg);
       }

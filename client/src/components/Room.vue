@@ -16,7 +16,7 @@
       >
          <!-- 自定义右键菜单 -->
         <v-contextmenu :ref="'groupmenu'+chat.userId">
-          <v-contextmenu-item v-if="chat.isTop === true" @click="handleCommand('TOP-REVERT', chat)">取消置顶</v-contextmenu-item>
+          <v-contextmenu-item v-if="chat.isTop === true" @click="handleCommand('TOP_REVERT', chat)">取消置顶</v-contextmenu-item>
           <v-contextmenu-item v-else @click="handleCommand('TOP', chat)">置顶</v-contextmenu-item>
           <v-contextmenu-item @click="handleCommand('READ', chat)">标记已读</v-contextmenu-item>
           <v-contextmenu-item divider></v-contextmenu-item>
@@ -27,12 +27,18 @@
         <div class="room-card-message">
           <div class="room-card-name">{{ chat.groupName }}</div>
           <div class="room-card-new" v-if="chat.messages">
-            <div
-              class="text"
-              v-text="_parseText(chat.messages[chat.messages.length - 1].content)"
-              v-if="chat.messages[chat.messages.length - 1].messageType === 'text'"
-            ></div>
-            <div class="image" v-if="chat.messages[chat.messages.length - 1].messageType === 'image'">[图片]</div>
+            <!-- 消息列表未读信息简述考虑撤回情况 -->
+            <template v-if="chat.messages[chat.messages.length - 1].isRevoke">
+               <div class="text">{{chat.messages[chat.messages.length - 1].revokeUserName}}撤回了一条消息</div>
+            </template>
+            <template v-else>
+                <div
+                class="text"
+                v-text="_parseText(chat.messages[chat.messages.length - 1].content)"
+                v-if="chat.messages[chat.messages.length - 1].messageType === 'text'"
+              ></div>
+              <div class="image" v-if="chat.messages[chat.messages.length - 1].messageType === 'image'">[图片]</div>
+            </template>
           </div>
         </div>
       </div>
@@ -45,7 +51,7 @@
       >
         <!-- 自定义右键菜单 -->
         <v-contextmenu :ref="'contextmenu'+chat.userId">
-          <v-contextmenu-item v-if="chat.isTop === true" @click="handleCommand('TOP-REVERT', chat)">取消置顶</v-contextmenu-item>
+          <v-contextmenu-item v-if="chat.isTop === true" @click="handleCommand('TOP_REVERT', chat)">取消置顶</v-contextmenu-item>
           <v-contextmenu-item v-else @click="handleCommand('TOP', chat)">置顶</v-contextmenu-item>
           <v-contextmenu-item @click="handleCommand('READ', chat)">标记已读</v-contextmenu-item>
           <v-contextmenu-item divider></v-contextmenu-item>
@@ -118,12 +124,12 @@ export default class Room extends Vue {
   }
 
   // 右键菜单
-  handleCommand(type: string, chat: Group & User) {
+  handleCommand(type: ContextMenuType, chat: Group & User) {
     if (type === 'TOP') {
       localStorage.setItem(`${this.currentUserId}-topChatId`, chat.userId);
       this.sortChat();
       this.$message.success('置顶成功');
-    } else if (type === 'TOP-REVERT') {
+    } else if (type === 'TOP_REVERT') {
       localStorage.removeItem(`${this.currentUserId}-topChatId`);
       // 删除isTop属性,取消置顶
       // eslint-disable-next-line no-param-reassign

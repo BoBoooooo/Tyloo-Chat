@@ -48,7 +48,8 @@ export class ChatGateway {
   // socket连接钩子
   async handleConnection(client: Socket): Promise<string> {
     const userRoom = client.handshake.query.userId
-    // 连接默认加入"用户问题反馈群"房间
+    // 连接默认加入DEFAULG_GROUP
+    // TODO 待优化
     client.join(defaultGroup)
     // 进来统计一下在线人数
     this.getActiveGroupUser()
@@ -583,6 +584,41 @@ export class ChatGateway {
     this.server
       .to(userMap.userId)
       .emit('exitFriend', { code: RCode.FAIL, msg: '删好友失败' })
+  }
+
+  // 消息撤回
+  @SubscribeMessage('revokeMessage')
+  async revokeMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() messageDto: GroupMessageDto & FriendMessageDto
+  ): Promise<any> {
+    // 先判断groupId是否有值,有值的话撤回的是群聊消息
+    if (messageDto.groupId) {
+      const groupMessage = await this.groupMessageRepository.findOne(
+        messageDto._id
+      )
+      await this.groupMessageRepository.remove(groupMessage)
+      return this.server.to(messageDto.groupId).emit('revokeMessage', {
+        code: RCode.OK,
+        msg: '已撤回了一条消息',
+        data: messageDto
+      })
+    } else {
+      const friendMessage = await this.friendMessageRepository.findOne(
+        messageDto._id
+      )
+      const roomId =
+        messageDto.userId > messageDto.friendId
+          ? messageDto.userId + messageDto.friendId
+          : messageDto.friendId + messageDto.userId
+      console.log('消息撤回---' + messageDto._id)
+      await this.friendMessageRepository.remove(friendMessage)
+      return this.server.to(roomId).emit('revokeMessage', {
+        code: RCode.OK,
+        msg: '已撤回了一条消息',
+        data: messageDto
+      })
+    }
   }
 
   // 获取在线用户

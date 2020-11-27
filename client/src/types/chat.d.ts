@@ -24,11 +24,14 @@ interface GroupMap {
 
 // 群消息
 interface GroupMessage {
+  _id?: number;
   userId: string;
   groupId: string;
   content: string;
   messageType: MessageType;
   time: number;
+  isRevoke?: boolean; // 是否已撤回
+  revokeUserName?: string; // 撤回人姓名
 }
 
 // 所有好友的好友信息
@@ -56,12 +59,15 @@ interface UserMap {
 
 // 好友消息
 interface FriendMessage {
+  _id?: number;
   userId: string;
   friendId: string;
   content: string;
   messageType: MessageType;
   time: number;
   type?: string;
+  isRevoke?: boolean; // 是否已撤回
+  revokeUserName?: string; // 撤回人姓名
 }
 
 interface SendMessage {
@@ -117,7 +123,18 @@ interface PagingResponse {
   messageArr: GroupMessage[];
   userArr: User[];
 }
+
 interface FriendMap {
   friendId: string,
   friendUserName: string,
+}
+
+// 右键菜单操作烈性
+declare enum ContextMenuType {
+  COPY = 'COPY', // 复制
+  REVOKE = 'REVOKE', // 撤回
+  TOP_REVERT = 'TOP_REVERT', // 取消置顶
+  TOP = 'TOP', // 置顶
+  READ = 'READ', // 一键已读
+  DELETE = 'DELETE' // 删除
 }
