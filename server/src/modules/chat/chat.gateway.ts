@@ -1,4 +1,4 @@
-import { defaultGroup, defaultRobot } from './../../common/constant/global'
+import { defaultGroup, defaultRobotId } from './../../common/constant/global'
 import { DictionaryService } from './../dictionary/dictionary.service'
 import { AuthService } from './../auth/auth.service'
 import {
@@ -266,10 +266,10 @@ export class ChatGateway {
               password: defaultPassword
             })
             friend = res.data.user
-            // 默认添加小冰机器人为好友
+            // 默认添加机器人为好友
             await this.friendRepository.save({
               userId: friend.userId,
-              friendId: defaultRobot
+              friendId: defaultRobotId
             })
           } else {
             this.server.to(data.userId).emit('addFriend', {
@@ -390,7 +390,7 @@ export class ChatGateway {
           .emit('friendMessage', { code: RCode.OK, msg: '', data })
         // 如果friendID 为小冰机器人,则需要自动回复
         // 获取自动回复内容
-        if (data.friendId === defaultRobot) {
+        if (data.friendId === defaultRobotId) {
           this.autoReply(data, roomId)
         }
       }
@@ -417,7 +417,7 @@ export class ChatGateway {
     const reply = {
       time: new Date().valueOf(),
       content: res.data,
-      userId: defaultRobot,
+      userId: defaultRobotId,
       friendId: data.userId,
       messageType: 'text'
     }
