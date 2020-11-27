@@ -29,7 +29,7 @@
               <Avatar :data="data" :showTime="false"></Avatar>
               {{ data.username }}
               <!-- 群主标识 -->
-              <a-icon class="icon" type="user" v-if="isManager" />
+              <a-icon class="icon" type="user" v-if="isManager(data)" />
             </div>
           </div>
           <a-button type="danger" class="active-content-out" @click="exitGroup">退出群聊</a-button>
@@ -96,8 +96,8 @@ export default class Panel extends Vue {
   }
 
   // 是否为群主
-  get isManager() {
-    return this.user.userId === this.activeRoom.userId && this.type === 'group';
+  isManager(user: User) {
+    return user.userId === this.activeRoom.userId && this.type === 'group';
   }
 
   toggleGroupUser() {

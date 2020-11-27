@@ -16,7 +16,7 @@
             <div class="message-tool-item">
               <a-upload :show-upload-list="false" :before-upload="beforeImgUpload">
                 <div class="message-tool-contant">
-                  <img src="~@/assets/send.png" class="message-tool-item-img" alt="" />
+                  <img src="~@/assets/photo.png" class="message-tool-item-img" alt="" />
                   <div class="message-tool-item-text">图片</div>
                 </div>
               </a-upload>

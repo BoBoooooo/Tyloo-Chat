@@ -20,11 +20,11 @@
           <a-button @click="addFriend(data.userId)" type="primary" v-else>添加好友</a-button>
         </a-card>
       </div>
-      <a-avatar  :style="{ 'order': data.userId === user.userId ? '3' : '1'}"  class="avatar-img" :class="{ offLine: !data.online && highLight  === false}" :src="userGather[data.userId].avatar" />
+      <a-avatar :style="{ 'order': data.userId === user.userId ? '3' : '1'} && highLight"  class="avatar-img" :class="{ offLine: !data.online && highLight  === false}" :src="userGather[data.userId].avatar" />
     </a-popover>
-    <a-avatar v-else class="avatar-img" :style="{ 'order': data.userId === user.userId ? '3' : '1'}" :class="{ offLine: !data.online && highLight  === false }" :src="userGather[data.userId].avatar" />
+    <a-avatar v-else class="avatar-img" :style="{ 'order': data.userId === user.userId ? '3' : '1'} && highLight" :class="{ offLine: !data.online && highLight  === false }" :src="userGather[data.userId].avatar" />
     <div class="avatar-name" style="order: 2">{{ userGather[data.userId].username }}</div>
-    <div class="avatar-time" :style="{ 'order': data.userId === user.userId ? '1' : '3'}" v-if="showTime">{{ _formatTime(data.time) }}</div>
+    <div class="avatar-time" :style="{ 'order': data.userId === user.userId ? '1' : '3'} && highLight" v-if="showTime">{{ _formatTime(data.time) }}</div>
   </div>
 </template>
 
