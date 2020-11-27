@@ -10,6 +10,7 @@ interface GroupDto {
 
 // 群消息
 interface GroupMessageDto {
+  _id: number
   userId: string
   groupId: string
   content: string
@@ -32,6 +33,7 @@ interface FriendDto {
 
 // 好友消息
 interface FriendMessageDto {
+  _id: number
   userId: string
   friendId: string
   content: string

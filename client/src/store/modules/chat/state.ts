@@ -11,9 +11,9 @@ export interface ChatState {
 
 const chatState: ChatState = {
   // @ts-ignore
-  socket: null,
-  dropped: false,
-  activeGroupUser: {},
+  socket: null, // ws实例
+  dropped: false, // 是否断开连接
+  activeGroupUser: {}, // ???
   activeRoom: null, // 当前访问房间
   groupGather: {}, // 群组列表
   userGather: {}, // 设置群在线用户列表

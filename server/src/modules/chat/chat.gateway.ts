@@ -48,7 +48,8 @@ export class ChatGateway {
   // socket连接钩子
   async handleConnection(client: Socket): Promise<string> {
     const userRoom = client.handshake.query.userId
-    // 连接默认加入"用户问题反馈群"房间
+    // 连接默认加入DEFAULG_GROUP
+    // TODO 待优化
     client.join(defaultGroup)
     // 进来统计一下在线人数
     this.getActiveGroupUser()
@@ -65,6 +66,7 @@ export class ChatGateway {
   }
 
   // 创建群组
+  // 待优化,可以不走ws放入http请求
   @SubscribeMessage('addGroup')
   async addGroup(
     @ConnectedSocket() client: Socket,
@@ -238,7 +240,7 @@ export class ChatGateway {
 
         if (relation1 || relation2) {
           this.server.to(data.userId).emit('addFriend', {
-            code: RCode.OK,
+            code: RCode.FAIL,
             msg: '已经有该好友',
             data: data
           })
@@ -591,7 +593,44 @@ export class ChatGateway {
       .emit('exitFriend', { code: RCode.FAIL, msg: '删好友失败' })
   }
 
+  // 消息撤回
+  @SubscribeMessage('revokeMessage')
+  async revokeMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() messageDto: GroupMessageDto & FriendMessageDto
+  ): Promise<any> {
+    // 先判断groupId是否有值,有值的话撤回的是群聊消息
+    if (messageDto.groupId) {
+      const groupMessage = await this.groupMessageRepository.findOne(
+        messageDto._id
+      )
+      await this.groupMessageRepository.remove(groupMessage)
+      return this.server.to(messageDto.groupId).emit('revokeMessage', {
+        code: RCode.OK,
+        msg: '已撤回了一条消息',
+        data: messageDto
+      })
+    } else {
+      const friendMessage = await this.friendMessageRepository.findOne(
+        messageDto._id
+      )
+      const roomId =
+        messageDto.userId > messageDto.friendId
+          ? messageDto.userId + messageDto.friendId
+          : messageDto.friendId + messageDto.userId
+      console.log('消息撤回---' + messageDto._id)
+      await this.friendMessageRepository.remove(friendMessage)
+      return this.server.to(roomId).emit('revokeMessage', {
+        code: RCode.OK,
+        msg: '已撤回了一条消息',
+        data: messageDto
+      })
+    }
+  }
+
   // 获取在线用户
+  // 此处待优化
+  // 目前写法为获取所有在线用户的所有群组全部返回
   async getActiveGroupUser() {
     // 从socket中找到连接人数
     // @ts-ignore;
@@ -602,6 +641,7 @@ export class ChatGateway {
     // 数组去重
     userIdArr = Array.from(new Set(userIdArr))
 
+    // 群内在线人员列表
     const activeGroupUserGather = {}
     for (const userId of userIdArr) {
       const userGroupArr = await this.groupUserRepository.find({

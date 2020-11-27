@@ -1,6 +1,8 @@
 {
-  "name": "chat-client",
+  "name": "tyloo-chat-client",
   "version": "0.1.0",
+  "author": "boboooooo159@gmail.com",
+  "license": "MIT",
   "scripts": {
     "start": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -11,6 +13,7 @@
     "@types/socket.io-client": "^1.4.33",
     "ant-design-vue": "^1.6.2",
     "axios": "^0.19.2",
+    "cnchar": "^2.2.7",
     "core-js": "^2.6.5",
     "js-cookie": "^2.2.1",
     "less-loader": "^6.1.2",
@@ -18,11 +21,13 @@
     "sass": "^1.26.9",
     "sass-loader": "^8.0.2",
     "socket.io-client": "^2.3.0",
+    "v-contextmenu": "^2.9.0",
     "v-viewer": "^1.5.1",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^8.4.2",
     "vue-router": "^3.2.0",
+    "vue-runtime-helpers": "^1.1.2",
     "vuex": "^3.4.0",
     "vuex-class": "^0.3.2"
   },

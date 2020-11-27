@@ -78,7 +78,7 @@ module.exports = {
       less: {
         lessOptions: {
           modifyVars: {
-            'primary-color': 'skyblue',
+            'primary-color': '#09b955',
             // 'link-color': '#1DA57A',
             // 'border-radius-base': '2px',
           },
@@ -86,7 +86,7 @@ module.exports = {
         },
       },
       sass: {
-        prependData: "@import '@/theme/index.scss';",
+        prependData: "@import '@/styles/index.scss';",
       },
     },
   },

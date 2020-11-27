@@ -8,28 +8,28 @@
   <div class="avatar" v-if="userGather[data.userId]">
     <a-popover v-if="data.userId !== user.userId" trigger="click">
       <div slot="content" class="avatar-card">
-        <a-avatar :size="60" :src="userGather[data.userId].avatar" />
-        <div>{{ userGather[data.userId].username }}</div>
-        <a-button v-if="user.role === 'admin'" style="margin-bottom: 5px;" @click="deleteUser(data.userId)" type="primary">
-          删除用户
-        </a-button>
-        <a-button @click="_setActiveRoom(data.userId)" type="primary" v-if="friendGather[data.userId]">进入私聊</a-button>
-        <a-button @click="addFriend(data.userId)" type="primary" v-else>添加好友</a-button>
+        <a-card :bordered="false" style="width: 300px">
+          <template slot="title">
+            <h2>{{ userGather[data.userId].username }}</h2>
+            <a-avatar :size="60" style="float:right" :src="userGather[data.userId].avatar" />
+          </template>
+          <a-button v-if="user.role === 'admin'" style="margin-bottom: 5px;" @click="deleteUser(data.userId)" type="primary">
+            删除用户
+          </a-button>
+          <a-button @click="_setActiveRoom(data.userId)" type="primary" v-if="friendGather[data.userId]">发消息</a-button>
+          <a-button @click="addFriend(data.userId)" type="primary" v-else>添加好友</a-button>
+        </a-card>
       </div>
-      <a-avatar class="avatar-img" :src="userGather[data.userId].avatar" />
+      <a-avatar  :style="{ 'order': data.userId === user.userId ? '3' : '1'}"  class="avatar-img" :class="{ offLine: !data.online && highLight  === false}" :src="userGather[data.userId].avatar" />
     </a-popover>
-    <a-avatar v-else class="avatar-img" :src="userGather[data.userId].avatar" />
-    <div>
-      <span class="avatar-name">{{ userGather[data.userId].username }}</span>
-      <span class="avatar-time" v-if="showTime">{{ _formatTime(data.time) }}</span>
-    </div>
+    <a-avatar v-else class="avatar-img" :style="{ 'order': data.userId === user.userId ? '3' : '1'}" :class="{ offLine: !data.online && highLight  === false }" :src="userGather[data.userId].avatar" />
+    <div class="avatar-name" style="order: 2">{{ userGather[data.userId].username }}</div>
+    <div class="avatar-time" :style="{ 'order': data.userId === user.userId ? '1' : '3'}" v-if="showTime">{{ _formatTime(data.time) }}</div>
   </div>
 </template>
 
 <script lang="ts">
-import {
-  Component, Vue, Prop,
-} from 'vue-property-decorator';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 import * as api from '@/api/apis';
 import { namespace } from 'vuex-class';
 import { formatTime } from '@/utils/common';
@@ -42,6 +42,8 @@ export default class Avatar extends Vue {
   @Prop() data: User; // 用户信息
 
   @Prop({ default: true }) showTime: boolean; // 是否显示时间
+
+  @Prop({ default: false }) highLight: boolean; // 头像是否常亮
 
   @appModule.Getter('user') user: User;
 
@@ -85,16 +87,19 @@ export default class Avatar extends Vue {
   height: 37px;
   .avatar-img {
     cursor: pointer;
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
+  }
+  .offLine {
+    filter: grayscale(100%);
   }
   .avatar-name {
-    margin-left: 5px;
+    margin: 0 6px;
     color: #080808;
   }
   .avatar-time {
     font-size: 12px;
-    margin-left: 6px;
+    margin: 0 6px;
     color: #080808;
   }
 }
@@ -103,6 +108,13 @@ export default class Avatar extends Vue {
   font-size: 18px;
   flex-direction: column;
   align-items: center;
+  .ant-card-body{
+    text-align: right;
+  }
+  h2 {
+    display: inline-block;
+    line-height: 60px;
+  }
   > div {
     margin: 4px;
   }

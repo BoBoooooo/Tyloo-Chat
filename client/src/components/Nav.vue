@@ -44,7 +44,7 @@
       />
     </a-tooltip>
     <a-icon type="skin" class="tool-skin icon" @click="showBackgroundModal = true" />
-    <!-- <a href="https://github.com/BoBoooooo/tyloo-chat" target="_blank" class="tool-github icon"><a-icon type="github"/></a> -->
+    <a v-if="isDemo" href="https://github.com/BoBoooooo/tyloo-chat" target="_blank" class="tool-github icon"><a-icon type="github"/></a>
     <a-icon class="tool-out icon" type="poweroff" @click="logout" />
     <a-modal title="用户信息" :visible="showUserModal" footer="" @cancel="showUserModal = false">
       <div class="tool-user">
@@ -157,7 +157,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { setUserAvatar } from '@/api/apis';
-import { DEFAULT_BACKGROUND, DEFAULT_GROUP } from '@/const/index';
+import { DEFAULT_BACKGROUND, DEFAULT_GROUP } from '@/common/index';
 import { namespace } from 'vuex-class';
 import * as apis from '@/api/apis';
 import { processReturn, nameVerify, passwordVerify } from '@/utils/common';
@@ -297,15 +297,21 @@ export default class Tool extends Vue {
     }
     this.showBackgroundModal = false;
   }
+
+  get isDemo() {
+    return window.location.host.includes('server.boboooooo.top:9999') || process.env.NODE_ENV === 'development';
+  }
 }
 </script>
 <style lang="scss" scoped>
+@import '@/styles/theme';
+
 .tool {
   padding: 10px 5px;
   height: 98%;
   position: relative;
   .tool-active {
-    color: #09b955 !important;
+    color: $primary-color !important;
   }
   .tool-avatar {
     margin-top: 3px;
@@ -340,7 +346,7 @@ export default class Tool extends Vue {
   }
   .tool-github {
     color: rgba(255, 255, 255, 0.85);
-    bottom: 70px;
+    bottom: 190px;
   }
   .tool-message {
     top: 120px;
@@ -361,7 +367,7 @@ export default class Tool extends Vue {
     cursor: pointer;
     z-index: 100;
     &:hover {
-      color: skyblue;
+      color: $primary-color;
     }
   }
 }

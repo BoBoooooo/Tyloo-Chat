@@ -34,8 +34,13 @@
     <!-- 移动端兼容 -->
     <a-drawer placement="left" :closable="false" :visible="visibleDrawer" @close="toggleDrawer" style="height:100%">
       <div class="chat-drawer">
-        <Search @addGroup="addGroup" @joinGroup="joinGroup" @addFriend="addFriend" @setActiveRoom="setActiveRoom"> </Search>
-        <Room @setActiveRoom="setActiveRoom"></Room>
+        <template v-if="activeTabName === 'message'">
+          <Search @addGroup="addGroup" @joinGroup="joinGroup" @addFriend="addFriend" @setActiveRoom="setActiveRoom"> </Search>
+          <Room @setActiveRoom="setActiveRoom"></Room>
+        </template>
+        <template v-else>
+          <Contact @addFriend="addFriend" @setActiveRoom="setActiveRoom"></Contact>
+        </template>
       </div>
     </a-drawer>
   </div>
@@ -77,7 +82,7 @@ export default class Chat extends Vue {
 
   @appModule.Getter('activeTabName') activeTabName: string;
 
-  @appModule.Mutation('set_activeTabName') setActiveTabName: Function;
+  @appModule.Mutation('set_activeTabName') _setActiveTabName: Function;
 
   @chatModule.Getter('socket') socket: SocketIOClient.Socket;
 
@@ -166,12 +171,18 @@ export default class Chat extends Vue {
       friendUserName: friend.friendUserName,
       createTime: new Date().valueOf(),
     });
+    // this.setActiveRoom({
+    //   userId: friend.friendId,
+    //   username: friend.friendUserName,
+    //   messages: [],
+    // });
     // 此处激活聊天窗口
-    this.setActiveTabName('message');
+    // this._setActiveTabName('message');
   }
 
   // 设置当前聊天窗
-  setActiveRoom(room: Friend & Group) {
+  setActiveRoom(room: Friend | Group) {
+    console.log(room);
     this._setActiveRoom(room);
   }
 
@@ -191,6 +202,8 @@ export default class Chat extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@import '@/styles/theme';
+
 .chat {
   font-size: 16px;
   z-index: 999;
@@ -216,11 +229,13 @@ export default class Chat extends Vue {
     height: 100%;
     background-color: rgb(0, 0, 0, 0.3);
     border-right: 1px solid #d6d6d6;
+    background: $room-bg-color;
+    overflow: auto;
   }
   .chat-part3 {
     flex: 1;
     height: 100%;
-    background:#fbfbfb;
+    background: $room-bg-color;
     // background-color: rgb(0, 0, 0, 0.2);
     overflow-y: hidden;
     position: relative;
@@ -260,23 +275,25 @@ export default class Chat extends Vue {
     .chat-team {
       display: block !important;
       position: absolute;
-      font-size: 25px;
-      top: 17px;
-      left: 60px;
+      font-size: 20px;
+      top: 20px;
+      color: #080808;
+      right: 100px;
       z-index: 999;
       &:active {
-        color: skyblue;
+        color: $primary-color;
       }
     }
     .chat-nav {
       display: block !important;
       position: absolute;
-      font-size: 25px;
-      top: 13px;
-      left: 20px;
+      font-size: 20px;
+      top: 16px;
+      color: #080808;
+      right: 62px;
       z-index: 999;
       &:active {
-        color: skyblue;
+        color: $primary-color;
       }
     }
   }

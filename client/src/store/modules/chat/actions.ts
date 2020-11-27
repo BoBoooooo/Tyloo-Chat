@@ -1,7 +1,7 @@
 import { ActionTree } from 'vuex';
 import io from 'socket.io-client';
 import Vue from 'vue';
-import { DEFAULT_GROUP } from '@/const/index';
+import { DEFAULT_GROUP } from '@/common/index';
 import { ChatState } from './state';
 import { RootState } from '../../index';
 import {
@@ -18,6 +18,7 @@ import {
   DEL_GROUP,
   DEL_FRIEND,
   ADD_UNREAD_GATHER,
+  REVOKE_MESSAGE,
 } from './mutation-types';
 
 const actions: ActionTree<ChatState, RootState> = {
@@ -141,6 +142,8 @@ const actions: ActionTree<ChatState, RootState> = {
 
     socket.on('joinFriendSocket', (res: ServerRes) => {
       console.log('on joinFriendSocket', res);
+      // 添加好友之后默认进入好友聊天房间
+      commit(SET_ACTIVE_ROOM, state.friendGather[res.data.friendId]);
       if (!res.code) {
         console.log('成功加入私聊房间');
       }
@@ -187,6 +190,15 @@ const actions: ActionTree<ChatState, RootState> = {
         commit(DEL_FRIEND, res.data);
         commit(SET_ACTIVE_ROOM, state.groupGather[DEFAULT_GROUP]);
         Vue.prototype.$message.success(res.msg);
+      } else {
+        Vue.prototype.$message.error(res.msg);
+      }
+    });
+
+    // 消息撤回
+    socket.on('revokeMessage', (res: ServerRes) => {
+      if (!res.code) {
+        commit(REVOKE_MESSAGE, res.data);
       } else {
         Vue.prototype.$message.error(res.msg);
       }
@@ -238,7 +250,7 @@ const actions: ActionTree<ChatState, RootState> = {
     const groupGather2 = state.groupGather;
     const friendGather2 = state.friendGather;
     if (!activeRoom) {
-      // 更新完数据没有默认activeRoom设置群为'阿童木聊天室'
+      // 更新完数据没有默认activeRoom设置群为DEFAULT_GROUP
       return commit(SET_ACTIVE_ROOM, groupGather[DEFAULT_GROUP]);
     }
     commit(SET_ACTIVE_ROOM, groupGather2[activeRoom.groupId] || friendGather2[activeRoom.userId]);

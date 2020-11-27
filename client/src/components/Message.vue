@@ -8,9 +8,14 @@
   <div class="message">
     <div class="message-header">
       <div class="message-header-box">
-        <span class="message-header-text">{{ chatName }}</span>
+        <span class="message-header-text"
+          >{{ chatName }}
+          <template v-if="groupGather[activeRoom.groupId]">
+            ({{ groupUserList.length }})
+          </template>
+        </span>
         <a-icon type="sync" spin class="message-header-icon" v-if="dropped" />
-        <Panel v-if="groupGather[activeRoom.groupId]" type="group"></Panel>
+        <Panel :groupUserList="groupUserList" v-if="groupGather[activeRoom.groupId]" type="group"></Panel>
         <Panel v-else type="friend"></Panel>
       </div>
     </div>
@@ -25,9 +30,20 @@
           <div class="message-content-noData" v-if="isNoData">没有更多消息了~</div>
         </transition>
         <template v-for="item in activeRoom.messages">
-          <div class="message-content-message" :key="item.userId + item.time" :class="{ 'text-right': item.userId === user.userId }">
-            <Avatar :data="item"></Avatar>
-            <div>
+          <!-- 消息被撤回 -->
+          <div class="message-content-revoke" v-if="item.isRevoke" :key="item.userId + item.time">
+            <span v-if="item.userId === user.userId">
+              你撤回了一条消息
+            </span>
+            <span v-else>
+              {{item.revokeUserName}}撤回了一条消息
+            </span>
+          </div>
+          <!-- 正常消息 -->
+          <div v-else class="message-content-message" :key="item.userId + item.time" :class="{ 'text-right': item.userId === user.userId }">
+            <Avatar highLight :data="item"></Avatar>
+            <!-- 消息区域 -->
+            <div v-contextmenu="'message' + item.userId + item.time">
               <a class="message-content-text" v-if="_isUrl(item.content)" :href="item.content" target="_blank">{{ item.content }}</a>
               <div class="message-content-text" v-text="_parseText(item.content)" v-else-if="item.messageType === 'text'"></div>
               <div class="message-content-image" v-if="item.messageType === 'image'" :style="getImageStyle(item.content)">
@@ -35,6 +51,11 @@
                   <img :src="'api/static/' + item.content" alt="" />
                 </viewer>
               </div>
+              <!-- 自定义右键菜单 -->
+              <v-contextmenu :ref="'message' + item.userId + item.time">
+                <v-contextmenu-item @click="handleCommand('COPY', item)">复制</v-contextmenu-item>
+                <v-contextmenu-item v-if="isShowRevoke(item)" @click="handleCommand('REVOKE', item)">撤回</v-contextmenu-item>
+              </v-contextmenu>
             </div>
           </div>
         </template>
@@ -108,6 +129,8 @@ export default class Message extends Vue {
 
   lastTime: number = 0;
 
+  groupUserList: Array<User> = [];
+
   mounted() {
     this.messageDom = document.getElementsByClassName('message-main')[0] as HTMLElement;
     this.messageContentDom = document.getElementsByClassName('message-content')[0] as HTMLElement;
@@ -116,11 +139,48 @@ export default class Message extends Vue {
     this.scrollToBottom();
   }
 
+  // 右键菜单
+  handleCommand(type: ContextMenuType, message: FriendMessage & GroupMessage) {
+    if (type === 'COPY') {
+      // 复制功能
+      const copy = (e: any) => {
+        e.preventDefault();
+        if (e.clipboardData) {
+          e.clipboardData.setData('text/plain', message.content);
+        } else if ((window as any).clipboardData) {
+          (window as any).clipboardData.setData('Text', message.content);
+        }
+      };
+      window.addEventListener('copy', copy);
+      document.execCommand('Copy');
+      window.removeEventListener('copy', copy);
+      this.$message.info('已粘贴至剪切板');
+      // eslint-disable-next-line no-undef
+    } else if (type === 'REVOKE') {
+      // 消息撤回功能
+      this.socket.emit('revokeMessage', {
+        userId: this.user.userId, // 当前用户Id
+        username: this.user.username, // 当前用户名称
+        groupId: this.activeRoom.groupId, // 当前群组Id
+        friendId: this.activeRoom.userId, // 当前好友Id
+        _id: message._id, // 撤回的消息Id
+      });
+    }
+  }
+
+  // 判断是否超过2分钟,超时不让撤回
+  isShowRevoke(message: FriendMessage & GroupMessage) {
+    return message.userId === this.user.userId && new Date().getTime() - message.time <= 1000 * 60 * 2;
+  }
+
   get chatName() {
     if (this.groupGather[this.activeRoom.groupId]) {
       return this.groupGather[this.activeRoom.groupId].groupName;
     }
-    return this.userGather[this.activeRoom.userId].username;
+    if (this.userGather[this.activeRoom.userId]) {
+      return this.userGather[this.activeRoom.userId].username;
+    }
+    return '';
   }
 
   /**
@@ -145,15 +205,26 @@ export default class Message extends Vue {
     this.scrollToBottom();
   }
 
+  // 切换至群组聊天窗口时需要获取当前群组所有人员
+  @Watch('activeRoom.groupId', {
+    immediate: true,
+  })
+  async activeRoomChange(val: string) {
+    const res = await api.getGroupUser(val);
+    this.groupUserList = res.data.data.list;
+  }
+
   /**
    * 新消息会进入此方法
    */
   @Watch('activeRoom.messages', { deep: true })
   changeMessages() {
+    // 新消息
     if (this.needScrollToBottom) {
       this.addMessage();
     }
     this.needScrollToBottom = true;
+    this.$forceUpdate();
   }
 
   // 监听socket断连给出重连状态提醒
@@ -171,7 +242,7 @@ export default class Message extends Vue {
       // 新消息来了只有是自己发的消息和消息框本身在底部才会滚动到底部
       const { messages } = this.activeRoom;
       if (
-        messages[messages.length - 1].userId === this.user.userId
+        (messages.length > 0 && messages[messages.length - 1].userId === this.user.userId)
         || (this.messageDom && this.messageDom.scrollTop + this.messageDom.offsetHeight + 100 > this.messageContentDom.scrollHeight)
       ) {
         this.scrollToBottom();
@@ -334,11 +405,13 @@ export default class Message extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@import '@/styles/theme';
+
 .message {
   overflow: hidden;
   height: 100%;
   position: relative;
-  background: #f1f1f1;
+  background: $message-bg-color;
   .message-header {
     height: 60px;
     line-height: 60px;
@@ -377,6 +450,12 @@ export default class Message extends Vue {
       .message-content-noData {
         line-height: 50px;
       }
+      .message-content-revoke{
+        text-align: center;
+        color: #9d9d9d;
+        font-size: 14px;
+        margin: 10px auto;
+      }
       .message-content-message {
         text-align: left;
         margin: 10px 20px;
@@ -384,10 +463,12 @@ export default class Message extends Vue {
         .message-content-image {
           max-width: 600px;
           display: inline-block;
+          margin-left: 35px;
           overflow: hidden;
           margin-top: 4px;
           padding: 6px;
-          background-color: rgba(0, 0, 0, 0.4);
+          background-color: white;
+          color: #080808;
           font-size: 16px;
           border-radius: 5px;
           text-align: left;

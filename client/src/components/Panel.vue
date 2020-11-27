@@ -23,17 +23,20 @@
             <div class="active-content-title-label">群公告</div>
             <div>{{activeRoom.notice}}</div>
           </div>
-          <div class="active-content-sum">在线人数: {{ activeNum }}</div>
+          <div class="active-content-sum">群人数: ({{ activeNum }}/{{groupUserList.length}})</div>
           <div class="active-content-users">
-            <div class="active-content-user" v-for="data in activeGroupUser[activeRoom.groupId]" :key="data.userId">
-              <avatar :data="data" :showTime="false"></avatar>
+            <div class="active-content-user" v-for="(data) in groupUserList" :key="data.userId + Math.random()">
+              <Avatar :data="data" :showTime="false"></Avatar>
               {{ data.username }}
+              <!-- 群主标识 -->
+              <a-icon class="icon" type="user" v-if="isManager" />
             </div>
           </div>
           <a-button type="danger" class="active-content-out" @click="exitGroup">退出群聊</a-button>
         </div>
       </a-drawer>
     </div>
+    <!-- 删除好友,机器人默认不允许删除 -->
     <div v-else-if="!isRobot">
       <a-popconfirm title="确定要删除该好友吗？" placement="bottomRight" ok-text="Yes" cancel-text="No" @confirm="exitFriend">
         <a-icon type="more" style="transform: rotate(90deg)" class="active-button" />
@@ -49,6 +52,7 @@ import {
 import { namespace } from 'vuex-class';
 import Avatar from './Avatar.vue';
 
+
 const chatModule = namespace('chat');
 const appModule = namespace('app');
 
@@ -59,6 +63,8 @@ const appModule = namespace('app');
 })
 export default class Panel extends Vue {
   @Prop({ default: 'group' }) type: string;
+
+  @Prop({ default: () => [], type: Array }) groupUserList: Array<User>;
 
   @appModule.Getter('user') user: User;
 
@@ -78,11 +84,20 @@ export default class Panel extends Vue {
   }
 
   get activeNum() {
-    return Object.keys(this.activeGroupUser[this.activeRoom.groupId]).length;
+    // 修复在线人数bug,当前聊天窗口为私聊窗口时 "(error during evaluation)"
+    if (this.type === 'group') {
+      return Object.keys(this.activeGroupUser[this.activeRoom.groupId]).length;
+    }
+    return 0;
   }
 
   get isRobot() {
-    return this.activeRoom.userId === '小冰机器人';
+    return this.activeRoom.userId === '智能助手';
+  }
+
+  // 是否为群主
+  get isManager() {
+    return this.user.userId === this.activeRoom.userId && this.type === 'group';
   }
 
   toggleGroupUser() {
@@ -106,9 +121,42 @@ export default class Panel extends Vue {
       friendId: this.activeRoom.userId,
     });
   }
+
+  // 设置在线状态
+  filterGroupUsers(userIds:string[]) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const user of this.groupUserList) {
+      const isOnlineUser = userIds.some(userId => userId === user.userId);
+      // 在线用户 online true,离线 false
+      // eslint-disable-next-line no-unused-expressions
+      isOnlineUser ? user.online = true : user.online = false;
+    }
+  }
+
+  // 获取当前在线所有用户id
+  get activeGroupUserIdList() {
+    if (this.type === 'group') {
+      return Object.keys(this.activeGroupUser[this.activeRoom.groupId]);
+    }
+    return [];
+  }
+
+  // 监听在线状态,发生变更则重新设置在线状态
+  @Watch('activeGroupUserIdList')
+  activeGroupUserIdListChange(userIds:string[]) {
+    console.log(userIds);
+    this.filterGroupUsers(userIds);
+  }
+
+  @Watch('groupUserList')
+  groupUserListChange() {
+    this.filterGroupUsers(this.activeGroupUserIdList);
+  }
 }
 </script>
 <style lang="scss" scoped>
+@import '@/styles/theme';
+
 .active {
   position: absolute;
   width: 170px;
@@ -124,11 +172,11 @@ export default class Panel extends Vue {
     color:#2b2b2b;
     cursor: pointer;
     &:active {
-      color: skyblue;
+      color: $primary-color;
     }
   }
   .active-button.heightLight {
-    color: skyblue;
+    color: $primary-color;
   }
 }
 ::-webkit-scrollbar {

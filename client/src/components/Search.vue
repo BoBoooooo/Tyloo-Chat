@@ -115,7 +115,10 @@ export default class Search extends Vue {
 
   groupArr: Array<Group> = [];
 
-  friend: FriendMap = {};
+  friend: FriendMap = {
+    friendId: '',
+    friendUserName: '',
+  };
 
   userArr: Array<User> = [];
 
@@ -210,13 +213,18 @@ export default class Search extends Vue {
   addFriend() {
     this.visibleAddFriend = false;
     this.$emit('addFriend', this.friend);
-    this.friend = {};
+    this.friend = {
+      friendUserName: '',
+      friendId: '',
+    };
   }
 }
 </script>
 <style lang="scss" scoped>
+@import '@/styles/theme';
+
 .search {
-  background: #fbfbfb;
+  background: $room-bg-color;
   position: relative;
   height: 60px;
   padding: 10px;
@@ -239,7 +247,7 @@ export default class Search extends Vue {
     transition: 0.2s all linear;
     border-radius: 4px;
     &:hover {
-      background-color: skyblue;
+      color: $primary-color;
     }
   }
 }
