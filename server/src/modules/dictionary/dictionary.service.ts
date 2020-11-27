@@ -80,7 +80,7 @@ export class DictionaryService {
 
   // 通过输入内容模糊匹配自动回复词条
   async getReplyMessage(content: string) {
-    const failMessage = '小冰不知道你在说什么。'
+    const failMessage = '智能助手不知道你在说什么。'
     try {
       // 此处引用分词器进行中文分词
       // nodejieba
