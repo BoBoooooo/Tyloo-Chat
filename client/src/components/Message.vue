@@ -442,8 +442,14 @@ export default class Message extends Vue {
       background-color: rgb(0, 0, 0, 0.8);
     }
   }
+  // 移动端样式
+  @media screen and (max-width: 768px) {
+   .message-main {
+      height: calc(100% - 100px)!important;
+    }
+  }
   .message-main {
-    height: calc(100% - 100px);
+    height: calc(100% - 240px);
     overflow: auto;
     position: relative;
     .message-content {
@@ -514,6 +520,9 @@ export default class Message extends Vue {
 //输入框样式
 .ant-input {
   padding: 0 50px 0 50px;
+  &:focus{
+    box-shadow: none !important;
+  }
 }
 // 消息工具样式
 .messagte-tool-icon {

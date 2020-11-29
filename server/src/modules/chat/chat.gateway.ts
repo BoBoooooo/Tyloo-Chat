@@ -22,6 +22,7 @@ import { RCode } from 'src/common/constant/rcode'
 import { nameVerify } from 'src/common/tool/utils'
 import { defaultPassword } from 'src/common/constant/global'
 // const axios = require('axios');
+const fs = require('fs')
 
 @WebSocketGateway()
 export class ChatGateway {
@@ -192,7 +193,12 @@ export class ChatGateway {
         const randomName = `${Date.now()}$${data.userId}$${data.width}$${
           data.height
         }`
-        const stream = createWriteStream(join('public/static', randomName))
+        if (!fs.existsSync('public/static/image')) {
+          fs.mkdirSync('public/static/image')
+        }
+        const stream = createWriteStream(
+          join('public/static/image', randomName)
+        )
         stream.write(data.content)
         data.content = randomName
       }
@@ -375,8 +381,13 @@ export class ChatGateway {
           const randomName = `${Date.now()}$${roomId}$${data.width}$${
             data.height
           }`
+          if (!fs.existsSync('public/static/image')) {
+            fs.mkdirSync('public/static/image')
+          }
+          const stream = createWriteStream(
+            join('public/static/image', randomName)
+          )
           // 聊天图片保存至服务器static文件夹下
-          const stream = createWriteStream(join('public/static', randomName))
           stream.write(data.content)
           data.content = randomName
         }

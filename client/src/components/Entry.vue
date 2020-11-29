@@ -6,36 +6,50 @@
 -->
 <template>
   <div class="message-input" v-if="activeRoom">
-    <a-popover placement="topLeft" trigger="hover" class="message-popver">
-      <template slot="content">
-        <a-tabs default-key="1" size="small">
-          <a-tab-pane key="1" tab="Emoji">
-            <emoji @addEmoji="addEmoji"></emoji>
-          </a-tab-pane>
-          <a-tab-pane key="2" tab="工具">
-            <div class="message-tool-item">
-              <a-upload :show-upload-list="false" :before-upload="beforeImgUpload">
-                <div class="message-tool-contant">
-                  <img src="~@/assets/photo.png" class="message-tool-item-img" alt="" />
-                  <div class="message-tool-item-text">图片</div>
-                </div>
-              </a-upload>
-            </div>
-          </a-tab-pane>
-        </a-tabs>
-      </template>
-      <div class="messagte-tool-icon">😃</div>
-    </a-popover>
+    <div class="message-tool">
+      <a-popover placement="topLeft" trigger="click" class="message-popver">
+        <template slot="content">
+          <emoji @addEmoji="addEmoji"></emoji>
+        </template>
+        <div class="message-tool-item">
+          <div class="messagte-tool-icon" v-if="mobile">😃</div>
+          <a-icon v-else type="smile" />
+        </div>
+      </a-popover>
+      <div class="message-tool-item" v-if="!mobile">
+        <a-upload :show-upload-list="false" :before-upload="beforeFileUpload">
+          <a-icon type="folder-open" />
+        </a-upload>
+      </div>
+    </div>
+
     <a-input
+      v-if="mobile"
       autocomplete="off"
       type="text"
+      autoFocus
       placeholder="say hello..."
       v-model="text"
       ref="input"
       style="color:#000;"
       @pressEnter="throttle(preSendMessage)"
     />
-    <img class="message-input-button" @click="throttle(preSendMessage)" src="~@/assets/send.png" alt="" />
+    <a-textarea
+      v-else
+      autocomplete="off"
+      v-model="text"
+      ref="input"
+      autoFocus
+      style="color:#000;"
+      @pressEnter="
+        (e) => {
+          // 此处拦截enter后光标换行
+          e.preventDefault();
+          throttle(preSendMessage);
+        }
+      "
+    />
+    <img class="message-input-button" v-if="mobile" @click="throttle(preSendMessage)" src="~@/assets/send.png" alt="" />
   </div>
 </template>
 
@@ -103,7 +117,7 @@ export default class Entry extends Vue {
         }
       }
       if (file) {
-        this.throttle(this.handleImgUpload, file);
+        this.throttle(this.handleUpload, file, 'image' as MessageType);
       }
     });
   }
@@ -111,14 +125,14 @@ export default class Entry extends Vue {
   /**
    * 消息发送节流
    */
-  throttle(fn: Function, file?: File) {
+  throttle(fn: Function, file?: File, messageType?: MessageType) {
     const nowTime = +new Date();
     console.log(this.lastTime);
     console.log(nowTime);
     if (nowTime - this.lastTime < 200) {
       return this.$message.error('消息发送太频繁！');
     }
-    fn(file);
+    fn(file, messageType);
     this.lastTime = nowTime;
   }
 
@@ -207,38 +221,42 @@ export default class Entry extends Vue {
   }
 
   /**
-   * 图片上传校验
+   * 附件上传校验
    * @params file
    */
-  beforeImgUpload(file: File) {
-    this.throttle(this.handleImgUpload, file);
+  beforeFileUpload(file: File) {
+    this.throttle(this.handleUpload, file, 'file' as MessageType);
     return false;
   }
 
   /**
-   * 图片消息发送
+   * 上传附件/图片发送
    * @params file
    */
-  async handleImgUpload(imageFile: File) {
-    const isJpgOrPng = imageFile.type === 'image/jpeg' || imageFile.type === 'image/png' || imageFile.type === 'image/jpg' || imageFile.type === 'image/gif';
-    if (!isJpgOrPng) {
-      return this.$message.error('请选择jpeg/jpg/png/gif格式的图片!');
+  async handleUpload(file: File, messageType: MessageType) {
+    if (messageType === 'image') {
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/gif';
+      if (!isJpgOrPng) {
+        return this.$message.error('请选择jpeg/jpg/png/gif格式的图片!');
+      }
     }
-    const isLt1M = imageFile.size / 1024 / 1024 < 0.5;
+    const maxSize = messageType === 'image' ? 0.5 : 100;
+    const isLt1M = file.size / 1024 / 1024 < maxSize;
     if (!isLt1M) {
-      return this.$message.error('图片必须小于500K!');
+      return this.$message.error(messageType === 'image' ? '图片必须小于500K!' : '文件必须小于100M!');
     }
+
     const image = new Image();
     const url = window.URL || window.webkitURL;
-    image.src = url.createObjectURL(imageFile);
+    image.src = url.createObjectURL(file);
     image.onload = () => {
       const imageSize: ImageSize = this.getImageSize({ width: image.width, height: image.height });
       this.sendMessage({
         type: this.activeRoom.groupId ? 'group' : 'friend',
-        message: imageFile,
+        message: file,
         width: imageSize.width,
         height: imageSize.height,
-        messageType: 'image',
+        messageType,
       });
     };
   }
@@ -256,7 +274,7 @@ export default class Entry extends Vue {
   width: 100%;
   bottom: 0px;
   textarea {
-    border-left: none!important;
+    border-left: none !important;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     border-bottom-left-radius: 0;
@@ -271,40 +289,53 @@ export default class Entry extends Vue {
 }
 //输入框样式
 .ant-input {
-  padding: 0 50px 0 50px;
-  height: 40px;
+  padding: 40px 10px 0 20px !important;
+  height: 180px;
+  border-top: 1px solid #d6d6d6;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  border-radius: 0;
+  &:focus {
+    box-shadow: none !important;
+  }
 }
+
+// 移动端样式
+@media screen and (max-width: 768px) {
+  .ant-input {
+    padding: 0 50px 0 35px !important;
+    height: 40px;
+  }
+  .message-tool {
+    right: unset!important;
+    padding: 0 0 0 10px !important;
+    .message-tool-item{
+       .anticon{
+         margin-right: 0!important;
+       }
+    }
+  }
+}
+
 // 消息工具样式
-.messagte-tool-icon {
+.message-tool {
   position: absolute;
   left: 0;
   top: 0;
-  width: 50px;
+  right: 0;
+  display: flex;
+  align-items: center;
   height: 40px;
-  text-align: center;
   line-height: 42px;
   font-size: 16px;
   cursor: pointer;
+  padding: 0 20px;
   z-index: 99;
-}
-.message-tool-item {
-  width: 0px;
-  height: 240px;
-  cursor: pointer;
-  .message-tool-contant {
-    width: 50px;
-    padding: 5px;
-    border-radius: 5px;
-    transition: all linear 0.2s;
-    .message-tool-item-img {
-      width: 40px;
-    }
-    .message-tool-item-text {
-      text-align: center;
-      font-size: 10px;
-    }
-    &:hover {
-      background: rgba(135, 206, 235, 0.6);
+  color: #828282;
+  .message-tool-item {
+    .anticon {
+      margin-right: 15px ;
     }
   }
 }

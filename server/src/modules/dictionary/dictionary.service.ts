@@ -93,17 +93,6 @@ export class DictionaryService {
       if (result.length > 0) {
         return result[0]._source.title
       }
-      // if (content) {
-      //   const dict = await this.dictionaryRepository.find({
-      //     where: { keyWords: Like(`%${content}%`) },
-      //   });
-      //   if (dict && dict.length > 0) {
-      //     const [{ message }] = dict;
-      //     return message;
-      //   } else {
-      //     return failMessage;
-      //   }
-      // }
       return failMessage
     } catch (e) {
       return failMessage
