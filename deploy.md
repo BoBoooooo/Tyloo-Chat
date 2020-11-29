@@ -73,16 +73,24 @@ http {
 ```
 
 ## 部署后端服务
-1. 安装 pm2
-```js
-npm i pm2 -g
-```
-2. 生成 dist 文件
-```js
-npm i
-npm run build
-```
-3. 使用 pm2 运行
-```js
-npm run pm2
-```
+- 方式一(整个项目拷贝至服务器)
+  1. 安装 pm2
+  ```js
+  npm i pm2 -g
+  ```
+  2. 生成 dist 文件
+  ```js
+  npm i
+  npm run build
+  ```
+  3. 使用 pm2 运行
+  ```js
+  npm run pm2
+  ```
+- 方式二(结合ncc打包,便于离线环境下部署)
+  1. 本地执行`npm run pkg`
+  2. 拷贝`deploy`文件夹至服务器
+  3. 服务器上运行
+  ```js
+    node deploy/index 或者 pm2 deploy/index
+  ```

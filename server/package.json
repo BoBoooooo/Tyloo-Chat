@@ -18,7 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "pm2": "pm2 start --name nest dist/main.js -i max"
+    "pm2": "pm2 start --name nest dist/main.js -i max",
+    "pkg": "npm run build && ncc build dist/main.js -o deploy"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",
@@ -53,6 +54,7 @@
     "@types/supertest": "^2.0.8",
     "@typescript-eslint/eslint-plugin": "3.0.2",
     "@typescript-eslint/parser": "3.0.2",
+    "@zeit/ncc": "^0.22.3",
     "eslint": "7.1.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-import": "^2.20.1",
