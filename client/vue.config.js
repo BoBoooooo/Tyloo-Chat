@@ -27,10 +27,11 @@ const CompressionWebpackPlugin = require('compression-webpack-plugin');
 module.exports = {
   chainWebpack: (config) => {
     // 需要打包分析时取消注释
+    // eslint-disable-next-line global-require
     // config.plugin('webpack-bundle-analyzer').use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin);
 
     // 配置cdn引入
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'production' && process.env.VUE_APP_CDN === 'true') {
       const externals = {
         vue: 'Vue',
         axios: 'axios',
