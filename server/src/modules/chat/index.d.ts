@@ -18,6 +18,8 @@ interface GroupMessageDto {
   height?: number
   messageType: string
   time: number
+  fileName?: string // 附件名称
+  size?: number // 附件大小
 }
 
 // 好友
@@ -41,6 +43,8 @@ interface FriendMessageDto {
   height?: number
   messageType: string
   time: number
+  fileName?: string // 附件名称
+  size?: number // 附件大小
 }
 
 // 自定义好友DTO

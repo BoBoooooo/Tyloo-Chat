@@ -48,8 +48,20 @@
               <div class="message-content-text" v-text="_parseText(item.content)" v-else-if="item.messageType === 'text'"></div>
               <div class="message-content-image" v-if="item.messageType === 'image'" :style="getImageStyle(item.content)">
                 <viewer style="display:flex;align-items:center;">
-                  <img :src="'api/static/' + item.content" alt="" />
+                  <img :src="'api/static/image/' + item.content" alt="" />
                 </viewer>
+              </div>
+              <!-- 附件类型消息 -->
+              <div class="message-content-file" v-else-if="item.messageType === 'file'" @click="download(item)">
+                <img class="message-content-icon" :src="getFileIcon(item)" alt="" />
+                <div class="message-content-detail">
+                  <div class="file-name">
+                    {{getFileName(item).name}}
+                  </div>
+                  <div class="file-size">
+                    {{getFileName(item).size}}
+                  </div>
+                </div>
               </div>
               <!-- 自定义右键菜单 -->
               <v-contextmenu :ref="'message' + item.userId + item.time">
@@ -73,6 +85,7 @@ import { isUrl, parseText, processReturn } from '@/utils/common';
 import Avatar from './Avatar.vue';
 import Panel from './Panel.vue';
 import Entry from './Entry.vue';
+import { FILE_SAVE_PATH, MIME_TYPE, IMAGE_TYPE } from '../common';
 
 const chatModule = namespace('chat');
 const appModule = namespace('app');
@@ -171,6 +184,43 @@ export default class Message extends Vue {
   // 判断是否超过2分钟,超时不让撤回
   isShowRevoke(message: FriendMessage & GroupMessage) {
     return message.userId === this.user.userId && new Date().getTime() - message.time <= 1000 * 60 * 2;
+  }
+
+  /**
+   * 附件下载函数
+   */
+  download(message: FriendMessage & GroupMessage) {
+    const a = document.createElement('a');
+    a.id = '__downloadFile__';
+    a.href = `${FILE_SAVE_PATH}${message.content}`;
+    a.setAttribute('target', '__blank');
+    document.body.append(a);
+    a.click();
+    document.getElementById('__downloadFile__')!.remove();
+  }
+
+  getFileName(item: FriendMessage & GroupMessage) {
+    // 此处后台保存时默认写死  格式为  date:size:fileName
+    // 例如 fileName =  xxxxx-xxxxx-xxxx-xxxx:35.00KB:test.doc
+    const fileNameArr = item.content.split(':');
+    const [, size, name] = fileNameArr;
+    return {
+      name,
+      size,
+    };
+  }
+
+  getFileIcon(item: FriendMessage & GroupMessage) {
+    const fileNameArr = item.content.split(':');
+    const [, , name] = fileNameArr;
+    if (name) {
+      const fileExtension = name.split('.')[1];
+      // 获取附件图标(项目中预设了几种,如果找不到匹配的附件图标则默认用other.png)
+      // eslint-disable-next-line no-nested-ternary
+      const pngName = MIME_TYPE.includes(fileExtension) ? fileExtension : false
+     || IMAGE_TYPE.includes(fileExtension) ? 'img' : false || 'other';
+      return `/mime/${pngName}.png`;
+    }
   }
 
   get chatName() {
@@ -487,6 +537,36 @@ export default class Message extends Vue {
             cursor: pointer;
             max-width: 335px;
             max-height: 335px;
+          }
+        }
+        .message-content-file{
+          cursor: pointer;
+          max-width: 600px;
+          display: inline-block;
+          margin-left: 35px;
+          overflow: hidden;
+          margin-top: 4px;
+          padding: 10px 20px;
+          font-weight: 500;
+          background-color: white;
+          color: #080808;
+          font-size: 16px;
+          border-radius: 5px;
+          text-align: left;
+          word-break: break-word;
+          .message-content-icon{
+            width: 50px;
+            height: 50px;
+            float: left;
+          }
+           .message-content-detail{
+            float: right;
+            margin-left: 20px;
+            .file-size{
+              font-size: 14px;
+              margin-top: 10px;
+              color: #8e8e8e;
+            }
           }
         }
       }

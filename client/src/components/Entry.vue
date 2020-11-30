@@ -165,10 +165,12 @@ export default class Entry extends Vue {
       this.socket.emit('groupMessage', {
         userId: this.user.userId,
         groupId: this.activeRoom.groupId,
-        content: this.text,
+        content: data.message,
         width: data.width,
         height: data.height,
+        fileName: data.fileName,
         messageType: data.messageType,
+        size: data.size,
       });
     } else {
       this.socket.emit('friendMessage', {
@@ -177,7 +179,9 @@ export default class Entry extends Vue {
         content: data.message,
         width: data.width,
         height: data.height,
+        fileName: data.fileName,
         messageType: data.messageType,
+        size: data.size,
       });
     }
   }
@@ -245,20 +249,29 @@ export default class Entry extends Vue {
     if (!isLt1M) {
       return this.$message.error(messageType === 'image' ? '图片必须小于500K!' : '文件必须小于100M!');
     }
-
-    const image = new Image();
-    const url = window.URL || window.webkitURL;
-    image.src = url.createObjectURL(file);
-    image.onload = () => {
-      const imageSize: ImageSize = this.getImageSize({ width: image.width, height: image.height });
+    if (messageType === 'image') {
+      const image = new Image();
+      const url = window.URL || window.webkitURL;
+      image.src = url.createObjectURL(file);
+      image.onload = () => {
+        const imageSize: ImageSize = this.getImageSize({ width: image.width, height: image.height });
+        this.sendMessage({
+          type: this.activeRoom.groupId ? 'group' : 'friend',
+          message: file,
+          width: imageSize.width,
+          height: imageSize.height,
+          messageType,
+        });
+      };
+    } else {
       this.sendMessage({
         type: this.activeRoom.groupId ? 'group' : 'friend',
         message: file,
-        width: imageSize.width,
-        height: imageSize.height,
         messageType,
+        fileName: file.name,
+        size: file.size,
       });
-    };
+    }
   }
 }
 </script>

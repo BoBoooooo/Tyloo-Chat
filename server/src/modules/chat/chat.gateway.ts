@@ -1,4 +1,9 @@
-import { defaultGroup, defaultRobotId } from './../../common/constant/global'
+import {
+  defaultGroup,
+  defaultRobotId,
+  FILE_SAVE_PATH,
+  IMAGE_SAVE_PATH
+} from './../../common/constant/global'
 import { DictionaryService } from './../dictionary/dictionary.service'
 import { AuthService } from './../auth/auth.service'
 import {
@@ -19,7 +24,7 @@ import { FriendMessage } from '../friend/entity/friendMessage.entity'
 import { createWriteStream } from 'fs'
 import { join } from 'path'
 import { RCode } from 'src/common/constant/rcode'
-import { nameVerify } from 'src/common/tool/utils'
+import { formatBytes, nameVerify } from 'src/common/tool/utils'
 import { defaultPassword } from 'src/common/constant/global'
 // const axios = require('axios');
 const fs = require('fs')
@@ -189,19 +194,26 @@ export class ChatGateway {
         })
         return
       }
-      if (data.messageType === 'image') {
-        const randomName = `${Date.now()}$${data.userId}$${data.width}$${
-          data.height
-        }`
-        if (!fs.existsSync('public/static/image')) {
-          fs.mkdirSync('public/static/image')
+      if (data.messageType === 'file' || data.messageType === 'image') {
+        // 根据文件类型判断保存路径
+        const SAVE_PATH =
+          data.messageType === 'image' ? IMAGE_SAVE_PATH : FILE_SAVE_PATH
+        const saveName =
+          data.messageType === 'image'
+            ? `${Date.now()}$${data.userId}$${data.width}$${data.height}`
+            : `${Date.now()}$${data.userId}:${formatBytes(data.size)}:${
+                data.fileName
+              }`
+        if (!fs.existsSync(SAVE_PATH)) {
+          fs.mkdirSync(SAVE_PATH)
         }
-        const stream = createWriteStream(
-          join('public/static/image', randomName)
-        )
+        console.log(data.content)
+        const stream = createWriteStream(join(SAVE_PATH, saveName))
         stream.write(data.content)
-        data.content = randomName
+        data.content = saveName
       }
+      console.log(data.groupId)
+
       data.time = new Date().valueOf() // 使用服务端时间
       await this.groupMessageRepository.save(data)
       this.server
@@ -377,22 +389,26 @@ export class ChatGateway {
           data.userId > data.friendId
             ? data.userId + data.friendId
             : data.friendId + data.userId
-        if (data.messageType === 'image') {
-          const randomName = `${Date.now()}$${roomId}$${data.width}$${
-            data.height
-          }`
-          if (!fs.existsSync('public/static/image')) {
-            fs.mkdirSync('public/static/image')
+        // 根据文件类型判断保存路径
+        if (data.messageType === 'file' || data.messageType === 'image') {
+          const SAVE_PATH =
+            data.messageType === 'image' ? IMAGE_SAVE_PATH : FILE_SAVE_PATH
+          const saveName =
+            data.messageType === 'image'
+              ? `${Date.now()}$${data.userId}$${data.width}$${data.height}`
+              : `${Date.now()}$${data.userId}:${formatBytes(data.size)}:${
+                  data.fileName
+                }`
+          if (!fs.existsSync(SAVE_PATH)) {
+            fs.mkdirSync(SAVE_PATH)
           }
-          const stream = createWriteStream(
-            join('public/static/image', randomName)
-          )
-          // 聊天图片保存至服务器static文件夹下
+          console.log(data.content)
+          const stream = createWriteStream(join(SAVE_PATH, saveName))
           stream.write(data.content)
-          data.content = randomName
+          data.content = saveName
+          console.log(roomId)
+          console.log(data.friendId)
         }
-        console.log(roomId)
-        console.log(data.friendId)
 
         data.time = new Date().valueOf()
         await this.friendMessageRepository.save(data)
