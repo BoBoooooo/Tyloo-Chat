@@ -5,10 +5,18 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter'
 import { logger } from './common/middleware/logger.middleware'
 import { ResponseInterceptor } from './common/interceptor/response.interceptor'
 import { join } from 'path'
+import { IoAdapter } from '@nestjs/platform-socket.io'
+
+const fix_socket_io_bug = require('./fix')
 
 async function bootstrap() {
-  // const app = await NestFactory.create(AppModule);
+  await fix_socket_io_bug()
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
+
+  // https://github.com/vercel/ncc/issues/513
+  // fix ncc打包后提示找不到该依赖问题
+  app.useWebSocketAdapter(new IoAdapter(app))
 
   // 全局中间件
   app.use(logger)
