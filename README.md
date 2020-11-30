@@ -1,4 +1,4 @@
-# Tyloo-Chat
+# Tyloo-Chat(仿wechat)
 [![author](https://img.shields.io/badge/author-BoBoooooo-blue.svg)](https://github.com/BoBoooooo)
 [![author](https://img.shields.io/github/languages/top/BoBoooooo/tyloo-chat)](https://github.com/BoBoooooo/tyloo-chat)
 [![Node.js Version](https://img.shields.io/badge/node.js-10.16.3-blue.svg)](http://nodejs.org/download)
@@ -7,15 +7,18 @@
 
 ## Feature
 - 用户登陆注册 (支持单点登陆)
-- 群聊功能
+- 群聊功能 (类似qq群)
 - 好友功能 (支持接入第三方组织架构直接发起私聊)
-- 消息分页
+- 通讯录功能
 - Emoji表情包
 - 图片发送/图片预览
-- 在线人数统计
 - 自定义主题
 - 重连提醒
-- **小冰机器人(默认)**
+- 发送附件
+- 消息分页
+- 消息列表置顶/删除
+- 聊天内容撤回/复制
+- **智能助手(默认)**
 - **第三方API机器人(可选)**
 
 ## Tech Stack
@@ -43,14 +46,14 @@
 // client
 cd client 
 npm i
-npm run serve
+npm start
 ```
 
 ```js
 // server
 cd server
 npm i
-npm run start:dev
+npm run start
 ```
 
 ## 部署
@@ -59,3 +62,8 @@ npm run start:dev
 ## 感谢
 
 本项目fork自[genal-chat]('https://github.com/genaller/genal-chat.git')做了优化升级,感谢大佬Genal开源提供思路!
+
+## TODO
+- `邀请好友加入群聊`
+- `@功能实现`
+- `修改群名/群公告`

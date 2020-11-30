@@ -75,13 +75,16 @@ interface SendMessage {
   message: string | File;
   width?: number;
   height?: number;
+  fileName?: string; // 上传附件名
   messageType: MessageType[0] | MessageType[1];
+  size?: number; // 附件大小
 }
 
 // 消息类型
 declare enum MessageType {
   text = 'text',
   image = 'image',
+  file = 'file'
 }
 
 // 图片尺寸

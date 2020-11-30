@@ -56,7 +56,9 @@ export class GroupService {
         const qb = this.groupUserRepository
           .createQueryBuilder('group_map')
           .innerJoin('user', 'user', 'user.userId = group_map.userId')
-        qb.select('group_map.*').addSelect('user.username', 'username')
+        qb.select('group_map.*')
+          .addSelect('user.username', 'username')
+          .where('group_map.groupId = :id', { id: groupId })
         const list = await qb.getRawMany()
         const total = await qb.getCount()
         data = {

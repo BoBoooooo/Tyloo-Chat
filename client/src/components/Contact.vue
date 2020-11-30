@@ -17,9 +17,9 @@
         </div>
       </div>
     </a-collapse-panel>
-    <a-collapse-panel key="organization" header="组织架构" :disabled="false">
+    <a-collapse-panel key="organization" header="组织架构"  v-if="organizationArr.length > 0">
       <!-- 此处嵌入第三方组织架构目录 -->
-      <div class="tree-container" v-if="organizationArr.length > 0">
+      <div class="tree-container">
         <a-tree show-line :replace-fields="replaceFields" :tree-data="organizationArr" @select="onTreeSelect" />
       </div>
     </a-collapse-panel>

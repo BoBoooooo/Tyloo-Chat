@@ -88,7 +88,10 @@
           height: 50px;
           color: #e23b38;
           background: #f8f8f8;
-          border: none;
+          border-top: 1px solid #e1e1e1;
+          border-left:none;
+          border-right:none;
+          border-bottom:none;
           border-radius: 0 !important;
           box-shadow: none !important;
           width: 100%;
@@ -136,4 +139,9 @@
 .ant-tree-title,
 .ant-tree-switcher-line-icon {
   color: #080808 !important;
+}
+
+// 上传附件字体修改
+.ant-upload {
+  font-size: inherit!important;
 }

@@ -11,3 +11,12 @@ export const DEFAULT_GROUP = 'group';
 export const DEFAULT_BACKGROUND = 'https://pic2.zhimg.com/v2-f76706d67343c66b08c937ec6bc42942_r.jpg?source=1940ef5c';
 // 默认机器人Id
 export const DEFAULT_ROBOT = 'robot';
+
+// 图片/附件请求路径
+export const IMAGE_SAVE_PATH = 'api/static/image/';
+export const FILE_SAVE_PATH = 'api/static/file/';
+
+// MIME类型
+export const MIME_TYPE = ['xls', 'xlsx', 'doc', 'docx', 'exe', 'pdf', 'ppt', 'txt', 'zip', 'img', 'rar'];
+// 图片类型
+export const IMAGE_TYPE = ['png', 'jpg', 'jpeg', 'gif'];

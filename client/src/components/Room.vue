@@ -29,12 +29,11 @@
           <div class="room-card-new" v-if="chat.messages">
             <!-- 消息列表未读信息简述考虑撤回情况 -->
             <template v-if="chat.messages[chat.messages.length - 1].isRevoke">
-               <div class="text">{{chat.messages[chat.messages.length - 1].revokeUserName}}撤回了一条消息</div>
+               <div>{{chat.messages[chat.messages.length - 1].revokeUserName}}撤回了一条消息</div>
             </template>
             <template v-else>
                 <div
-                class="text"
-                v-text="_parseText(chat.messages[chat.messages.length - 1].content)"
+                v-text="_parseText(chat.messages[chat.messages.length - 1])"
                 v-if="chat.messages[chat.messages.length - 1].messageType === 'text'"
               ></div>
               <div class="image" v-if="chat.messages[chat.messages.length - 1].messageType === 'image'">[图片]</div>
@@ -62,12 +61,17 @@
         <div class="room-card-message">
           <div class="room-card-name">{{ chat.username }}</div>
           <div class="room-card-new" v-if="chat.messages">
-            <div
-              class="text"
-              v-text="_parseText(chat.messages[chat.messages.length - 1].content)"
-              v-if="chat.messages[chat.messages.length - 1].messageType === 'text'"
-            ></div>
-            <div class="image" v-if="chat.messages[chat.messages.length - 1].messageType === 'image'">[图片]</div>
+            <!-- 消息列表未读信息简述考虑撤回情况 -->
+            <template v-if="chat.messages[chat.messages.length - 1].isRevoke">
+               <div>{{chat.messages[chat.messages.length - 1].revokeUserName}}撤回了一条消息</div>
+            </template>
+            <template v-else>
+                <div
+                v-text="_parseText(chat.messages[chat.messages.length - 1])"
+                v-if="chat.messages[chat.messages.length - 1].messageType === 'text'"
+              ></div>
+              <div class="image" v-if="chat.messages[chat.messages.length - 1].messageType === 'image'">[图片]</div>
+            </template>
           </div>
         </div>
       </div>
@@ -212,8 +216,12 @@ export default class Room extends Vue {
     this.lose_unread_gather((activeRoom as Group).groupId || (activeRoom as User).userId);
   }
 
-  _parseText(text: string) {
-    return parseText(text);
+  _parseText(chat: User & FriendMessage & GroupMessage) {
+    // if (chat.groupId) {
+    //   return `${chat.username}:${parseText(chat.content)}`;
+    // }
+
+    return parseText(chat.content);
   }
 }
 </script>
@@ -284,11 +292,9 @@ export default class Room extends Vue {
         color: #474747;
         font-weight: bold;
       }
-      .text {
-        color: #a9a9a9;
-      }
       .room-card-new {
         > * {
+          color: #a9a9a9;
           display: block;
           overflow: hidden; //超出的文本隐藏
           text-overflow: ellipsis; //溢出用省略号显示
