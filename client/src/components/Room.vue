@@ -29,11 +29,10 @@
           <div class="room-card-new" v-if="chat.messages">
             <!-- 消息列表未读信息简述考虑撤回情况 -->
             <template v-if="chat.messages[chat.messages.length - 1].isRevoke">
-               <div class="text">{{chat.messages[chat.messages.length - 1].revokeUserName}}撤回了一条消息</div>
+               <div>{{chat.messages[chat.messages.length - 1].revokeUserName}}撤回了一条消息</div>
             </template>
             <template v-else>
                 <div
-                class="text"
                 v-text="_parseText(chat.messages[chat.messages.length - 1])"
                 v-if="chat.messages[chat.messages.length - 1].messageType === 'text'"
               ></div>
@@ -64,11 +63,10 @@
           <div class="room-card-new" v-if="chat.messages">
             <!-- 消息列表未读信息简述考虑撤回情况 -->
             <template v-if="chat.messages[chat.messages.length - 1].isRevoke">
-               <div class="text">{{chat.messages[chat.messages.length - 1].revokeUserName}}撤回了一条消息</div>
+               <div>{{chat.messages[chat.messages.length - 1].revokeUserName}}撤回了一条消息</div>
             </template>
             <template v-else>
                 <div
-                class="text"
                 v-text="_parseText(chat.messages[chat.messages.length - 1])"
                 v-if="chat.messages[chat.messages.length - 1].messageType === 'text'"
               ></div>
@@ -294,11 +292,9 @@ export default class Room extends Vue {
         color: #474747;
         font-weight: bold;
       }
-      .text {
-        color: #a9a9a9;
-      }
       .room-card-new {
         > * {
+          color: #a9a9a9;
           display: block;
           overflow: hidden; //超出的文本隐藏
           text-overflow: ellipsis; //溢出用省略号显示

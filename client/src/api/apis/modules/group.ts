@@ -23,7 +23,6 @@ export async function getGroupMessages(params: PagingParams) {
  * 获取所有群成员
  */
 export async function getGroupUser(groupId: string) {
-  console.log(groupId);
   // eslint-disable-next-line no-return-await
   return await axios.get(`/group/groupUser?groupId=${groupId}`);
 }
