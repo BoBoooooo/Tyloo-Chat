@@ -219,7 +219,7 @@ export default class Message extends Vue {
       // eslint-disable-next-line no-nested-ternary
       const pngName = MIME_TYPE.includes(fileExtension) ? fileExtension : false
      || IMAGE_TYPE.includes(fileExtension) ? 'img' : false || 'other';
-      return `./mime/${pngName}.png`;
+      return `${process.env.BASE_URL}mime/${pngName}.png`;
     }
   }
 
