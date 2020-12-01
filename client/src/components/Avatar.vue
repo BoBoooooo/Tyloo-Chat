@@ -98,6 +98,7 @@ export default class Avatar extends Vue {
   display: flex;
   align-items: center;
   height: 37px;
+  margin-bottom: 6px;
   .avatar-img {
     cursor: pointer;
     width: 40px;
