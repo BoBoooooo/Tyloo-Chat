@@ -55,6 +55,8 @@ export default class Contact extends Vue {
 
   @appModule.Mutation('set_activeTabName') _setActiveTabName: Function;
 
+  @appModule.Getter('user') user: User;
+
   friend: FriendMap = {
     friendId: '',
     friendUserName: '',
@@ -132,9 +134,18 @@ export default class Contact extends Vue {
     }
   }
 
-  chooseObject(friend: Friend | Group) {
+  async chooseObject(chat: Friend | Group) {
+    const { userId } = this.user;
+    const chatId = (chat as Group).groupId || chat.userId;
+    // 激活聊天窗口,如果已删除需要重新恢复
+    let deletedChat = await this.$localforage.getItem(`${userId}-deletedChatId`) as string[];
+    if (Array.isArray(deletedChat)) {
+      deletedChat = deletedChat.filter(id => id !== chatId);
+      await this.$localforage.setItem(`${userId}-deletedChatId`, deletedChat);
+    }
     this._setActiveTabName('message');
-    this._setActiveRoom(friend);
+
+    this._setActiveRoom(chat);
   }
 
   addFriend() {

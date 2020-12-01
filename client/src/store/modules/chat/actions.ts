@@ -2,6 +2,7 @@ import { ActionTree } from 'vuex';
 import io from 'socket.io-client';
 import Vue from 'vue';
 import { DEFAULT_GROUP } from '@/common/index';
+import localforage from 'localforage';
 import { ChatState } from './state';
 import { RootState } from '../../index';
 import {
@@ -149,12 +150,22 @@ const actions: ActionTree<ChatState, RootState> = {
       }
     });
 
-    socket.on('friendMessage', (res: ServerRes) => {
+    socket.on('friendMessage', async (res: ServerRes) => {
       console.log('on friendMessage', res);
       if (!res.code) {
         if (res.data.friendId === user.userId || res.data.userId === user.userId) {
           console.log('ADD_FRIEND_MESSAGE', res.data);
           commit(ADD_FRIEND_MESSAGE, res.data);
+          // 新增私聊信息需要检测本地是否已删除聊天,如已删除需要恢复
+          let deletedChat = await localforage.getItem(`${user.userId}-deletedChatId`) as string[];
+          if (deletedChat) {
+            if (res.data.friendId === user.userId) {
+              deletedChat = deletedChat.filter(id => id !== res.data.userId);
+            } else {
+              deletedChat = deletedChat.filter(id => id !== res.data.friendId);
+            }
+            await localforage.setItem(`${user.userId}-deletedChatId`, deletedChat);
+          }
           const { activeRoom } = state;
           if (activeRoom && activeRoom.userId !== res.data.userId && activeRoom.userId !== res.data.friendId) {
             commit(ADD_UNREAD_GATHER, res.data.userId);

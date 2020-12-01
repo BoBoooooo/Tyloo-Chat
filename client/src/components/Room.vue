@@ -12,10 +12,10 @@
         class="room-card"
         :class="{ active: activeRoom && activeRoom.groupId === chat.groupId }"
         @click="changeActiveRoom(chat)"
-        v-contextmenu="'groupmenu'+chat.userId"
+        v-contextmenu="'groupmenu'+chat.groupId"
       >
          <!-- 自定义右键菜单 -->
-        <v-contextmenu :ref="'groupmenu'+chat.userId">
+        <v-contextmenu :ref="'groupmenu'+chat.groupId">
           <v-contextmenu-item v-if="chat.isTop === true" @click="handleCommand('TOP_REVERT', chat)">取消置顶</v-contextmenu-item>
           <v-contextmenu-item v-else @click="handleCommand('TOP', chat)">置顶</v-contextmenu-item>
           <v-contextmenu-item @click="handleCommand('READ', chat)">标记已读</v-contextmenu-item>
@@ -128,35 +128,38 @@ export default class Room extends Vue {
   }
 
   // 右键菜单
-  handleCommand(type: ContextMenuType, chat: Group & User) {
+  async handleCommand(type: ContextMenuType, chat: Group & User) {
+    // 消息ID
+    const chatId = chat.groupId || chat.userId;
     if (type === 'TOP') {
-      localStorage.setItem(`${this.currentUserId}-topChatId`, chat.userId);
-      this.sortChat();
+      await this.$localforage.setItem(`${this.currentUserId}-topChatId`, chatId);
+      await this.sortChat();
       this.$message.success('置顶成功');
     } else if (type === 'TOP_REVERT') {
-      localStorage.removeItem(`${this.currentUserId}-topChatId`);
+      await this.$localforage.removeItem(`${this.currentUserId}-topChatId`);
       // 删除isTop属性,取消置顶
       // eslint-disable-next-line no-param-reassign
       delete chat.isTop;
-      this.sortChat();
+      await this.sortChat();
       this.$message.info('取消置顶');
     } else if (type === 'READ') {
-      this.lose_unread_gather((chat as Group).groupId || (chat as User).userId);
+      this.lose_unread_gather(chatId);
     } else if (type === 'DELETE') {
+      // 如果聊天列表仅有一个消息不允许删除
       if (this.chatArr.length > 1) {
         // 先查询本地时候有删除记录
-        let deletedChat = localStorage.getItem(`${this.currentUserId}-deletedChatId`);
-        if (deletedChat) {
-          if (!deletedChat.split(',').includes(chat.userId)) {
-            deletedChat += `,${chat.userId}`;
+        const deletedChat = await this.$localforage.getItem(`${this.currentUserId}-deletedChatId`) as string[];
+        if (Array.isArray(deletedChat)) {
+          if (!deletedChat.includes(chatId)) {
+            deletedChat.push(chatId);
           }
-          localStorage.setItem(`${this.currentUserId}-deletedChatId`, deletedChat);
+          await this.$localforage.setItem(`${this.currentUserId}-deletedChatId`, deletedChat);
         } else {
         // 本地删除聊天(非删除好友,本地记录)
-          localStorage.setItem(`${this.currentUserId}-deletedChatId`, `${chat.userId}`);
+          await this.$localforage.setItem(`${this.currentUserId}-deletedChatId`, [chatId]);
         }
         // 删除聊天窗口后默认激活第一个聊天窗口
-        this.sortChat();
+        await this.sortChat();
         this.$message.success(`已删除${chat.groupName || chat.username}聊天窗口`);
         this.changeActiveRoom(this.chatArr[0] as (User | Group));
       } else {
@@ -172,16 +175,16 @@ export default class Room extends Vue {
   }
 
   // 获取消息列表数据
-  sortChat() {
+  async sortChat() {
     this.chatArr = [];
     const groups = Object.values(this.groupGather);
     const friends = Object.values(this.friendGather);
     this.chatArr = [...groups, ...friends];
     // 此处需要过滤本地已删除的会话
 
-    const deletedChat = localStorage.getItem(`${this.currentUserId}-deletedChatId`);
-    if (deletedChat) {
-      this.chatArr = this.chatArr.filter(chat => !deletedChat.split(',').some(d => d === chat.userId));
+    const deletedChat = await this.$localforage.getItem(`${this.currentUserId}-deletedChatId`) as string[];
+    if (Array.isArray(deletedChat)) {
+      this.chatArr = this.chatArr.filter(chat => !deletedChat.includes((chat as Group).groupId || chat.userId));
     }
 
     // 对聊天窗进行排序(根据最新消息时间)
@@ -197,13 +200,13 @@ export default class Room extends Vue {
     });
 
     // 查看是否有需要置顶列表
-    const topChatId = localStorage.getItem(`${this.currentUserId}-topChatId`);
+    const topChatId = await this.$localforage.getItem(`${this.currentUserId}-topChatId`) as string;
     if (topChatId) {
       // 找到需要置顶的窗口
-      const chat = this.chatArr.find(c => c.userId === topChatId);
+      const chat = this.chatArr.find(c => ((c as Group).groupId || c.userId) === topChatId);
       if (chat) {
         // 移动至第一位
-        this.chatArr = this.chatArr.filter(k => k.userId !== topChatId);
+        this.chatArr = this.chatArr.filter(k => ((k as Group).groupId || k.userId) !== topChatId);
         chat.isTop = true;
         this.chatArr.unshift(chat);
       }
