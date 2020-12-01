@@ -256,14 +256,8 @@ export default class Room extends Vue {
     text-align: left;
     transition: all 0.2s linear;
     cursor: pointer;
-    &:hover {
+    &:hover,&.active {
       background-color: #d6d6d6;
-    }
-    &.active {
-      background-color: #d6d6d6;
-      @include button(#d6d6d6, '~@/assets/animate.png', 3000%, 100%, none, #fff);
-      -webkit-animation: ani 2s steps(29) forwards;
-      animation: ani 0.5s steps(29) forwards;
     }
     .room-card-badge {
       position: absolute;
