@@ -5,6 +5,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/BoBoooooo/tyloo-chat/LICENSE)
 [![author](https://img.shields.io/github/stars/BoBoooooo/tyloo-chat?style=social)](https://github.com/BoBoooooo/tyloo-chat)
 
+## [线上demo地址](http://server.boboooooo.top:9999)
+
 ## Feature
 - 用户登陆注册 (支持单点登陆)
 - 群聊功能 (类似qq群)
@@ -57,13 +59,17 @@ npm run start
 ```
 
 ## 部署
-[deploy](./deploy.md)
+
+[Deploy](./deploy.md)
 
 ## 感谢
 
 本项目fork自[genal-chat]('https://github.com/genaller/genal-chat.git')做了优化升级,感谢大佬Genal开源提供思路!
 
 ## TODO
+
 - `邀请好友加入群聊`
 - `@功能实现`
 - `修改群名/群公告`
+- `消息转发`
+- `代码性能优化`

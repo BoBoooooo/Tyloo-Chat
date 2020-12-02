@@ -20,11 +20,24 @@
           <a-button @click="addFriend(data.userId)" type="primary" v-else>添加好友</a-button>
         </a-card>
       </div>
-      <a-avatar :style="{ 'order': data.userId === user.userId ? '3' : '1'} && highLight"  class="avatar-img" :class="{ offLine: !data.online && highLight  === false}" :src="userGather[data.userId].avatar" />
+      <a-avatar
+        :style="{ order: data.userId === user.userId && highLight ? '3' : '1' }"
+        class="avatar-img"
+        :class="{ offLine: !data.online && highLight === false }"
+        :src="userGather[data.userId].avatar"
+      />
     </a-popover>
-    <a-avatar v-else class="avatar-img" :style="{ 'order': data.userId === user.userId ? '3' : '1'} && highLight" :class="{ offLine: !data.online && highLight  === false }" :src="userGather[data.userId].avatar" />
+    <a-avatar
+      v-else
+      class="avatar-img"
+      :style="{ order: data.userId === user.userId && highLight ? '3' : '1' }"
+      :class="{ offLine: !data.online && highLight === false }"
+      :src="userGather[data.userId].avatar"
+    />
     <div class="avatar-name" style="order: 2">{{ userGather[data.userId].username }}</div>
-    <div class="avatar-time" :style="{ 'order': data.userId === user.userId ? '1' : '3'} && highLight" v-if="showTime">{{ _formatTime(data.time) }}</div>
+    <div class="avatar-time" :style="{ order: data.userId === user.userId && highLight ? '1' : '3' }" v-if="showTime">
+      {{ _formatTime(data.time) }}
+    </div>
   </div>
 </template>
 
@@ -43,7 +56,7 @@ export default class Avatar extends Vue {
 
   @Prop({ default: true }) showTime: boolean; // 是否显示时间
 
-  @Prop({ default: false }) highLight: boolean; // 头像是否常亮
+  @Prop({ type: Boolean, default: false }) highLight: boolean; // 头像是否常亮
 
   @appModule.Getter('user') user: User;
 
@@ -85,6 +98,7 @@ export default class Avatar extends Vue {
   display: flex;
   align-items: center;
   height: 37px;
+  margin-bottom: 6px;
   .avatar-img {
     cursor: pointer;
     width: 40px;
@@ -94,12 +108,11 @@ export default class Avatar extends Vue {
     filter: grayscale(100%);
   }
   .avatar-name {
-    margin: 0 6px;
+    margin: 0 12px;
     color: #080808;
   }
   .avatar-time {
     font-size: 12px;
-    margin: 0 6px;
     color: #080808;
   }
 }
@@ -108,7 +121,7 @@ export default class Avatar extends Vue {
   font-size: 18px;
   flex-direction: column;
   align-items: center;
-  .ant-card-body{
+  .ant-card-body {
     text-align: right;
   }
   h2 {

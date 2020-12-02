@@ -12,10 +12,10 @@
         class="room-card"
         :class="{ active: activeRoom && activeRoom.groupId === chat.groupId }"
         @click="changeActiveRoom(chat)"
-        v-contextmenu="'groupmenu'+chat.userId"
+        v-contextmenu="'groupmenu' + chat.groupId"
       >
-         <!-- 自定义右键菜单 -->
-        <v-contextmenu :ref="'groupmenu'+chat.userId">
+        <!-- 自定义右键菜单 -->
+        <v-contextmenu :ref="'groupmenu' + chat.groupId">
           <v-contextmenu-item v-if="chat.isTop === true" @click="handleCommand('TOP_REVERT', chat)">取消置顶</v-contextmenu-item>
           <v-contextmenu-item v-else @click="handleCommand('TOP', chat)">置顶</v-contextmenu-item>
           <v-contextmenu-item @click="handleCommand('READ', chat)">标记已读</v-contextmenu-item>
@@ -25,14 +25,22 @@
         <a-badge class="room-card-badge" :count="unReadGather[chat.groupId]" />
         <img class="room-card-type" src="~@/assets/group.png" alt="" />
         <div class="room-card-message">
-          <div class="room-card-name">{{ chat.groupName }}</div>
+          <div class="room-card-info">
+            <div class="room-card-name">{{ chat.groupName }}</div>
+            <!-- 显示最后一次聊天时间 -->
+            <div
+              class="room-card-time"
+              v-if="chat.messages[chat.messages.length - 1]"
+              v-text="_formatTime(chat.messages[chat.messages.length - 1])"
+            ></div>
+          </div>
           <div class="room-card-new" v-if="chat.messages">
             <!-- 消息列表未读信息简述考虑撤回情况 -->
             <template v-if="chat.messages[chat.messages.length - 1].isRevoke">
-               <div>{{chat.messages[chat.messages.length - 1].revokeUserName}}撤回了一条消息</div>
+              <div>{{ chat.messages[chat.messages.length - 1].revokeUserName }}撤回了一条消息</div>
             </template>
             <template v-else>
-                <div
+              <div
                 v-text="_parseText(chat.messages[chat.messages.length - 1])"
                 v-if="chat.messages[chat.messages.length - 1].messageType === 'text'"
               ></div>
@@ -46,10 +54,10 @@
         class="room-card"
         :class="{ active: activeRoom && !activeRoom.groupId && activeRoom.userId === chat.userId }"
         @click="changeActiveRoom(chat)"
-        v-contextmenu="'contextmenu'+chat.userId"
+        v-contextmenu="'contextmenu' + chat.userId"
       >
         <!-- 自定义右键菜单 -->
-        <v-contextmenu :ref="'contextmenu'+chat.userId">
+        <v-contextmenu :ref="'contextmenu' + chat.userId">
           <v-contextmenu-item v-if="chat.isTop === true" @click="handleCommand('TOP_REVERT', chat)">取消置顶</v-contextmenu-item>
           <v-contextmenu-item v-else @click="handleCommand('TOP', chat)">置顶</v-contextmenu-item>
           <v-contextmenu-item @click="handleCommand('READ', chat)">标记已读</v-contextmenu-item>
@@ -59,14 +67,22 @@
         <a-badge class="room-card-badge" :count="unReadGather[chat.userId]" />
         <img class="room-card-type" :src="friendGather[chat.userId].avatar" :class="{ offLine: avatarOffLine(chat) }" alt="" />
         <div class="room-card-message">
-          <div class="room-card-name">{{ chat.username }}</div>
+          <div class="room-card-info">
+            <div class="room-card-name">{{ chat.username }}</div>
+            <!-- 显示最后一次聊天时间 -->
+            <div
+              class="room-card-time"
+              v-if="chat.messages[chat.messages.length - 1]"
+              v-text="_formatTime(chat.messages[chat.messages.length - 1])"
+            ></div>
+          </div>
           <div class="room-card-new" v-if="chat.messages">
             <!-- 消息列表未读信息简述考虑撤回情况 -->
             <template v-if="chat.messages[chat.messages.length - 1].isRevoke">
-               <div>{{chat.messages[chat.messages.length - 1].revokeUserName}}撤回了一条消息</div>
+              <div>{{ chat.messages[chat.messages.length - 1].revokeUserName }}撤回了一条消息</div>
             </template>
             <template v-else>
-                <div
+              <div
                 v-text="_parseText(chat.messages[chat.messages.length - 1])"
                 v-if="chat.messages[chat.messages.length - 1].messageType === 'text'"
               ></div>
@@ -82,7 +98,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
-import { parseText } from '@/utils/common';
+import { parseText, formatTime } from '@/utils/common';
 import { DEFAULT_GROUP, DEFAULT_ROBOT } from '@/common';
 
 const chatModule = namespace('chat');
@@ -128,37 +144,40 @@ export default class Room extends Vue {
   }
 
   // 右键菜单
-  handleCommand(type: ContextMenuType, chat: Group & User) {
+  async handleCommand(type: ContextMenuType, chat: Group & User) {
+    // 消息ID
+    const chatId = chat.groupId || chat.userId;
     if (type === 'TOP') {
-      localStorage.setItem(`${this.currentUserId}-topChatId`, chat.userId);
-      this.sortChat();
+      await this.$localforage.setItem(`${this.currentUserId}-topChatId`, chatId);
+      await this.sortChat();
       this.$message.success('置顶成功');
     } else if (type === 'TOP_REVERT') {
-      localStorage.removeItem(`${this.currentUserId}-topChatId`);
+      await this.$localforage.removeItem(`${this.currentUserId}-topChatId`);
       // 删除isTop属性,取消置顶
       // eslint-disable-next-line no-param-reassign
       delete chat.isTop;
-      this.sortChat();
+      await this.sortChat();
       this.$message.info('取消置顶');
     } else if (type === 'READ') {
-      this.lose_unread_gather((chat as Group).groupId || (chat as User).userId);
+      this.lose_unread_gather(chatId);
     } else if (type === 'DELETE') {
+      // 如果聊天列表仅有一个消息不允许删除
       if (this.chatArr.length > 1) {
         // 先查询本地时候有删除记录
-        let deletedChat = localStorage.getItem(`${this.currentUserId}-deletedChatId`);
-        if (deletedChat) {
-          if (!deletedChat.split(',').includes(chat.userId)) {
-            deletedChat += `,${chat.userId}`;
+        const deletedChat = (await this.$localforage.getItem(`${this.currentUserId}-deletedChatId`)) as string[];
+        if (Array.isArray(deletedChat)) {
+          if (!deletedChat.includes(chatId)) {
+            deletedChat.push(chatId);
           }
-          localStorage.setItem(`${this.currentUserId}-deletedChatId`, deletedChat);
+          await this.$localforage.setItem(`${this.currentUserId}-deletedChatId`, deletedChat);
         } else {
-        // 本地删除聊天(非删除好友,本地记录)
-          localStorage.setItem(`${this.currentUserId}-deletedChatId`, `${chat.userId}`);
+          // 本地删除聊天(非删除好友,本地记录)
+          await this.$localforage.setItem(`${this.currentUserId}-deletedChatId`, [chatId]);
         }
         // 删除聊天窗口后默认激活第一个聊天窗口
-        this.sortChat();
+        await this.sortChat();
         this.$message.success(`已删除${chat.groupName || chat.username}聊天窗口`);
-        this.changeActiveRoom(this.chatArr[0] as (User | Group));
+        this.changeActiveRoom(this.chatArr[0] as User | Group);
       } else {
         this.$message.error('无法删除');
       }
@@ -172,16 +191,16 @@ export default class Room extends Vue {
   }
 
   // 获取消息列表数据
-  sortChat() {
+  async sortChat() {
     this.chatArr = [];
     const groups = Object.values(this.groupGather);
     const friends = Object.values(this.friendGather);
     this.chatArr = [...groups, ...friends];
     // 此处需要过滤本地已删除的会话
 
-    const deletedChat = localStorage.getItem(`${this.currentUserId}-deletedChatId`);
-    if (deletedChat) {
-      this.chatArr = this.chatArr.filter(chat => !deletedChat.split(',').some(d => d === chat.userId));
+    const deletedChat = (await this.$localforage.getItem(`${this.currentUserId}-deletedChatId`)) as string[];
+    if (Array.isArray(deletedChat)) {
+      this.chatArr = this.chatArr.filter(chat => !deletedChat.includes((chat as Group).groupId || chat.userId));
     }
 
     // 对聊天窗进行排序(根据最新消息时间)
@@ -197,13 +216,13 @@ export default class Room extends Vue {
     });
 
     // 查看是否有需要置顶列表
-    const topChatId = localStorage.getItem(`${this.currentUserId}-topChatId`);
+    const topChatId = (await this.$localforage.getItem(`${this.currentUserId}-topChatId`)) as string;
     if (topChatId) {
       // 找到需要置顶的窗口
-      const chat = this.chatArr.find(c => c.userId === topChatId);
+      const chat = this.chatArr.find(c => ((c as Group).groupId || c.userId) === topChatId);
       if (chat) {
         // 移动至第一位
-        this.chatArr = this.chatArr.filter(k => k.userId !== topChatId);
+        this.chatArr = this.chatArr.filter(k => ((k as Group).groupId || k.userId) !== topChatId);
         chat.isTop = true;
         this.chatArr.unshift(chat);
       }
@@ -222,6 +241,10 @@ export default class Room extends Vue {
     // }
 
     return parseText(chat.content);
+  }
+
+  _formatTime(chat: User & FriendMessage & GroupMessage) {
+    return formatTime(chat.time);
   }
 }
 </script>
@@ -253,14 +276,9 @@ export default class Room extends Vue {
     text-align: left;
     transition: all 0.2s linear;
     cursor: pointer;
-    &:hover {
-      background-color: #d6d6d6;
-    }
+    &:hover,
     &.active {
       background-color: #d6d6d6;
-      @include button(#d6d6d6, '~@/assets/animate.png', 3000%, 100%, none, #fff);
-      -webkit-animation: ani 2s steps(29) forwards;
-      animation: ani 0.5s steps(29) forwards;
     }
     .room-card-badge {
       position: absolute;
@@ -271,8 +289,8 @@ export default class Room extends Vue {
       }
     }
     .room-card-type {
-      width: 45px;
-      height: 45px;
+      width: 40px;
+      height: 40px;
       margin-right: 10px;
       // border-radius: 50%;
       object-fit: cover;
@@ -285,13 +303,27 @@ export default class Room extends Vue {
       display: flex;
       width: 75%;
       flex-direction: column;
-      .room-card-name {
-        overflow: hidden; //超出的文本隐藏
-        text-overflow: ellipsis; //溢出用省略号显示
-        white-space: nowrap; //溢出不换行
-        color: #474747;
-        font-weight: bold;
+      .room-card-info {
+        .room-card-name {
+          overflow: hidden; //超出的文本隐藏
+          text-overflow: ellipsis; //溢出用省略号显示
+          white-space: nowrap; //溢出不换行
+          color: #474747;
+          font-weight: bold;
+          font-size: 16px;
+          display: inline-block;
+          max-width: 115px;
+        }
+        .room-card-time {
+          overflow: hidden; //超出的文本隐藏
+          text-overflow: ellipsis; //溢出用省略号显示
+          white-space: nowrap; //溢出不换行
+          color: #a9a9a9;
+          font-size: 14px;
+          float: right;
+        }
       }
+
       .room-card-new {
         > * {
           color: #a9a9a9;

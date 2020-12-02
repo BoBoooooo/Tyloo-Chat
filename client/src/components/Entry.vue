@@ -302,9 +302,10 @@ export default class Entry extends Vue {
 }
 //输入框样式
 .ant-input {
-  padding: 40px 10px 0 20px !important;
+  padding: 50px 10px 0 20px !important;
   height: 180px;
   border-top: 1px solid #d6d6d6;
+  background: $message-bg-color;
   border-left: none;
   border-right: none;
   border-bottom: none;
@@ -339,16 +340,15 @@ export default class Entry extends Vue {
   right: 0;
   display: flex;
   align-items: center;
-  height: 40px;
+  height: 50px;
   line-height: 42px;
-  font-size: 16px;
-  cursor: pointer;
+  font-size: 22px;
   padding: 0 20px;
   z-index: 99;
   color: #828282;
   .message-tool-item {
     .anticon {
-      margin-right: 15px ;
+      margin-right: 25px ;
     }
   }
 }

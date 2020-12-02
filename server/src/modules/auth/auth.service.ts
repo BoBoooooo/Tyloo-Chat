@@ -69,7 +69,7 @@ export class AuthService {
     if (!passwordVerify(user.password) || !nameVerify(user.username)) {
       return { code: RCode.FAIL, msg: '注册校验不通过！', data: '' }
     }
-    user.avatar = `api/avatar/avatar(${Math.round(Math.random() * 19 + 1)}).png`
+    user.avatar = `api/avatar/avatar${Math.round(Math.random() * 19 + 1)}.png`
     user.role = 'user'
     user.userId = user.userId
     const newUser = await this.userRepository.save(user)
