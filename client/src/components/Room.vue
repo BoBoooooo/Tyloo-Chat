@@ -30,7 +30,7 @@
             <!-- 显示最后一次聊天时间 -->
             <div
               class="room-card-time"
-              v-if="chat.messages[chat.messages.length - 1]"
+              v-if="chat.messages && chat.messages[chat.messages.length - 1]"
               v-text="_formatTime(chat.messages[chat.messages.length - 1])"
             ></div>
           </div>
@@ -72,7 +72,7 @@
             <!-- 显示最后一次聊天时间 -->
             <div
               class="room-card-time"
-              v-if="chat.messages[chat.messages.length - 1]"
+              v-if="chat.messages && chat.messages[chat.messages.length - 1]"
               v-text="_formatTime(chat.messages[chat.messages.length - 1])"
             ></div>
           </div>
