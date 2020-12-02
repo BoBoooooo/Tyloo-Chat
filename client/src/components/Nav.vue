@@ -6,12 +6,18 @@
 -->
 <template>
   <div class="tool">
+    <div class="tool-panel">
+      <div class="close"></div>
+      <div class="zoom-in"></div>
+      <div class="zoom-out"></div>
+    </div>
     <!-- 顶部头像区域 -->
     <div class="tool-avatar">
       <div class="tool-avatar-img" @click="showUserInfo('showUserModal')">
-        <img v-if="user" :src="user.avatar" alt="" />
+        <a-tooltip v-if="user" placement="left" arrow-point-at-center :title="user.username">
+          <img :src="user.avatar" alt="" />
+        </a-tooltip>
       </div>
-      <div class="tool-avatar-name">{{ user.username }}</div>
     </div>
     <!-- 底部工具栏 -->
     <a-tooltip placement="topLeft" arrow-point-at-center>
@@ -307,14 +313,44 @@ export default class Tool extends Vue {
 @import '@/styles/theme';
 
 .tool {
-  padding: 10px 5px;
+  padding: 10px 5px 10px;
   height: 98%;
   position: relative;
+  .tool-panel{
+    justify-content: space-around;
+    align-items: center;
+    display: flex;
+    .close,.zoom-in,.zoom-out{
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ff544d;
+      cursor: pointer;
+      position: relative;
+      &:hover{
+        &::after{
+          position: absolute;
+          content: '';
+          top: 5px;
+          left: 3px;
+          width: 6px;
+          height: 2px;
+          background: #080808;
+        }
+      }
+    }
+    .zoom-in{
+      background: #feb429;
+    }
+    .zoom-out{
+      background: #24c138;
+    }
+  }
   .tool-active {
     color: $primary-color !important;
   }
   .tool-avatar {
-    margin-top: 3px;
+    margin-top: 30px;
     .tool-avatar-img {
       margin: 0 auto;
       width: 55px;
@@ -326,14 +362,11 @@ export default class Tool extends Vue {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: all 2.0s;
+        &:hover{
+          transform: rotate(360deg);
+        }
       }
-    }
-    .tool-avatar-name {
-      color: #fff;
-      overflow: hidden; //超出的文本隐藏
-      text-overflow: ellipsis; //溢出用省略号显示
-      white-space: nowrap; //溢出不换行
-      margin-top: 2px;
     }
   }
   .tool-tip {
@@ -349,10 +382,10 @@ export default class Tool extends Vue {
     bottom: 190px;
   }
   .tool-message {
-    top: 120px;
+    top: 150px;
   }
   .tool-contacts {
-    top: 180px;
+    top: 210px;
   }
   .tool-out {
     bottom: 10px;

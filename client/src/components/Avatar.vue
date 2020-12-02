@@ -108,12 +108,11 @@ export default class Avatar extends Vue {
     filter: grayscale(100%);
   }
   .avatar-name {
-    margin: 0 6px;
+    margin: 0 12px;
     color: #080808;
   }
   .avatar-time {
     font-size: 12px;
-    margin: 0 6px;
     color: #080808;
   }
 }
