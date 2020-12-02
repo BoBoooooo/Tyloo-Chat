@@ -4,7 +4,6 @@ import {
   FILE_SAVE_PATH,
   IMAGE_SAVE_PATH
 } from './../../common/constant/global'
-import { DictionaryService } from './../dictionary/dictionary.service'
 import { AuthService } from './../auth/auth.service'
 import {
   MessageBody,
@@ -26,6 +25,9 @@ import { join } from 'path'
 import { RCode } from 'src/common/constant/rcode'
 import { formatBytes, nameVerify } from 'src/common/tool/utils'
 import { defaultPassword } from 'src/common/constant/global'
+import { getElasticData } from 'src/common/middleware/elasticsearch'
+const nodejieba = require('nodejieba')
+
 // const axios = require('axios');
 const fs = require('fs')
 
@@ -44,8 +46,7 @@ export class ChatGateway {
     private readonly friendRepository: Repository<UserMap>,
     @InjectRepository(FriendMessage)
     private readonly friendMessageRepository: Repository<FriendMessage>,
-    private readonly authService: AuthService,
-    private readonly dictionaryService: DictionaryService
+    private readonly authService: AuthService
   ) {}
 
   @WebSocketServer()
@@ -430,10 +431,31 @@ export class ChatGateway {
     }
   }
 
+  // 通过输入内容模糊匹配自动回复词条
+  async getReplyMessage(content: string) {
+    const failMessage = '智能助手不知道你在说什么。'
+    try {
+      // 此处引用分词器进行中文分词
+      // nodejieba
+      // https://github.com/yanyiwu/nodejieba
+      const splitWords = nodejieba.cut(content).join(' ')
+      console.log(splitWords)
+      const res = await getElasticData(splitWords)
+      console.log(res.data)
+      const result = res.data.hits.hits
+      if (result.length > 0) {
+        return result[0]._source.title
+      }
+      return failMessage
+    } catch (e) {
+      return failMessage
+    }
+  }
   // 小冰机器人自动回复
   async autoReply(data, roomId) {
     // 获取自动回复内容
-    const message = await this.dictionaryService.getReplyMessage(data.content)
+    const message = await this.getReplyMessage(data.content)
+
     const reply = {
       time: new Date().valueOf(),
       content: message,

@@ -1,5 +1,4 @@
 import { defaultGroup as defaultGroupName } from './../../common/constant/global'
-import { DictionaryModule } from './../dictionary/dictionary.module'
 import { AuthModule } from './../auth/auth.module'
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -23,8 +22,7 @@ import { defaultRobot } from 'src/common/constant/global'
       UserMap,
       FriendMessage
     ]),
-    AuthModule,
-    DictionaryModule
+    AuthModule
   ],
   providers: [ChatGateway]
 })
