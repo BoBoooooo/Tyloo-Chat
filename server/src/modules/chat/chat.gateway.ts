@@ -4,7 +4,6 @@ import {
   FILE_SAVE_PATH,
   IMAGE_SAVE_PATH
 } from './../../common/constant/global'
-import { DictionaryService } from './../dictionary/dictionary.service'
 import { AuthService } from './../auth/auth.service'
 import {
   MessageBody,
@@ -44,8 +43,7 @@ export class ChatGateway {
     private readonly friendRepository: Repository<UserMap>,
     @InjectRepository(FriendMessage)
     private readonly friendMessageRepository: Repository<FriendMessage>,
-    private readonly authService: AuthService,
-    private readonly dictionaryService: DictionaryService
+    private readonly authService: AuthService
   ) {}
 
   @WebSocketServer()
