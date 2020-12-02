@@ -8,7 +8,7 @@
 // 默认群组Id
 export const DEFAULT_GROUP = 'group';
 // 默认背景图片
-export const DEFAULT_BACKGROUND = 'https://pic2.zhimg.com/v2-f76706d67343c66b08c937ec6bc42942_r.jpg?source=1940ef5c';
+export const DEFAULT_BACKGROUND = 'https://pic.downk.cc/item/5fc744ea394ac5237897a81d.jpg';
 // 默认机器人Id
 export const DEFAULT_ROBOT = 'robot';
 

@@ -96,64 +96,9 @@
         <a-button type="primary" @click="changeBackground">确认</a-button>
       </div>
       <div class="tool-recommend">
-        <div
-          class="recommend"
-          @click="
-            setBackground(
-              'https://images.weserv.nl/?url=https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/23fa890c0c244db1b2d6e0927113475c~tplv-k3u1fbpfcp-zoom-1.image?imageView2/2/w/800/q/85'
-            )
-          "
-        >
-          <img
-            src="https://images.weserv.nl/?url=https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/23fa890c0c244db1b2d6e0927113475c~tplv-k3u1fbpfcp-zoom-1.image?imageView2/2/w/800/q/85"
-            alt=""
-          />
-          <span class="text">阿童木</span>
-        </div>
-        <div
-          class="recommend"
-          @click="
-            setBackground('https://images.weserv.nl/?url=https://raw.githubusercontent.com/alexanderbast/vscode-snazzy/master/sample.jpg')
-          "
-        >
-          <img src="https://images.weserv.nl/?url=https://raw.githubusercontent.com/alexanderbast/vscode-snazzy/master/sample.jpg" alt="" />
-          <span class="text">VSCode摸鱼</span>
-        </div>
-        <div
-          class="recommend"
-          @click="
-            setBackground(
-              'https://images.weserv.nl/?url=https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/453b8ebcdefa46a69c620da13f346ce2~tplv-k3u1fbpfcp-zoom-1.image?imageView2/2/w/800/q/85'
-            )
-          "
-        >
-          <img
-            src="https://images.weserv.nl/?url=https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/453b8ebcdefa46a69c620da13f346ce2~tplv-k3u1fbpfcp-zoom-1.image?imageView2/2/w/800/q/85"
-            alt=""
-          />
-          <span class="text">山谷</span>
-        </div>
-        <div class="recommend" @click="setBackground('https://pic2.zhimg.com/v2-f76706d67343c66b08c937ec6bc42942_r.jpg?source=1940ef5c')">
-          <img src="https://pic2.zhimg.com/v2-f76706d67343c66b08c937ec6bc42942_r.jpg?source=1940ef5c" alt="" />
-          <span class="text">云朵</span>
-        </div>
-        <div
-          class="recommend"
-          @click="
-            setBackground(
-              'https://images.weserv.nl/?url=https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cc98cbc4ca284fc0aa509b12db0e325e~tplv-k3u1fbpfcp-zoom-1.image?imageView2/2/w/800/q/85'
-            )
-          "
-        >
-          <img
-            src="https://images.weserv.nl/?url=https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cc98cbc4ca284fc0aa509b12db0e325e~tplv-k3u1fbpfcp-zoom-1.image?imageView2/2/w/800/q/85"
-            alt=""
-          />
-          <span class="text">少女</span>
-        </div>
-        <div class="recommend" @click="setBackground('https://picb.zhimg.com/v2-263525f6c912d300abfa0eed3acbfd4b_r.jpg')">
-          <img src="https://picb.zhimg.com/v2-263525f6c912d300abfa0eed3acbfd4b_r.jpg" alt="" />
-          <span class="text">猫咪</span>
+        <div class="recommend" v-for="(theme, index) in themes" :key="index" @click="setBackground(theme.url)">
+          <img :src="theme.url" alt="" />
+          <span class="text">{{ theme.name }}</span>
         </div>
       </div>
     </a-modal>
@@ -167,6 +112,7 @@ import { DEFAULT_BACKGROUND, DEFAULT_GROUP } from '@/common/index';
 import { namespace } from 'vuex-class';
 import * as apis from '@/api/apis';
 import { processReturn, nameVerify, passwordVerify } from '@/utils/common';
+import themes from '@/common/theme';
 
 const appModule = namespace('app');
 const chatModule = namespace('chat');
@@ -202,6 +148,11 @@ export default class Tool extends Vue {
   uploading: boolean = false;
 
   avatar: any = '';
+
+  themes: {
+    name: string;
+    url: string;
+  }[] = themes;
 
   @Watch('user')
   userChange() {
@@ -316,19 +267,21 @@ export default class Tool extends Vue {
   padding: 10px 5px 10px;
   height: 98%;
   position: relative;
-  .tool-panel{
+  .tool-panel {
     justify-content: space-around;
     align-items: center;
     display: flex;
-    .close,.zoom-in,.zoom-out{
+    .close,
+    .zoom-in,
+    .zoom-out {
       width: 12px;
       height: 12px;
       border-radius: 50%;
       background: #ff544d;
       cursor: pointer;
       position: relative;
-      &:hover{
-        &::after{
+      &:hover {
+        &::after {
           position: absolute;
           content: '';
           top: 5px;
@@ -339,10 +292,10 @@ export default class Tool extends Vue {
         }
       }
     }
-    .zoom-in{
+    .zoom-in {
       background: #feb429;
     }
-    .zoom-out{
+    .zoom-out {
       background: #24c138;
     }
   }
@@ -362,8 +315,8 @@ export default class Tool extends Vue {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: all 2.0s;
-        &:hover{
+        transition: all 2s;
+        &:hover {
           transform: rotate(360deg);
         }
       }
