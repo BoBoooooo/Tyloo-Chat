@@ -12,9 +12,7 @@ export class GroupService {
     @InjectRepository(Group)
     private readonly groupRepository: Repository<Group>,
     @InjectRepository(GroupMap)
-    private readonly groupUserRepository: Repository<GroupMap>,
-    @InjectRepository(GroupMessage)
-    private readonly groupMessageRepository: Repository<GroupMessage>
+    private readonly groupUserRepository: Repository<GroupMap>
   ) {}
 
   async postGroups(groupIds: string) {
@@ -58,6 +56,7 @@ export class GroupService {
           .innerJoin('user', 'user', 'user.userId = group_map.userId')
         qb.select('group_map.*')
           .addSelect('user.username', 'username')
+          .addSelect('user.avatar', 'avatar')
           .where('group_map.groupId = :id', { id: groupId })
         const list = await qb.getRawMany()
         const total = await qb.getCount()

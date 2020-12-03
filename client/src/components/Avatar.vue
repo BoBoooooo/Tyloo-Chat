@@ -5,7 +5,7 @@
  * @Date: 2020年11月05 16:40:11
 -->
 <template>
-  <div class="avatar" v-if="userGather[data.userId]">
+  <div class="avatar">
     <a-popover v-if="data.userId !== user.userId" trigger="click">
       <div slot="content" class="avatar-card">
         <a-card :bordered="false" style="width: 300px">
@@ -24,7 +24,7 @@
         :style="{ order: data.userId === user.userId && highLight ? '3' : '1' }"
         class="avatar-img"
         :class="{ offLine: !data.online && highLight === false }"
-        :src="userGather[data.userId].avatar"
+        :src="userGather[data.userId].avatar || data.avatar"
       />
     </a-popover>
     <a-avatar
@@ -32,7 +32,7 @@
       class="avatar-img"
       :style="{ order: data.userId === user.userId && highLight ? '3' : '1' }"
       :class="{ offLine: !data.online && highLight === false }"
-      :src="userGather[data.userId].avatar"
+        :src="userGather[data.userId].avatar || data.avatar"
     />
     <div class="avatar-name" style="order: 2">{{ userGather[data.userId].username }}</div>
     <div class="avatar-time" :style="{ order: data.userId === user.userId && highLight ? '1' : '3' }" v-if="showTime">
