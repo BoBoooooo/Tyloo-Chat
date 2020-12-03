@@ -200,10 +200,10 @@ export default class Message extends Vue {
   }
 
   getFileName(item: FriendMessage & GroupMessage) {
-    // 此处后台保存时默认写死  格式为  date:size:fileName
-    // 例如 fileName =  xxxxx-xxxxx-xxxx-xxxx:35.00KB:test.doc
-    const fileNameArr = item.content.split(':');
-    const [, size, name] = fileNameArr;
+    // 此处后台保存时默认写死  格式为  [date]$[userId]$[size]$[fileName]
+    // 例如 fileName = 1606980397047$1a01e20f-3780-4227-84b5-5c69ca766ee5$15.41KB$123.docx
+    const fileNameArr = item.content.split('$');
+    const [,, size, name] = fileNameArr;
     return {
       name,
       size,
@@ -211,10 +211,13 @@ export default class Message extends Vue {
   }
 
   getFileIcon(item: FriendMessage & GroupMessage) {
-    const fileNameArr = item.content.split(':');
-    const [, , name] = fileNameArr;
+    const fileNameArr = item.content.split('$');
+    const [,,, name] = fileNameArr;
+    console.log(name);
     if (name) {
-      const fileExtension = name.split('.')[1];
+      const nameArr = name.split('.');
+      const fileExtension = nameArr[nameArr.length - 1];
+      console.log(fileExtension);
       // 获取附件图标(项目中预设了几种,如果找不到匹配的附件图标则默认用other.png)
       // eslint-disable-next-line no-nested-ternary
       const pngName = MIME_TYPE.includes(fileExtension) ? fileExtension : false

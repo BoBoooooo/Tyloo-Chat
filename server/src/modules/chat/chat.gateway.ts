@@ -199,7 +199,7 @@ export class ChatGateway {
         const saveName =
           data.messageType === 'image'
             ? `${Date.now()}$${data.userId}$${data.width}$${data.height}`
-            : `${Date.now()}$${data.userId}:${formatBytes(data.size)}:${
+            : `${Date.now()}$${data.userId}$${formatBytes(data.size)}$${
                 data.fileName
               }`
         if (!fs.existsSync(SAVE_PATH)) {
@@ -394,7 +394,7 @@ export class ChatGateway {
           const saveName =
             data.messageType === 'image'
               ? `${Date.now()}$${data.userId}$${data.width}$${data.height}`
-              : `${Date.now()}$${data.userId}:${formatBytes(data.size)}:${
+              : `${Date.now()}$${data.userId}$${formatBytes(data.size)}$${
                   data.fileName
                 }`
           if (!fs.existsSync(SAVE_PATH)) {
