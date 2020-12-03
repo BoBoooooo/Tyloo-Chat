@@ -22,7 +22,7 @@
           <v-contextmenu-item divider></v-contextmenu-item>
           <v-contextmenu-item @click="handleCommand('DELETE', chat)">删除</v-contextmenu-item>
         </v-contextmenu>
-        <a-badge class="room-card-badge" :count="unReadGather[chat.groupId]" />
+        <a-badge class="room-card-badge" dot v-if="unReadGather[chat.groupId]" />
         <img class="room-card-type" src="~@/assets/group.png" alt="" />
         <div class="room-card-message">
           <div class="room-card-info">
@@ -236,10 +236,13 @@ export default class Room extends Vue {
   }
 
   _parseText(chat: User & FriendMessage & GroupMessage) {
-    // if (chat.groupId) {
-    //   return `${chat.username}:${parseText(chat.content)}`;
-    // }
-
+    if (chat.groupId) {
+      const unReadCount = this.unReadGather[chat.groupId];
+      if (unReadCount && unReadCount > 1) {
+        return `[${this.unReadGather[chat.groupId]}条] ${chat.username}:${parseText(chat.content)}`;
+      }
+      return `${chat.username}:${parseText(chat.content)}`;
+    }
     return parseText(chat.content);
   }
 
@@ -282,7 +285,7 @@ export default class Room extends Vue {
     }
     .room-card-badge {
       position: absolute;
-      right: 10px;
+      left: 40px;
       top: 10px;
       ::v-deep.ant-badge-count {
         box-shadow: none;

@@ -1,5 +1,6 @@
 import {
   defaultGroup,
+  defaultGroupId,
   defaultRobotId,
   FILE_SAVE_PATH,
   IMAGE_SAVE_PATH
@@ -486,24 +487,29 @@ export class ChatGateway {
       const userGather: { [key: string]: User } = {}
       let userArr: FriendDto[] = []
 
+      // 找到用户所属的群
       const groupMap: GroupMap[] = await this.groupUserRepository.find({
         userId: user.userId
       })
+      // 找到用户所有好友
       const friendMap: UserMap[] = await this.friendRepository.find({
         userId: user.userId
       })
-
+      // 获取群信息
       const groupPromise = groupMap.map(async item => {
         return await this.groupRepository.findOne({ groupId: item.groupId })
       })
       const groupMessagePromise = groupMap.map(async item => {
-        let groupMessage = await getRepository(GroupMessage)
-          .createQueryBuilder('groupMessage')
-          .orderBy('groupMessage.time', 'DESC')
-          .where('groupMessage.groupId = :id', { id: item.groupId })
-          .take(30)
-          .getMany()
-        groupMessage = groupMessage.reverse()
+        const groupMessage = await getRepository(GroupMessage)
+          .createQueryBuilder('group_message')
+          .innerJoin('user', 'user', 'user.userId = group_message.userId')
+          .select('group_message.*')
+          .addSelect('user.username', 'username')
+          .orderBy('group_message.time', 'DESC')
+          .where('group_message.groupId = :id', { id: item.groupId })
+          .limit(10)
+          .getRawMany()
+        groupMessage.reverse()
         // 这里获取一下发消息的用户的用户信息
         for (const message of groupMessage) {
           if (!userGather[message.userId]) {
@@ -532,12 +538,12 @@ export class ChatGateway {
             'friendMessage.userId = :friendId AND friendMessage.friendId = :userId',
             { userId: item.userId, friendId: item.friendId }
           )
-          .take(30)
+          .take(10)
           .getMany()
         return messages.reverse()
       })
-
       const groups: GroupDto[] = await Promise.all(groupPromise)
+
       const groupsMessage: Array<GroupMessageDto[]> = await Promise.all(
         groupMessagePromise
       )
@@ -578,7 +584,7 @@ export class ChatGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() groupMap: GroupMap
   ): Promise<any> {
-    if (groupMap.groupId === defaultGroup) {
+    if (groupMap.groupId === defaultGroupId) {
       return this.server
         .to(groupMap.userId)
         .emit('exitGroup', { code: RCode.FAIL, msg: '默认群不可退' })

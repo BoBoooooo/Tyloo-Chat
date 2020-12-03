@@ -136,7 +136,7 @@ export default class Message extends Vue {
 
   spinning: boolean = false;
 
-  pageSize: number = 30;
+  pageSize: number = 10;
 
   isNoData: boolean = false;
 
@@ -508,6 +508,7 @@ export default class Message extends Vue {
     .message-content {
       .message-content-noData {
         line-height: 50px;
+        color: #9d9d9d;
       }
       .message-content-revoke{
         text-align: center;
