@@ -1,3 +1,4 @@
+import { GroupService } from './../group/group.service'
 import {
   defaultGroup,
   defaultGroupId,
@@ -47,7 +48,8 @@ export class ChatGateway {
     private readonly friendRepository: Repository<UserMap>,
     @InjectRepository(FriendMessage)
     private readonly friendMessageRepository: Repository<FriendMessage>,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly groupService: GroupService
   ) {}
 
   @WebSocketServer()
@@ -218,9 +220,14 @@ export class ChatGateway {
 
       data.time = new Date().valueOf() // 使用服务端时间
       await this.groupMessageRepository.save(data)
-      this.server
-        .to(data.groupId)
-        .emit('groupMessage', { code: RCode.OK, msg: '', data: data })
+      this.server.to(data.groupId).emit('groupMessage', {
+        code: RCode.OK,
+        msg: '',
+        data: {
+          ...data,
+          username: isUser.username // 此处返回发消息人姓名
+        }
+      })
     } else {
       this.server
         .to(data.userId)
@@ -710,5 +717,17 @@ export class ChatGateway {
       msg: 'activeGroupUser',
       data: activeGroupUserGather
     })
+  }
+
+  // 更新群信息(公告,群名)
+  @SubscribeMessage('updateGroupInfo')
+  async updateGroupNotice(@MessageBody() data: GroupDto): Promise<any> {
+    console.log(data)
+    const group = await this.groupRepository.findOne(data.groupId)
+    group.groupName = data.groupName
+    group.notice = data.notice
+    const res = await this.groupService.update(group)
+    this.server.to(data.groupId).emit('updateGroupInfo', res)
+    return
   }
 }

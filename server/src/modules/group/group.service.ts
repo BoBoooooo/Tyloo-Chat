@@ -108,4 +108,17 @@ export class GroupService {
       return { code: RCode.ERROR, msg: '查找群错误', data: null }
     }
   }
+
+  async update(group: GroupDto) {
+    try {
+      await this.groupRepository.update(group.groupId, group)
+      return {
+        code: RCode.OK,
+        msg: '修改成功',
+        data: group
+      }
+    } catch (e) {
+      return { code: RCode.ERROR, msg: '更新失败', data: null }
+    }
+  }
 }

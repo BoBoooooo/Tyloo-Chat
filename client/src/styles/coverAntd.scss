@@ -44,7 +44,12 @@
             font-size: 12px;
             color: #888;
           }
-          & > div {
+          .active-content-title-detail {
+            display: inline-block;
+            width: 90%;
+            vertical-align: middle;
+          }
+          & > div,span {
             overflow: hidden; //超出的文本隐藏
             text-overflow: ellipsis; //溢出用省略号显示
             white-space: nowrap; //溢出不换行

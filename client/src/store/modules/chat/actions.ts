@@ -195,6 +195,19 @@ const actions: ActionTree<ChatState, RootState> = {
       }
     });
 
+    // 更新群信息
+    socket.on('updateGroupInfo', (res:ServerRes) => {
+      if (!res.code) {
+        if (state.groupGather[res.data.groupId]) {
+          commit(SET_GROUP_GATHER, res.data);
+          commit(SET_ACTIVE_ROOM, res.data);
+          if (res.data.userId === user.userId) {
+            Vue.prototype.$message.success(res.msg);
+          }
+        }
+      }
+    });
+
     // 删除好友
     socket.on('exitFriend', (res: ServerRes) => {
       if (!res.code) {

@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="room">
-    <div v-for="(chat, index) in chatArr" :key="(chat.userId || chat.groupId) + index">
+    <div v-for="(chat) in chatArr" :key="(chat.groupId || chat.userId)">
       <div
         v-if="chat.groupId"
         class="room-card"
@@ -192,7 +192,6 @@ export default class Room extends Vue {
 
   // 获取消息列表数据
   async sortChat() {
-    this.chatArr = [];
     const groups = Object.values(this.groupGather);
     const friends = Object.values(this.friendGather);
     this.chatArr = [...groups, ...friends];

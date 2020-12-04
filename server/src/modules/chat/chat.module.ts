@@ -1,3 +1,4 @@
+import { GroupModule } from './../group/group.module'
 import { defaultGroup as defaultGroupName } from './../../common/constant/global'
 import { AuthModule } from './../auth/auth.module'
 import { Module } from '@nestjs/common'
@@ -22,7 +23,8 @@ import { defaultRobot } from 'src/common/constant/global'
       UserMap,
       FriendMessage
     ]),
-    AuthModule
+    AuthModule,
+    GroupModule
   ],
   providers: [ChatGateway]
 })

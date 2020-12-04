@@ -263,8 +263,10 @@ export default class Message extends Vue {
     immediate: true,
   })
   async activeRoomChange(val: string) {
-    const res = await api.getGroupUser(val);
-    this.groupUserList = res.data.data.list;
+    if (val) {
+      const res = await api.getGroupUser(val);
+      this.groupUserList = res.data.data.list;
+    }
   }
 
   /**
