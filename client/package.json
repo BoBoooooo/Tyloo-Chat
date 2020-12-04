@@ -31,9 +31,11 @@
     "vue-router": "^3.2.0",
     "vue-runtime-helpers": "^1.1.2",
     "vuex": "^3.4.0",
-    "vuex-class": "^0.3.2"
+    "vuex-class": "^0.3.2",
+    "lodash": "^4.17.20"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.165",
     "@typescript-eslint/eslint-plugin": "^2.26.0",
     "@typescript-eslint/parser": "^2.26.0",
     "@vue/cli-plugin-babel": "^3.9.2",

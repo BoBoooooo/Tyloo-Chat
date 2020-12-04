@@ -19,6 +19,8 @@ const cdn = {
     'https://cdn.bootcdn.net/ajax/libs/axios/0.18.0/axios.min.js',
     // moment
     'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js',
+    // lodash
+    'https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.20/lodash.min.js',
   ],
 };
 
@@ -38,6 +40,7 @@ module.exports = {
         'vue-router': 'VueRouter',
         vuex: 'Vuex',
         moment: 'moment',
+        lodash: '_',
       };
       config.externals(externals);
       // 通过 html-webpack-plugin 将 cdn 注入到 index.html 之中
@@ -92,7 +95,7 @@ module.exports = {
     },
   },
   // webSocket本身不存在跨域问题，所以我们可以利用webSocket来进行非同源之间的通信。
-  publicPath: '/',
+  publicPath: './',
   devServer: {
     port: 1997,
     proxy: {

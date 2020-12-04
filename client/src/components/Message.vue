@@ -136,7 +136,7 @@ export default class Message extends Vue {
 
   spinning: boolean = false;
 
-  pageSize: number = 30;
+  pageSize: number = 10;
 
   isNoData: boolean = false;
 
@@ -263,8 +263,10 @@ export default class Message extends Vue {
     immediate: true,
   })
   async activeRoomChange(val: string) {
-    const res = await api.getGroupUser(val);
-    this.groupUserList = res.data.data.list;
+    if (val) {
+      const res = await api.getGroupUser(val);
+      this.groupUserList = res.data.data.list;
+    }
   }
 
   /**
@@ -508,6 +510,7 @@ export default class Message extends Vue {
     .message-content {
       .message-content-noData {
         line-height: 50px;
+        color: #9d9d9d;
       }
       .message-content-revoke{
         text-align: center;

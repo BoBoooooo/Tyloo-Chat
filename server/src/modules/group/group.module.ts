@@ -8,6 +8,7 @@ import { GroupMessage } from './entity/groupMessage.entity'
 @Module({
   imports: [TypeOrmModule.forFeature([Group, GroupMap, GroupMessage])],
   providers: [GroupService],
-  controllers: [GroupController]
+  controllers: [GroupController],
+  exports: [GroupService]
 })
 export class GroupModule {}

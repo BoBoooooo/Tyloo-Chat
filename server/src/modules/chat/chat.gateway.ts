@@ -1,5 +1,7 @@
+import { GroupService } from './../group/group.service'
 import {
   defaultGroup,
+  defaultGroupId,
   defaultRobotId,
   FILE_SAVE_PATH,
   IMAGE_SAVE_PATH
@@ -43,7 +45,8 @@ export class ChatGateway {
     private readonly friendRepository: Repository<UserMap>,
     @InjectRepository(FriendMessage)
     private readonly friendMessageRepository: Repository<FriendMessage>,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly groupService: GroupService
   ) {}
 
   @WebSocketServer()
@@ -214,9 +217,14 @@ export class ChatGateway {
 
       data.time = new Date().valueOf() // 使用服务端时间
       await this.groupMessageRepository.save(data)
-      this.server
-        .to(data.groupId)
-        .emit('groupMessage', { code: RCode.OK, msg: '', data: data })
+      this.server.to(data.groupId).emit('groupMessage', {
+        code: RCode.OK,
+        msg: '',
+        data: {
+          ...data,
+          username: isUser.username // 此处返回发消息人姓名
+        }
+      })
     } else {
       this.server
         .to(data.userId)
@@ -469,24 +477,29 @@ export class ChatGateway {
       const userGather: { [key: string]: User } = {}
       let userArr: FriendDto[] = []
 
+      // 找到用户所属的群
       const groupMap: GroupMap[] = await this.groupUserRepository.find({
         userId: user.userId
       })
+      // 找到用户所有好友
       const friendMap: UserMap[] = await this.friendRepository.find({
         userId: user.userId
       })
-
+      // 获取群信息
       const groupPromise = groupMap.map(async item => {
         return await this.groupRepository.findOne({ groupId: item.groupId })
       })
       const groupMessagePromise = groupMap.map(async item => {
-        let groupMessage = await getRepository(GroupMessage)
-          .createQueryBuilder('groupMessage')
-          .orderBy('groupMessage.time', 'DESC')
-          .where('groupMessage.groupId = :id', { id: item.groupId })
-          .take(30)
-          .getMany()
-        groupMessage = groupMessage.reverse()
+        const groupMessage = await getRepository(GroupMessage)
+          .createQueryBuilder('group_message')
+          .innerJoin('user', 'user', 'user.userId = group_message.userId')
+          .select('group_message.*')
+          .addSelect('user.username', 'username')
+          .orderBy('group_message.time', 'DESC')
+          .where('group_message.groupId = :id', { id: item.groupId })
+          .limit(10)
+          .getRawMany()
+        groupMessage.reverse()
         // 这里获取一下发消息的用户的用户信息
         for (const message of groupMessage) {
           if (!userGather[message.userId]) {
@@ -515,12 +528,12 @@ export class ChatGateway {
             'friendMessage.userId = :friendId AND friendMessage.friendId = :userId',
             { userId: item.userId, friendId: item.friendId }
           )
-          .take(30)
+          .take(10)
           .getMany()
         return messages.reverse()
       })
-
       const groups: GroupDto[] = await Promise.all(groupPromise)
+
       const groupsMessage: Array<GroupMessageDto[]> = await Promise.all(
         groupMessagePromise
       )
@@ -561,7 +574,7 @@ export class ChatGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() groupMap: GroupMap
   ): Promise<any> {
-    if (groupMap.groupId === defaultGroup) {
+    if (groupMap.groupId === defaultGroupId) {
       return this.server
         .to(groupMap.userId)
         .emit('exitGroup', { code: RCode.FAIL, msg: '默认群不可退' })
@@ -687,5 +700,17 @@ export class ChatGateway {
       msg: 'activeGroupUser',
       data: activeGroupUserGather
     })
+  }
+
+  // 更新群信息(公告,群名)
+  @SubscribeMessage('updateGroupInfo')
+  async updateGroupNotice(@MessageBody() data: GroupDto): Promise<any> {
+    console.log(data)
+    const group = await this.groupRepository.findOne(data.groupId)
+    group.groupName = data.groupName
+    group.notice = data.notice
+    const res = await this.groupService.update(group)
+    this.server.to(data.groupId).emit('updateGroupInfo', res)
+    return
   }
 }

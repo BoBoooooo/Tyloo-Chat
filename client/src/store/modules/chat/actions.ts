@@ -64,6 +64,7 @@ const actions: ActionTree<ChatState, RootState> = {
       }
       const newUser = res.data.user;
       const { group } = res.data;
+      // 新用户设置到userGather
       if (newUser.userId !== user.userId) {
         commit(SET_USER_GATHER, newUser);
         return Vue.prototype.$message.info(`${newUser.username}加入群${group.groupName}`);
@@ -192,6 +193,19 @@ const actions: ActionTree<ChatState, RootState> = {
         Vue.prototype.$message.success(res.msg);
       } else {
         Vue.prototype.$message.error(res.msg);
+      }
+    });
+
+    // 更新群信息
+    socket.on('updateGroupInfo', (res:ServerRes) => {
+      if (!res.code) {
+        if (state.groupGather[res.data.groupId]) {
+          commit(SET_GROUP_GATHER, res.data);
+          commit(SET_ACTIVE_ROOM, res.data);
+          if (res.data.userId === user.userId) {
+            Vue.prototype.$message.success(res.msg);
+          }
+        }
       }
     });
 
