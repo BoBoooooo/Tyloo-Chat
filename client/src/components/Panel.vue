@@ -35,9 +35,9 @@
               <a-icon @click="showGroupNoticeDialog = true" :type="currentUserIsManager ? 'edit' : 'eye'" />
             </div>
           </div>
-          <div class="active-content-sum">群人数: ({{ activeNum }}/{{ groupUserList.length }})</div>
+          <div class="active-content-sum">群人数: ({{ activeNum }}/{{ groupUsers.length }})</div>
           <div class="active-content-users">
-            <div class="active-content-user" v-for="(data, index) in groupUserList" :key="data.userId + index">
+            <div class="active-content-user" v-for="(data, index) in groupUsers" :key="data.userId + index">
               <Avatar :data="data" :showTime="false"></Avatar>
               {{ data.username }}
               <!-- 群主标识 -->
@@ -117,6 +117,8 @@ export default class Panel extends Vue {
 
   showGroupNameDialog: boolean = false;
 
+  groupUsers: Array<User> = [];
+
   groupNotice: string = ''; // 群公告
 
   groupName: string = ''; // 群名称
@@ -184,8 +186,9 @@ export default class Panel extends Vue {
       const isOnlineUser = userIds.some(userId => userId === user.userId);
       // 在线用户 online true,离线 false
       // eslint-disable-next-line no-unused-expressions
-      isOnlineUser ? (user.online = true) : (user.online = false);
+      isOnlineUser ? (user.online = 1) : (user.online = 0);
     }
+    this.groupUsers = this.$lodash.orderBy(this.groupUserList, ['online', 'username'], ['desc', 'asc']);
   }
 
   // 更新群信息
@@ -206,11 +209,10 @@ export default class Panel extends Vue {
   // 监听在线状态,发生变更则重新设置在线状态
   @Watch('activeGroupUserIdList')
   activeGroupUserIdListChange(userIds: string[]) {
-    console.log(userIds);
     this.filterGroupUsers(userIds);
   }
 
-  @Watch('groupUserList')
+  @Watch('groupUserList', { immediate: true })
   groupUserListChange() {
     // 群成员发生改变,切换房间
     this.groupNotice = this.activeRoom.notice;

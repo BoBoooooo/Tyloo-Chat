@@ -64,6 +64,7 @@ const actions: ActionTree<ChatState, RootState> = {
       }
       const newUser = res.data.user;
       const { group } = res.data;
+      // 新用户设置到userGather
       if (newUser.userId !== user.userId) {
         commit(SET_USER_GATHER, newUser);
         return Vue.prototype.$message.info(`${newUser.username}加入群${group.groupName}`);
