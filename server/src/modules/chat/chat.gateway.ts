@@ -506,6 +506,7 @@ export class ChatGateway {
       const groupPromise = groupMap.map(async item => {
         return await this.groupRepository.findOne({ groupId: item.groupId })
       })
+      // 获取所有群聊消息
       const groupMessagePromise = groupMap.map(async item => {
         const groupMessage = await getRepository(GroupMessage)
           .createQueryBuilder('group_message')

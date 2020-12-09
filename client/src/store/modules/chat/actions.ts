@@ -248,6 +248,9 @@ const actions: ActionTree<ChatState, RootState> = {
     });
   },
 
+  // 根据chatData返回的好友列表群组列表
+  // 建立各自socket连接
+  // 并保存至各自Gather
   async handleChatData({
     commit, dispatch, state, rootState,
   }, payload) {
