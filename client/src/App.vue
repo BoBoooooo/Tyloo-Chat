@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <router-view />
+    <a-config-provider :locale="locale">
+      <router-view />
+    </a-config-provider>
     <img class="background" v-if="background" :src="background" alt="" />
   </div>
 </template>
@@ -8,6 +10,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import { DEFAULT_BACKGROUND } from '@/common';
+import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN';
 
 const appModule = namespace('app');
 
@@ -20,6 +23,8 @@ export default class Chat extends Vue {
   @appModule.Mutation('set_mobile') setMobile: Function;
 
   @appModule.Mutation('set_background') set_background: Function;
+
+  locale: any = zhCN;
 
   mounted() {
     this.setMobile(this.isMobile());
