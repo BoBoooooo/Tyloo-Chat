@@ -6,7 +6,7 @@
 -->
 <template>
   <a-collapse>
-    <a-collapse-panel key="contact" header="联系人">
+    <a-collapse-panel key="contact" header="联系人" v-if="visibleList.contact">
       <div class="contact-container">
         <div class="contact-list" v-for="(value, key, index) in contactList" :key="index">
           <span class="contact-letter">{{ key }}</span>
@@ -17,17 +17,17 @@
         </div>
       </div>
     </a-collapse-panel>
-    <a-collapse-panel key="organization" header="组织架构"  v-if="organizationArr.length > 0">
+    <a-collapse-panel key="organization" header="组织架构" v-if="organizationArr.length > 0 && visibleList.organization">
       <!-- 此处嵌入第三方组织架构目录 -->
       <div class="tree-container">
         <a-tree show-line :replace-fields="replaceFields" :tree-data="organizationArr" @select="onTreeSelect" />
       </div>
     </a-collapse-panel>
-    <a-collapse-panel key="group" header="群组">
+    <a-collapse-panel key="group" header="群组" v-if="visibleList.group">
       <div class="contact-container" style="padding-top:0">
         <div class="contact-list" v-for="(group, index) in groupList" :key="index">
           <div class="contact-box" @click="chooseObject(group)">
-            <img  class="contact-avatar" src="~@/assets/group.png" alt="" />
+            <img class="contact-avatar" src="~@/assets/group.png" alt="" />
             <span class="contact-name">{{ group.groupName }}</span>
           </div>
         </div>
@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import axios from 'axios';
 import cnchar from 'cnchar';
@@ -56,6 +56,16 @@ export default class Contact extends Vue {
   @appModule.Mutation('set_activeTabName') _setActiveTabName: Function;
 
   @appModule.Getter('user') user: User;
+
+  @Prop({
+    type: Object,
+    default: () => ({
+      contact: true,
+      organization: true,
+      group: true,
+    }),
+  })
+  visibleList: Object;
 
   friend: FriendMap = {
     friendId: '',
@@ -100,7 +110,7 @@ export default class Contact extends Vue {
       .sort();
     const contactObj = {} as any;
     // eslint-disable-next-line no-restricted-syntax
-    for (const char of charList) {
+    for (const char of Array.from(new Set(charList))) {
       // eslint-disable-next-line no-restricted-syntax
       contactObj[char] = list.filter(
         k => cnchar
@@ -138,7 +148,7 @@ export default class Contact extends Vue {
     const { userId } = this.user;
     const chatId = (chat as Group).groupId || chat.userId;
     // 激活聊天窗口,如果已删除需要重新恢复
-    let deletedChat = await this.$localforage.getItem(`${userId}-deletedChatId`) as string[];
+    let deletedChat = (await this.$localforage.getItem(`${userId}-deletedChatId`)) as string[];
     if (Array.isArray(deletedChat)) {
       deletedChat = deletedChat.filter(id => id !== chatId);
       await this.$localforage.setItem(`${userId}-deletedChatId`, deletedChat);

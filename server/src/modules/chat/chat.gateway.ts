@@ -730,4 +730,65 @@ export class ChatGateway {
     this.server.to(data.groupId).emit('updateGroupInfo', res)
     return
   }
+
+  // 邀请好友入群
+  @SubscribeMessage('inviteUsersInfoGroup')
+  async inviteUsersInfoGroup(
+    @MessageBody() data: UsersIntoGroup
+  ): Promise<any> {
+    // 获取所有邀请好友
+    // @ts-ignore;
+    const friendsClient = Object.values(this.server.engine.clients)
+      .filter(k => data.friendIds.includes((k as any).request._query.userId))
+      .map(item => ({
+        // @ts-ignore;
+        friendId: item.request._query.userId,
+        // @ts-ignore;
+        client: item.request.client
+      }))
+    const isUser = await this.userRepository.findOne({ userId: data.userId })
+    if (isUser) {
+      for (const friendId of data.friendIds) {
+        const group = await this.groupRepository.findOne({
+          groupId: data.groupId
+        })
+        let userGroup = await this.groupUserRepository.findOne({
+          groupId: group.groupId,
+          userId: friendId
+        })
+        const user = await this.userRepository.findOne({
+          userId: friendId
+        })
+        if (group && user) {
+          if (!userGroup) {
+            data.groupId = group.groupId
+            userGroup = await this.groupUserRepository.save({
+              groupId: data.groupId,
+              userId: friendId
+            })
+          }
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          const friendClient = friendsClient.find(
+            client => client.friendId === friendId
+          )
+          if (friendClient) {
+            friendClient.client.join(group.groupId)
+          }
+          // 此处跟单人加群区分  multiple: true
+          const res = {
+            group: group,
+            friendIds: data.friendIds,
+            userId: data.userId,
+            multiple: true
+          }
+          this.server.to(group.groupId).emit('joinGroup', {
+            code: RCode.OK,
+            msg: '邀请' + data.friendIds.length + '位好友加入群聊',
+            data: res
+          })
+          this.getActiveGroupUser()
+        }
+      }
+    }
+  }
 }

@@ -58,26 +58,44 @@ const actions: ActionTree<ChatState, RootState> = {
 
     // 加入群组
     socket.on('joinGroup', async (res: ServerRes) => {
-      console.log('on joinGroup', res);
       if (res.code) {
         return Vue.prototype.$message.error(res.msg);
       }
-      const newUser = res.data.user;
-      const { group } = res.data;
-      // 新用户设置到userGather
-      if (newUser.userId !== user.userId) {
-        commit(SET_USER_GATHER, newUser);
-        return Vue.prototype.$message.info(`${newUser.username}加入群${group.groupName}`);
+      console.log('on joinGroup', res);
+      const { multiple, group, userId } = res.data;
+
+      // 此处区分是搜索群加入群聊还是被邀请加入群聊
+      if (multiple) {
+        // 被邀请的用户Id
+        const { friendIds } = res.data;
+        // 当前用户被邀请加入群,则加入到某个群
+        if (friendIds.includes(user.userId) && !state.groupGather[group.groupId]) {
+          commit(SET_GROUP_GATHER, group);
+          // 获取群里面所有用户的用户信息
+          socket.emit('chatData', user);
+        } else if (userId === user.userId) { // 邀请发起者
+          // 强制刷新active Room GroupID
+          const groupGather2 = state.groupGather;
+          commit(SET_ACTIVE_ROOM, groupGather2[group.groupId]);
+          return Vue.prototype.$message.info(res.msg);
+        }
+      } else {
+        const newUser = res.data.user;
+        // 新用户设置到userGather
+        if (newUser.userId !== user.userId) {
+          commit(SET_USER_GATHER, newUser);
+          return Vue.prototype.$message.info(`${newUser.username}加入群${group.groupName}`);
+        }
+        console.log(state.groupGather, group.groupId);
+        // 是用户自己 则加入到某个群
+        if (!state.groupGather[group.groupId]) {
+          commit(SET_GROUP_GATHER, group);
+          // 获取群里面所有用户的用户信息
+          socket.emit('chatData', user);
+        }
+        Vue.prototype.$message.info(`成功加入群${group.groupName}`);
+        commit(SET_ACTIVE_ROOM, state.groupGather[group.groupId]);
       }
-      console.log(state.groupGather, group.groupId);
-      // 是用户自己 则加入到某个群
-      if (!state.groupGather[group.groupId]) {
-        commit(SET_GROUP_GATHER, group);
-        // 获取群里面所有用户的用户信息
-        socket.emit('chatData', user);
-      }
-      Vue.prototype.$message.info(`成功加入群${group.groupName}`);
-      commit(SET_ACTIVE_ROOM, state.groupGather[group.groupId]);
     });
     //
     socket.on('joinGroupSocket', (res: ServerRes) => {

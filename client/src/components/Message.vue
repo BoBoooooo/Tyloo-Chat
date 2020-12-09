@@ -5,7 +5,7 @@
  * @Date: 2020年11月05 16:40:11
 -->
 <template>
-  <div class="message">
+  <div class="message-container">
     <div class="message-header">
       <div class="message-header-box">
         <span class="message-header-text"
@@ -462,7 +462,7 @@ export default class Message extends Vue {
 <style lang="scss" scoped>
 @import '@/styles/theme';
 
-.message {
+.message-container {
   overflow: hidden;
   height: 100%;
   position: relative;

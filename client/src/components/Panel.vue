@@ -20,7 +20,7 @@
         :visible="showGroupUser"
         :get-container="getElement"
         @close="toggleGroupUser"
-        :wrap-style="{ position: 'absolute', top: '60px' }"
+        :wrap-style="{ position: 'absolute',top: '0' }"
       >
         <div class="active-content" v-if="activeGroupUser[activeRoom.groupId]">
           <div class="active-content-title">
@@ -36,6 +36,10 @@
             </div>
           </div>
           <div class="active-content-sum">群人数: ({{ activeNum }}/{{ groupUsers.length }})</div>
+          <div class="active-content-adduser" @click="showContactDialog">
+            <a-icon class="icon" type="plus-square" />
+            <span class="label">添加成员</span>
+          </div>
           <div class="active-content-users">
             <div class="active-content-user" v-for="(data, index) in groupUsers" :key="data.userId + index">
               <Avatar :data="data" :showTime="false"></Avatar>
@@ -80,6 +84,8 @@
         <a-button @click="() => (showGroupNameDialog = false)">关闭</a-button>
       </template>
     </a-modal>
+    <!-- 添加用户进群 -->
+    <ContactModal :groupUserList="groupUserList" ref="contactDialog"></ContactModal>
   </div>
 </template>
 
@@ -89,6 +95,7 @@ import {
 } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import Avatar from './Avatar.vue';
+import ContactModal from './ContactModal.vue';
 
 const chatModule = namespace('chat');
 const appModule = namespace('app');
@@ -96,9 +103,14 @@ const appModule = namespace('app');
 @Component({
   components: {
     Avatar,
+    ContactModal,
   },
 })
 export default class Panel extends Vue {
+  $refs!: {
+    contactDialog: HTMLFormElement;
+  };
+
   @Prop({ default: 'group' }) type: string;
 
   @Prop({ default: () => [], type: Array }) groupUserList: Array<User>;
@@ -113,8 +125,10 @@ export default class Panel extends Vue {
 
   showGroupUser: boolean = false;
 
+  // 修改/查看群公告dialog
   showGroupNoticeDialog: boolean = false;
 
+  // 修改群名Dialog
   showGroupNameDialog: boolean = false;
 
   groupUsers: Array<User> = [];
@@ -148,6 +162,10 @@ export default class Panel extends Vue {
     return this.isManager(this.user);
   }
 
+  showContactDialog() {
+    this.$refs.contactDialog.showDialog();
+  }
+
   // 群成员是否为群主
   isManager(user: User) {
     return user.userId === this.activeRoom.userId && this.type === 'group';
@@ -158,7 +176,7 @@ export default class Panel extends Vue {
   }
 
   getElement() {
-    return document.getElementsByClassName('message')[0];
+    return document.getElementsByClassName('message-container')[0];
   }
 
   exitGroup() {
