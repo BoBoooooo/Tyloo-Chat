@@ -162,8 +162,10 @@ const actions: ActionTree<ChatState, RootState> = {
 
     socket.on('joinFriendSocket', (res: ServerRes) => {
       console.log('on joinFriendSocket', res);
-      // 添加好友之后默认进入好友聊天房间
-      commit(SET_ACTIVE_ROOM, state.friendGather[res.data.friendId]);
+      // 添加好友之后默认进入好友聊天房间,初始化时不默认选中该好友房间
+      if (!state.activeRoom) {
+        commit(SET_ACTIVE_ROOM, state.friendGather[res.data.friendId]);
+      }
       if (!res.code) {
         console.log('成功加入私聊房间');
       }
@@ -293,9 +295,12 @@ const actions: ActionTree<ChatState, RootState> = {
      */
 
     const { activeRoom } = state;
+    console.log('init');
+    console.log(activeRoom);
     const groupGather2 = state.groupGather;
     const friendGather2 = state.friendGather;
     if (!activeRoom) {
+      console.log(DEFAULT_GROUP);
       // 更新完数据没有默认activeRoom设置群为DEFAULT_GROUP
       return commit(SET_ACTIVE_ROOM, groupGather[DEFAULT_GROUP]);
     }
