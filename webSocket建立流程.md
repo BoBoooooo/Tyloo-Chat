@@ -1,5 +1,5 @@
 <!--
- * @file: 
+ * @file: webSocket建立流程思路说明
  * @author: BoBo
  * @copyright: NanJing Anshare Tech .Com
  * @Date: 2020-12-09 16:28:44
@@ -8,6 +8,7 @@
     - 建立连接
         - 用户默认加入userId房间
         - 默认加入defaultGroup房间
+        - 统计在线人数 (getActiveGroupUser)
     - 初始化聊天数据
         - socket.emit('chatData', user);
         - 获取当前账号所有好友 (friendGather)
