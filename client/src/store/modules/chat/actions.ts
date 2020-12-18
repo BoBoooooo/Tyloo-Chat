@@ -71,15 +71,15 @@ const actions: ActionTree<ChatState, RootState> = {
         return Vue.prototype.$message.error(res.msg);
       }
       console.log('on joinGroup', res);
-      const { multiple, group, userId } = res.data;
+      const { invited, group, userId } = res.data;
 
       // 此处区分是搜索群加入群聊还是被邀请加入群聊
-      if (multiple) {
+      if (invited) {
         // 被邀请的用户Id
         const { friendIds } = res.data;
         // 当前用户被邀请加入群,则加入群
         if (friendIds.includes(user.userId) && !state.groupGather[group.groupId]) {
-          commit(SET_GROUP_GATHER, group);
+          // commit(SET_GROUP_GATHER, group);
           // 获取群里面所有用户的用户信息
           socket.emit('chatData', user);
         } else if (userId === user.userId) { // 邀请发起者

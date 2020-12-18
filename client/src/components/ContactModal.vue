@@ -5,7 +5,7 @@
  * @Date: 2020-12-08 16:15:10
 -->
 <template>
-  <a-modal title="选择联系人" app :visible="showContactDialog" footer="" @cancel="cancelEvent">
+  <a-modal title="邀请好友加入本群" app :visible="showContactDialog" footer="" @cancel="cancelEvent">
     <a-transfer
       class="tree-transfer"
       :data-source="dataSource"
@@ -53,7 +53,7 @@
   </a-modal>
 </template>
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import cnchar from 'cnchar';
 
@@ -67,7 +67,7 @@ function isChecked(selectedKeys: any, eventKey: any) {
 function handleTreeData(data: any, targetKeys: any = []) {
   data.forEach((item: any) => {
     // eslint-disable-next-line no-param-reassign
-    item.disabled = targetKeys.includes(item.key) || item.disabled;
+    item.disabled = targetKeys.includes(item.key);
     if (item.children) {
       handleTreeData(item.children, targetKeys);
     }
@@ -81,13 +81,11 @@ export default class ContactModal extends Vue {
 
   @chatModule.Getter('socket') socket: SocketIOClient.Socket;
 
-  @chatModule.Action('inviteUsersInfoGroup') inviteUsersInfoGroup: Function;
+  @chatModule.Action('inviteFriendsIntoGroup') inviteFriendsIntoGroup: Function;
 
   @chatModule.State('activeRoom') activeRoom: Group & Friend;
 
   @appModule.Getter('user') user: User;
-
-  @Prop({ default: () => [], type: Array }) groupUserList: Array<User>;
 
   targetKeys = [];
 
@@ -104,7 +102,8 @@ export default class ContactModal extends Vue {
 
   // 获取联系人列表,按A-Z字母排序
   get contactList() {
-    const list = Object.values(this.friendGather);
+    // 获取不在本群中的好友
+    const list = Object.values(this.friendGather).filter(friend => !this.activeRoom.members.some(member => member.userId === friend.userId));
     // 此处拿到所有好友拼音首字母,使用cnchar插件
     // https://github.com/theajack/cnchar
     const charList = list
@@ -134,7 +133,6 @@ export default class ContactModal extends Vue {
             key: t.userId,
             title: t.username,
             avatar: t.avatar,
-            disabled: this.groupUserList.some(user => user.userId === t.userId),
           })),
       });
     }
@@ -168,11 +166,12 @@ export default class ContactModal extends Vue {
     if (this.targetKeys.length === 0) {
       this.$message.warning('请选择联系人');
     }
-    this.socket.emit('inviteUsersInfoGroup', {
+    this.socket.emit('inviteFriendsIntoGroup', {
       friendIds: this.targetKeys,
       groupId: this.activeRoom.groupId,
       userId: this.user.userId,
     });
+    this.cancelEvent();
   }
 
   onChange(targetKeys: any) {

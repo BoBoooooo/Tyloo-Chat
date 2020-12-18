@@ -57,7 +57,7 @@ interface UserFriendMap {
 }
 
 // 邀请好友入群DTO
-interface UsersIntoGroup {
+interface FriendsIntoGroup {
   friendIds: string[] // 被邀请人
   groupId: string // 群组ID
   userId: string // 邀请人

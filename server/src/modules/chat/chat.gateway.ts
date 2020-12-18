@@ -630,7 +630,6 @@ export class ChatGateway {
       })
       friendArr = friends
       userArr = [...Object.values(userGather), ...friendArr]
-      console.log(groupArr)
       this.server.to(user.userId).emit('chatData', {
         code: RCode.OK,
         msg: '获取聊天数据成功',
@@ -789,62 +788,51 @@ export class ChatGateway {
   }
 
   // 邀请好友入群
-  @SubscribeMessage('inviteUsersInfoGroup')
-  async inviteUsersInfoGroup(
-    @MessageBody() data: UsersIntoGroup
+  @SubscribeMessage('inviteFriendsIntoGroup')
+  async inviteFriendsIntoGroup(
+    @MessageBody() data: FriendsIntoGroup
   ): Promise<any> {
-    // 获取所有邀请好友
-    // @ts-ignore;
-    const friendsClient = Object.values(this.server.engine.clients)
-      .filter(k => data.friendIds.includes((k as any).request._query.userId))
-      .map(item => ({
-        // @ts-ignore;
-        friendId: item.request._query.userId,
-        // @ts-ignore;
-        client: item.request.client
-      }))
-    const isUser = await this.userRepository.findOne({ userId: data.userId })
-    if (isUser) {
-      for (const friendId of data.friendIds) {
-        const group = await this.groupRepository.findOne({
-          groupId: data.groupId
-        })
-        let userGroup = await this.groupUserRepository.findOne({
-          groupId: group.groupId,
-          userId: friendId
-        })
-        const user = await this.userRepository.findOne({
-          userId: friendId
-        })
-        if (group && user) {
-          if (!userGroup) {
+    try {
+      // 获取所有邀请好友
+      const isUser = await this.userRepository.findOne({ userId: data.userId })
+      const group = await this.groupRepository.findOne({
+        groupId: data.groupId
+      })
+      const res = {
+        group: group,
+        friendIds: data.friendIds,
+        userId: data.userId,
+        invited: true // 标记为,此处跟单人加群区分
+      }
+      if (isUser) {
+        for (const friendId of data.friendIds) {
+          if (group) {
             data.groupId = group.groupId
-            userGroup = await this.groupUserRepository.save({
+            await this.groupUserRepository.save({
               groupId: data.groupId,
               userId: friendId
             })
+            // 广播所有被邀请者 (此处暂不判断该好友是否在线,统一广播,后期可优化)
+            this.server.to(friendId).emit('joinGroup', {
+              code: RCode.OK,
+              msg: isUser.username + '邀请您加入群聊' + group.groupName,
+              data: res
+            })
           }
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          const friendClient = friendsClient.find(
-            client => client.friendId === friendId
-          )
-          if (friendClient) {
-            friendClient.client.join(group.groupId)
-          }
-          // 此处跟单人加群区分  multiple: true
-          const res = {
-            group: group,
-            friendIds: data.friendIds,
-            userId: data.userId,
-            multiple: true
-          }
-          this.server.to(group.groupId).emit('joinGroup', {
-            code: RCode.OK,
-            msg: '邀请' + data.friendIds.length + '位好友加入群聊',
-            data: res
-          })
         }
+        console.log('inviteFriendsIntoGroup', res)
+        this.server.to(group.groupId).emit('joinGroup', {
+          code: RCode.OK,
+          msg: '邀请' + data.friendIds.length + '位好友加入群聊',
+          data: res
+        })
       }
+    } catch (error) {
+      this.server.to(data.userId).emit('joinGroup', {
+        code: RCode.FAIL,
+        msg: '邀请失败:' + error,
+        data: null
+      })
     }
   }
 }
