@@ -11,11 +11,11 @@
         <span class="message-header-text"
           >{{ chatName }}
           <template v-if="groupGather[activeRoom.groupId]">
-            ({{ groupUserList.length }})
+            ({{ activeRoom.members.length }})
           </template>
         </span>
         <a-icon type="sync" spin class="message-header-icon" v-if="dropped" />
-        <Panel :groupUserList="groupUserList" v-if="groupGather[activeRoom.groupId]" type="group"></Panel>
+        <Panel v-if="groupGather[activeRoom.groupId]" type="group"></Panel>
         <Panel v-else type="friend"></Panel>
       </div>
     </div>
@@ -142,8 +142,6 @@ export default class Message extends Vue {
 
   lastTime: number = 0;
 
-  groupUserList: Array<User> = [];
-
   mounted() {
     this.messageDom = document.getElementsByClassName('message-main')[0] as HTMLElement;
     this.messageContentDom = document.getElementsByClassName('message-content')[0] as HTMLElement;
@@ -256,17 +254,6 @@ export default class Message extends Vue {
         FriendMessage[];
     }
     this.scrollToBottom();
-  }
-
-  // 切换至群组聊天窗口时需要获取当前群组所有人员
-  @Watch('activeRoom.groupId', {
-    immediate: true,
-  })
-  async activeRoomChange(val: string) {
-    if (val) {
-      const res = await api.getGroupUser(val);
-      this.groupUserList = res.data.data.list;
-    }
   }
 
   /**

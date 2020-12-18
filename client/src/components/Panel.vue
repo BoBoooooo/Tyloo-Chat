@@ -35,13 +35,13 @@
               <a-icon @click="showGroupNoticeDialog = true" :type="currentUserIsManager ? 'edit' : 'eye'" />
             </div>
           </div>
-          <div class="active-content-sum">群人数: ({{ activeNum }}/{{ activeRoom.members.length }})</div>
+          <div class="active-content-sum">群人数: ({{ activeNum }}/{{ groupUsers.length }})</div>
           <div class="active-content-adduser" @click="showContactDialog">
             <a-icon class="icon" type="plus-square" />
             <span class="label">添加成员</span>
           </div>
           <div class="active-content-users">
-            <div class="active-content-user" v-for="(data, index) in activeRoom.members" :key="data.userId + index">
+            <div class="active-content-user" v-for="(data, index) in groupUsers" :key="data.userId + index">
               <Avatar :data="data" :showTime="false"></Avatar>
               {{ data.username }}
               <!-- 群主标识 -->
@@ -113,8 +113,6 @@ export default class Panel extends Vue {
 
   @Prop({ default: 'group' }) type: string;
 
-  @Prop({ default: () => [], type: Array }) groupUserList: Array<User>;
-
   @appModule.Getter('user') user: User;
 
   @chatModule.State('activeRoom') activeRoom: Group & Friend;
@@ -128,8 +126,6 @@ export default class Panel extends Vue {
 
   // 修改群名Dialog
   showGroupNameDialog: boolean = false;
-
-  groupUsers: Array<User> = [];
 
   groupNotice: string = ''; // 群公告
 
@@ -150,6 +146,12 @@ export default class Panel extends Vue {
   // 当前用户是否为群主
   get currentUserIsManager() {
     return this.isManager(this.user);
+  }
+
+  // 群成员排序,在线的排在前
+  get groupUsers() {
+    return this.$lodash.orderBy(this.activeRoom.members,
+      ['online', 'username'], ['desc', 'asc']);
   }
 
   showContactDialog() {

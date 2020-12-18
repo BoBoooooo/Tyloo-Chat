@@ -23,6 +23,7 @@ import {
   REVOKE_MESSAGE,
   USER_ONLINE,
   USER_OFFLINE,
+  ADD_GROUP_MEMBER,
 } from './mutation-types';
 
 const actions: ActionTree<ChatState, RootState> = {
@@ -76,25 +77,32 @@ const actions: ActionTree<ChatState, RootState> = {
       if (multiple) {
         // 被邀请的用户Id
         const { friendIds } = res.data;
-        // 当前用户被邀请加入群,则加入到某个群
+        // 当前用户被邀请加入群,则加入群
         if (friendIds.includes(user.userId) && !state.groupGather[group.groupId]) {
           commit(SET_GROUP_GATHER, group);
           // 获取群里面所有用户的用户信息
           socket.emit('chatData', user);
         } else if (userId === user.userId) { // 邀请发起者
-          // 强制刷新active Room GroupID
+          commit(ADD_GROUP_MEMBER, {
+            groupId: group.groupId,
+            members: Object.values(state.friendGather).filter(friend => friendIds.includes(friend.userId)),
+          });
           const groupGather2 = state.groupGather;
+          // ?? 待优化
           commit(SET_ACTIVE_ROOM, groupGather2[group.groupId]);
           return Vue.prototype.$message.info(res.msg);
         }
       } else {
-        const newUser = res.data.user;
-        // 新用户设置到userGather
-        // if (newUser.userId !== user.userId) {
-        //   commit(SET_USER_GATHER, newUser);
-        //   return Vue.prototype.$message.info(`${newUser.username}加入群${group.groupName}`);
-        // }
-        console.log(state.groupGather, group.groupId);
+        const newUser = res.data.user as Friend;
+        newUser.online = 1;
+        // 新用户加入群
+        if (newUser.userId !== rootState.app.user.userId) {
+          commit(ADD_GROUP_MEMBER, {
+            groupId: group.groupId,
+            members: [newUser],
+          });
+          return Vue.prototype.$message.info(`${newUser.username}加入群${group.groupName}`);
+        }
         // 是用户自己 则加入到某个群
         if (!state.groupGather[group.groupId]) {
           commit(SET_GROUP_GATHER, group);
@@ -223,6 +231,7 @@ const actions: ActionTree<ChatState, RootState> = {
           commit(SET_ACTIVE_ROOM, state.groupGather[DEFAULT_GROUP]);
           Vue.prototype.$message.success(res.msg);
         } else {
+          console.log(`--用户--${res.data.userId}`, '--退出群--', res.data.groupId);
           // 广播给其他用户,从群成员中删除该成员
           commit(DEL_GROUP_MEMBER, res.data);
         }

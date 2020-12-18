@@ -17,3 +17,4 @@ export const LOSE_UNREAD_GATHER = 'lose_unread_gather';
 export const REVOKE_MESSAGE = 'revoke_message';
 export const USER_ONLINE = 'user_online';
 export const USER_OFFLINE = 'user_offline';
+export const ADD_GROUP_MEMBER = 'add_group_member';

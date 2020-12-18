@@ -1,10 +1,9 @@
 import Vue from 'vue';
 import { MutationTree } from 'vuex';
-import { DEFAULT_GROUP } from '@/common';
 import {
   SET_SOCKET,
   SET_DROPPED,
-  SET_ACTIVE_GROUP_USER,
+  ADD_GROUP_MEMBER,
   ADD_GROUP_MESSAGE,
   SET_GROUP_MESSAGES,
   ADD_FRIEND_MESSAGE,
@@ -70,13 +69,18 @@ const mutations: MutationTree<ChatState> = {
       }
     });
   },
-
-
-  // 设置群在线人数
-  // [SET_ACTIVE_GROUP_USER](state, payload: ActiveGroupUser) {
-  //   Vue.set(userGather, user.userId, user);
-  // },
-
+  // 新增群成员
+  [ADD_GROUP_MEMBER](state, payload: {
+    groupId: string,
+    members: Friend[]
+  }) {
+    if (state.groupGather[payload.groupId].members) {
+      state.groupGather[payload.groupId].members = state.groupGather[payload.groupId].members!.concat(payload.members);
+    } else {
+      // vuex对象数组中对象改变不更新问题
+      Vue.set(state.groupGather[payload.groupId], 'members', payload.members);
+    }
+  },
   // 新增一条群消息
   [ADD_GROUP_MESSAGE](state, payload: GroupMessage) {
     if (state.groupGather[payload.groupId].messages) {
@@ -148,13 +152,13 @@ const mutations: MutationTree<ChatState> = {
   [DEL_GROUP](state, payload: GroupMap) {
     Vue.delete(state.groupGather, payload.groupId);
   },
+
   // 删除群成员
   [DEL_GROUP_MEMBER](state, payload: GroupMap) {
     const group = state.groupGather[payload.groupId];
     if (group) {
       group.members = group.members!.filter(member => member.userId !== payload.userId);
     }
-    Vue.delete(state.groupGather, payload.groupId);
   },
 
   // 删好友
