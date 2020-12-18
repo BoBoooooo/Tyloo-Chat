@@ -22,7 +22,7 @@
         @close="toggleGroupUser"
         :wrap-style="{ position: 'absolute',top: '0' }"
       >
-        <div class="active-content" v-if="activeGroupUser[activeRoom.groupId]">
+        <div class="active-content">
           <div class="active-content-title">
             <div class="active-content-title-label">群名</div>
             <div>
@@ -35,13 +35,13 @@
               <a-icon @click="showGroupNoticeDialog = true" :type="currentUserIsManager ? 'edit' : 'eye'" />
             </div>
           </div>
-          <div class="active-content-sum">群人数: ({{ activeNum }}/{{ groupUsers.length }})</div>
+          <div class="active-content-sum">群人数: ({{ activeNum }}/{{ activeRoom.members.length }})</div>
           <div class="active-content-adduser" @click="showContactDialog">
             <a-icon class="icon" type="plus-square" />
             <span class="label">添加成员</span>
           </div>
           <div class="active-content-users">
-            <div class="active-content-user" v-for="(data, index) in groupUsers" :key="data.userId + index">
+            <div class="active-content-user" v-for="(data, index) in activeRoom.members" :key="data.userId + index">
               <Avatar :data="data" :showTime="false"></Avatar>
               {{ data.username }}
               <!-- 群主标识 -->
@@ -85,7 +85,7 @@
       </template>
     </a-modal>
     <!-- 添加用户进群 -->
-    <ContactModal :groupUserList="groupUserList" ref="contactDialog"></ContactModal>
+    <ContactModal ref="contactDialog"></ContactModal>
   </div>
 </template>
 
@@ -121,8 +121,6 @@ export default class Panel extends Vue {
 
   @chatModule.State('socket') socket: SocketIOClient.Socket;
 
-  @chatModule.Getter('activeGroupUser') activeGroupUser: ActiveGroupUser;
-
   showGroupUser: boolean = false;
 
   // 修改/查看群公告dialog
@@ -140,21 +138,13 @@ export default class Panel extends Vue {
   get activeNum() {
     // 修复在线人数bug,当前聊天窗口为私聊窗口时 "(error during evaluation)"
     if (this.type === 'group') {
-      return Object.keys(this.activeGroupUser[this.activeRoom.groupId]).length;
+      return this.activeRoom.members!.filter(item => item.online).length;
     }
     return 0;
   }
 
   get isRobot() {
     return this.activeRoom.userId === '智能助手';
-  }
-
-  // 获取当前在线所有用户id
-  get activeGroupUserIdList() {
-    if (this.type === 'group') {
-      return Object.keys(this.activeGroupUser[this.activeRoom.groupId]);
-    }
-    return [];
   }
 
   // 当前用户是否为群主
@@ -197,18 +187,6 @@ export default class Panel extends Vue {
     });
   }
 
-  // 设置在线状态
-  filterGroupUsers(userIds: string[]) {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const user of this.groupUserList) {
-      const isOnlineUser = userIds.some(userId => userId === user.userId);
-      // 在线用户 online true,离线 false
-      // eslint-disable-next-line no-unused-expressions
-      isOnlineUser ? (user.online = 1) : (user.online = 0);
-    }
-    this.groupUsers = this.$lodash.orderBy(this.groupUserList, ['online', 'username'], ['desc', 'asc']);
-  }
-
   // 更新群信息
   handleUpdateGroupInfo() {
     if (!this.groupNotice) {
@@ -222,20 +200,6 @@ export default class Panel extends Vue {
     });
     this.showGroupNameDialog = false;
     this.showGroupNoticeDialog = false;
-  }
-
-  // 监听在线状态,发生变更则重新设置在线状态
-  @Watch('activeGroupUserIdList')
-  activeGroupUserIdListChange(userIds: string[]) {
-    this.filterGroupUsers(userIds);
-  }
-
-  @Watch('groupUserList', { immediate: true })
-  groupUserListChange() {
-    // 群成员发生改变,切换房间
-    this.groupNotice = this.activeRoom.notice;
-    this.groupName = this.activeRoom.groupName;
-    this.filterGroupUsers(this.activeGroupUserIdList);
   }
 
   @Watch('type')

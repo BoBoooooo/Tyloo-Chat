@@ -8,13 +8,13 @@
     - 建立连接
         - 用户默认加入userId房间
         - 默认加入defaultGroup房间
-        - 统计在线人数 (getActiveGroupUser)
     - 初始化聊天数据
         - socket.emit('chatData', user);
         - 获取当前账号所有好友 (friendGather)
         - 获取当前账号已加入的群 (groupGather)
         - 获取群聊记录 (group.messages)
         - 获取私聊记录 (friend.messages)
+        - 获取群成员信息 (group.members)
         - 获取跟当前账号有关的所有用户信息(userGather)
             - 包括friendGataher
             - 群聊记录中非好友的用户信息

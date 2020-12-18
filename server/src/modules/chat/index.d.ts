@@ -5,6 +5,7 @@ interface GroupDto {
   groupName: string
   notice: string
   messages?: GroupMessageDto[]
+  members?: FriendDto[]
   createTime: number
 }
 
@@ -31,6 +32,7 @@ interface FriendDto {
   tag?: string
   messages?: FriendMessageDto[]
   createTime: number
+  online?: 1 | 0 // 是否在线
 }
 
 // 好友消息

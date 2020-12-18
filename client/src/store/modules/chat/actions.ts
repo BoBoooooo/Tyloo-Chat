@@ -17,9 +17,12 @@ import {
   SET_USER_GATHER,
   SET_ACTIVE_ROOM,
   DEL_GROUP,
+  DEL_GROUP_MEMBER,
   DEL_FRIEND,
   ADD_UNREAD_GATHER,
   REVOKE_MESSAGE,
+  USER_ONLINE,
+  USER_OFFLINE,
 } from './mutation-types';
 
 const actions: ActionTree<ChatState, RootState> = {
@@ -39,11 +42,16 @@ const actions: ActionTree<ChatState, RootState> = {
       // 先保存好socket对象
       commit(SET_SOCKET, socket);
     });
+    // 用户上线
+    socket.on('userOnline', (data: any) => {
+      console.log('userOnline', data);
+      commit(USER_ONLINE, data.data);
+    });
 
-    // 初始化事件监听
-    socket.on('activeGroupUser', (data: any) => {
-      console.log('activeGroupUser', data);
-      commit(SET_ACTIVE_GROUP_USER, data.data);
+    // 用户下线
+    socket.on('userOffline', (data: any) => {
+      console.log('userOffline', data);
+      commit(USER_OFFLINE, data.data);
     });
 
     // 新建群组
@@ -82,10 +90,10 @@ const actions: ActionTree<ChatState, RootState> = {
       } else {
         const newUser = res.data.user;
         // 新用户设置到userGather
-        if (newUser.userId !== user.userId) {
-          commit(SET_USER_GATHER, newUser);
-          return Vue.prototype.$message.info(`${newUser.username}加入群${group.groupName}`);
-        }
+        // if (newUser.userId !== user.userId) {
+        //   commit(SET_USER_GATHER, newUser);
+        //   return Vue.prototype.$message.info(`${newUser.username}加入群${group.groupName}`);
+        // }
         console.log(state.groupGather, group.groupId);
         // 是用户自己 则加入到某个群
         if (!state.groupGather[group.groupId]) {
@@ -105,27 +113,27 @@ const actions: ActionTree<ChatState, RootState> = {
       }
       const newUser: Friend = res.data.user;
       const { group } = res.data;
-      const { friendGather } = state;
-      if (newUser.userId !== user.userId) {
-        commit(SET_USER_GATHER, newUser);
-        if (friendGather[newUser.userId]) {
-          // 当用户的好友更新了用户信息
-          let messages;
-          if (friendGather[newUser.userId].messages) {
-            // eslint-disable-next-line prefer-destructuring
-            messages = friendGather[newUser.userId].messages;
-          }
-          commit(SET_FRIEND_GATHER, newUser);
-          commit(SET_FRIEND_MESSAGES, messages);
-        }
-        // @ts-ignore 解决重复进群消息问题
-        if (window.msg === newUser.userId) {
-          return;
-        }
-        // @ts-ignore
-        window.msg = newUser.userId;
-        return Vue.prototype.$message.info(`${newUser.username}加入群${group.groupName}`);
-      }
+      // const { friendGather } = state;
+      // if (newUser.userId !== user.userId) {
+      //   commit(SET_USER_GATHER, newUser);
+      //   if (friendGather[newUser.userId]) {
+      //     // 当用户的好友更新了用户信息
+      //     let messages;
+      //     if (friendGather[newUser.userId].messages) {
+      //       // eslint-disable-next-line prefer-destructuring
+      //       messages = friendGather[newUser.userId].messages;
+      //     }
+      //     commit(SET_FRIEND_GATHER, newUser);
+      //     commit(SET_FRIEND_MESSAGES, messages);
+      //   }
+      //   // @ts-ignore 解决重复进群消息问题
+      //   if (window.msg === newUser.userId) {
+      //     return;
+      //   }
+      //   // @ts-ignore
+      //   window.msg = newUser.userId;
+      //   return Vue.prototype.$message.info(`${newUser.username}加入群${group.groupName}`);
+      // }
       if (!state.groupGather[group.groupId]) {
         commit(SET_GROUP_GATHER, group);
       }
@@ -201,6 +209,7 @@ const actions: ActionTree<ChatState, RootState> = {
       if (res.code) {
         return Vue.prototype.$message.error(res.msg);
       }
+      console.log(res);
       dispatch('handleChatData', res.data);
       commit(SET_DROPPED, false);
     });
@@ -208,10 +217,16 @@ const actions: ActionTree<ChatState, RootState> = {
     // 退出群组
     socket.on('exitGroup', (res: ServerRes) => {
       if (!res.code) {
-        commit(DEL_GROUP, res.data);
-        commit(SET_ACTIVE_ROOM, state.groupGather[DEFAULT_GROUP]);
-        Vue.prototype.$message.success(res.msg);
-      } else {
+        // 如果是当前用户退群,则删除群聊
+        if (res.data.userId === user.userId) {
+          commit(DEL_GROUP, res.data);
+          commit(SET_ACTIVE_ROOM, state.groupGather[DEFAULT_GROUP]);
+          Vue.prototype.$message.success(res.msg);
+        } else {
+          // 广播给其他用户,从群成员中删除该成员
+          commit(DEL_GROUP_MEMBER, res.data);
+        }
+      } else if (res.data.userId === user.userId) {
         Vue.prototype.$message.error(res.msg);
       }
     });
