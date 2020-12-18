@@ -787,6 +787,22 @@ export class ChatGateway {
     return
   }
 
+  // 更新用户信息(头像\用户名)
+  @SubscribeMessage('updateUserInfo')
+  async updateUserInfo(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() userId
+  ): Promise<any> {
+    const user = await this.userRepository.findOne({
+      userId
+    })
+    // 广播给所有用户我的信息更新了
+    client.broadcast.emit('updateUserInfo', {
+      code: RCode.OK,
+      msg: 'userOnline',
+      data: user
+    })
+  }
   // 邀请好友入群
   @SubscribeMessage('inviteFriendsIntoGroup')
   async inviteFriendsIntoGroup(

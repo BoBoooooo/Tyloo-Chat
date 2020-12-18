@@ -24,6 +24,7 @@ import {
   USER_ONLINE,
   USER_OFFLINE,
   ADD_GROUP_MEMBER,
+  UPDATE_USER_INFO,
 } from './mutation-types';
 
 const actions: ActionTree<ChatState, RootState> = {
@@ -121,27 +122,6 @@ const actions: ActionTree<ChatState, RootState> = {
       }
       const newUser: Friend = res.data.user;
       const { group } = res.data;
-      // const { friendGather } = state;
-      // if (newUser.userId !== user.userId) {
-      //   commit(SET_USER_GATHER, newUser);
-      //   if (friendGather[newUser.userId]) {
-      //     // 当用户的好友更新了用户信息
-      //     let messages;
-      //     if (friendGather[newUser.userId].messages) {
-      //       // eslint-disable-next-line prefer-destructuring
-      //       messages = friendGather[newUser.userId].messages;
-      //     }
-      //     commit(SET_FRIEND_GATHER, newUser);
-      //     commit(SET_FRIEND_MESSAGES, messages);
-      //   }
-      //   // @ts-ignore 解决重复进群消息问题
-      //   if (window.msg === newUser.userId) {
-      //     return;
-      //   }
-      //   // @ts-ignore
-      //   window.msg = newUser.userId;
-      //   return Vue.prototype.$message.info(`${newUser.username}加入群${group.groupName}`);
-      // }
       if (!state.groupGather[group.groupId]) {
         commit(SET_GROUP_GATHER, group);
       }
@@ -258,6 +238,12 @@ const actions: ActionTree<ChatState, RootState> = {
       }
     });
 
+    // 更新好友信息
+    socket.on('updateUserInfo', (res:ServerRes) => {
+      if (!res.code) {
+        commit(UPDATE_USER_INFO, res.data);
+      }
+    });
     // 删除好友
     socket.on('exitFriend', (res: ServerRes) => {
       if (!res.code) {

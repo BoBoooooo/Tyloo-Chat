@@ -18,3 +18,4 @@ export const REVOKE_MESSAGE = 'revoke_message';
 export const USER_ONLINE = 'user_online';
 export const USER_OFFLINE = 'user_offline';
 export const ADD_GROUP_MEMBER = 'add_group_member';
+export const UPDATE_USER_INFO = 'update_user_info';

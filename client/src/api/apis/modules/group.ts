@@ -18,11 +18,3 @@ export async function getGroupMessages(params: PagingParams) {
     params,
   });
 }
-
-/**
- * 获取所有群成员
- */
-export async function getGroupUser(groupId: string) {
-  // eslint-disable-next-line no-return-await
-  return await axios.get(`/group/groupUser?groupId=${groupId}`);
-}

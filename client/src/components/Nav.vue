@@ -108,7 +108,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { setUserAvatar } from '@/api/apis';
-import { DEFAULT_BACKGROUND, DEFAULT_GROUP } from '@/common/index';
+import { DEFAULT_BACKGROUND } from '@/common/index';
 import { namespace } from 'vuex-class';
 import * as apis from '@/api/apis';
 import { processReturn, nameVerify, passwordVerify } from '@/utils/common';
@@ -192,10 +192,7 @@ export default class Tool extends Vue {
       this.setUser(data);
       this.setUserGather(data);
       // 通知其他用户个人信息改变
-      this.socket.emit('joinGroupSocket', {
-        groupId: DEFAULT_GROUP,
-        userId: data.userId,
-      });
+      this.socket.emit('updateUserInfo', data.userId);
     }
   }
 
@@ -239,10 +236,7 @@ export default class Tool extends Vue {
       this.uploading = false;
       this.showUpload = false;
       // 通知其他用户个人信息改变
-      this.socket.emit('joinGroupSocket', {
-        groupId: DEFAULT_GROUP,
-        userId: data.userId,
-      });
+      this.socket.emit('updateUserInfo', data.userId);
     }
   }
 

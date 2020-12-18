@@ -103,6 +103,7 @@ export default class Avatar extends Vue {
     cursor: pointer;
     width: 40px;
     height: 40px;
+    border-radius: 0;
   }
   .offLine {
     filter: grayscale(100%);

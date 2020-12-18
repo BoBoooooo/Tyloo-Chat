@@ -46,31 +46,6 @@ export class GroupService {
     }
   }
 
-  async getGroupUsers(groupId: string) {
-    try {
-      let data
-      if (groupId) {
-        // groupUser join users表 返回群内所有成员信息
-        const qb = this.groupUserRepository
-          .createQueryBuilder('group_map')
-          .innerJoin('user', 'user', 'user.userId = group_map.userId')
-        qb.select('group_map.*')
-          .addSelect('user.username', 'username')
-          .addSelect('user.avatar', 'avatar')
-          .where('group_map.groupId = :id', { id: groupId })
-        const list = await qb.getRawMany()
-        const total = await qb.getCount()
-        data = {
-          list,
-          total
-        }
-        return { msg: '获取群的所有用户成功', data }
-      }
-    } catch (e) {
-      return { code: RCode.ERROR, msg: '获取群的用户失败', data: e }
-    }
-  }
-
   async getGroupMessages(groupId: string, current: number, pageSize: number) {
     let groupMessage = await getRepository(GroupMessage)
       .createQueryBuilder('groupMessage')

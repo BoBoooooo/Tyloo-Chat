@@ -20,6 +20,7 @@ import {
   REVOKE_MESSAGE,
   USER_ONLINE,
   USER_OFFLINE,
+  UPDATE_USER_INFO,
 } from './mutation-types';
 import { ChatState } from './state';
 
@@ -146,6 +147,20 @@ const mutations: MutationTree<ChatState> = {
   // 设置所有的好友的用户详细信息(头像,昵称等)
   [SET_FRIEND_GATHER](state, payload: User) {
     Vue.set(state.friendGather, payload.userId, payload);
+  },
+
+  // 设置所有的用户的用户详细信息(头像,昵称等)
+  [UPDATE_USER_INFO](state, user: User) {
+    const { userId, username, avatar } = user;
+    const { userGather, friendGather } = state;
+    if (userGather[userId]) {
+      userGather[userId].username = username;
+      userGather[userId].avatar = avatar;
+    }
+    if (friendGather[userId]) {
+      friendGather[userId].username = username;
+      friendGather[userId].avatar = avatar;
+    }
   },
 
   // 退群
