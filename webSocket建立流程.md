@@ -8,6 +8,7 @@
     - 建立连接
         - 用户默认加入userId房间
         - 默认加入defaultGroup房间
+        - 广播给所有其他在线用户,我上线了
     - 初始化聊天数据
         - socket.emit('chatData', user);
         - 获取当前账号所有好友 (friendGather)
@@ -29,4 +30,5 @@
         - 设置/刷新activeRoom
             - 默认为DEFAULT_GROUP
             - 已有activeRoom则重新赋值activeRoom已便Watch触发监听
-
+    - 断开连接
+        - 广播给所有其他在线用户,我下线了
