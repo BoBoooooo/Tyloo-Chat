@@ -85,7 +85,7 @@
       </template>
     </a-modal>
     <!-- 添加用户进群 -->
-    <ContactModal ref="contactDialog"></ContactModal>
+    <ContactModal v-if="activeRoom.members" ref="contactDialog"></ContactModal>
   </div>
 </template>
 
@@ -133,7 +133,7 @@ export default class Panel extends Vue {
 
   get activeNum() {
     // 修复在线人数bug,当前聊天窗口为私聊窗口时 "(error during evaluation)"
-    if (this.type === 'group') {
+    if (this.type === 'group' && this.activeRoom.members) {
       return this.activeRoom.members!.filter(item => item.online).length;
     }
     return 0;
@@ -204,12 +204,18 @@ export default class Panel extends Vue {
     this.showGroupNoticeDialog = false;
   }
 
-  @Watch('type')
-  changeType() {
-    if (this.type === 'friend') {
-      this.showGroupUser = false;
-    }
+ @Watch('activeRoom.groupId')
+  activeRoomGroupChange() {
+    this.groupName = this.activeRoom.groupName;
+    this.groupNotice = this.activeRoom.notice;
   }
+
+  @Watch('type')
+ changeType() {
+   if (this.type === 'friend') {
+     this.showGroupUser = false;
+   }
+ }
 }
 </script>
 <style lang="scss" scoped>

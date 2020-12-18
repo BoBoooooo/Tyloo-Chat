@@ -243,9 +243,14 @@ const actions: ActionTree<ChatState, RootState> = {
     // 更新群信息
     socket.on('updateGroupInfo', (res:ServerRes) => {
       if (!res.code) {
-        if (state.groupGather[res.data.groupId]) {
-          commit(SET_GROUP_GATHER, res.data);
-          commit(SET_ACTIVE_ROOM, res.data);
+        const group = state.groupGather[res.data.groupId];
+        if (group) {
+          group.groupName = res.data.groupName;
+          group.notice = res.data.notice;
+          if (state.activeRoom!.groupId) {
+            state.activeRoom!.groupName = res.data.groupName;
+            state.activeRoom!.notice = res.data.notice;
+          }
           if (res.data.userId === user.userId) {
             Vue.prototype.$message.success(res.msg);
           }

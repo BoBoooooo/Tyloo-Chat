@@ -103,7 +103,7 @@ export default class ContactModal extends Vue {
   // 获取联系人列表,按A-Z字母排序
   get contactList() {
     // 获取不在本群中的好友
-    const list = Object.values(this.friendGather).filter(friend => !this.activeRoom.members.some(member => member.userId === friend.userId));
+    const list = Object.values(this.friendGather).filter(friend => !this.activeRoom.members!.some(member => member.userId === friend.userId));
     // 此处拿到所有好友拼音首字母,使用cnchar插件
     // https://github.com/theajack/cnchar
     const charList = list
