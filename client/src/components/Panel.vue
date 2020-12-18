@@ -20,9 +20,9 @@
         :visible="showGroupUser"
         :get-container="getElement"
         @close="toggleGroupUser"
-        :wrap-style="{ position: 'absolute', top: '60px' }"
+        :wrap-style="{ position: 'absolute',top: '0' }"
       >
-        <div class="active-content" v-if="activeGroupUser[activeRoom.groupId]">
+        <div class="active-content">
           <div class="active-content-title">
             <div class="active-content-title-label">群名</div>
             <div>
@@ -36,6 +36,10 @@
             </div>
           </div>
           <div class="active-content-sum">群人数: ({{ activeNum }}/{{ groupUsers.length }})</div>
+          <div class="active-content-adduser" @click="showContactDialog">
+            <a-icon class="icon" type="plus-square" />
+            <span class="label">添加成员</span>
+          </div>
           <div class="active-content-users">
             <div class="active-content-user" v-for="(data, index) in groupUsers" :key="data.userId + index">
               <Avatar :data="data" :showTime="false"></Avatar>
@@ -80,6 +84,8 @@
         <a-button @click="() => (showGroupNameDialog = false)">关闭</a-button>
       </template>
     </a-modal>
+    <!-- 添加用户进群 -->
+    <ContactModal v-if="activeRoom.members" ref="contactDialog"></ContactModal>
   </div>
 </template>
 
@@ -89,6 +95,7 @@ import {
 } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import Avatar from './Avatar.vue';
+import ContactModal from './ContactModal.vue';
 
 const chatModule = namespace('chat');
 const appModule = namespace('app');
@@ -96,12 +103,15 @@ const appModule = namespace('app');
 @Component({
   components: {
     Avatar,
+    ContactModal,
   },
 })
 export default class Panel extends Vue {
-  @Prop({ default: 'group' }) type: string;
+  $refs!: {
+    contactDialog: HTMLFormElement;
+  };
 
-  @Prop({ default: () => [], type: Array }) groupUserList: Array<User>;
+  @Prop({ default: 'group' }) type: string;
 
   @appModule.Getter('user') user: User;
 
@@ -109,15 +119,13 @@ export default class Panel extends Vue {
 
   @chatModule.State('socket') socket: SocketIOClient.Socket;
 
-  @chatModule.Getter('activeGroupUser') activeGroupUser: ActiveGroupUser;
-
   showGroupUser: boolean = false;
 
+  // 修改/查看群公告dialog
   showGroupNoticeDialog: boolean = false;
 
+  // 修改群名Dialog
   showGroupNameDialog: boolean = false;
-
-  groupUsers: Array<User> = [];
 
   groupNotice: string = ''; // 群公告
 
@@ -125,8 +133,8 @@ export default class Panel extends Vue {
 
   get activeNum() {
     // 修复在线人数bug,当前聊天窗口为私聊窗口时 "(error during evaluation)"
-    if (this.type === 'group') {
-      return Object.keys(this.activeGroupUser[this.activeRoom.groupId]).length;
+    if (this.type === 'group' && this.activeRoom.members) {
+      return this.activeRoom.members!.filter(item => item.online).length;
     }
     return 0;
   }
@@ -135,17 +143,19 @@ export default class Panel extends Vue {
     return this.activeRoom.userId === '智能助手';
   }
 
-  // 获取当前在线所有用户id
-  get activeGroupUserIdList() {
-    if (this.type === 'group') {
-      return Object.keys(this.activeGroupUser[this.activeRoom.groupId]);
-    }
-    return [];
-  }
-
   // 当前用户是否为群主
   get currentUserIsManager() {
     return this.isManager(this.user);
+  }
+
+  // 群成员排序,在线的排在前
+  get groupUsers() {
+    return this.$lodash.orderBy(this.activeRoom.members,
+      ['online', 'username'], ['desc', 'asc']);
+  }
+
+  showContactDialog() {
+    this.$refs.contactDialog.showDialog();
   }
 
   // 群成员是否为群主
@@ -158,7 +168,7 @@ export default class Panel extends Vue {
   }
 
   getElement() {
-    return document.getElementsByClassName('message')[0];
+    return document.getElementsByClassName('message-container')[0];
   }
 
   exitGroup() {
@@ -179,18 +189,6 @@ export default class Panel extends Vue {
     });
   }
 
-  // 设置在线状态
-  filterGroupUsers(userIds: string[]) {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const user of this.groupUserList) {
-      const isOnlineUser = userIds.some(userId => userId === user.userId);
-      // 在线用户 online true,离线 false
-      // eslint-disable-next-line no-unused-expressions
-      isOnlineUser ? (user.online = 1) : (user.online = 0);
-    }
-    this.groupUsers = this.$lodash.orderBy(this.groupUserList, ['online', 'username'], ['desc', 'asc']);
-  }
-
   // 更新群信息
   handleUpdateGroupInfo() {
     if (!this.groupNotice) {
@@ -206,26 +204,18 @@ export default class Panel extends Vue {
     this.showGroupNoticeDialog = false;
   }
 
-  // 监听在线状态,发生变更则重新设置在线状态
-  @Watch('activeGroupUserIdList')
-  activeGroupUserIdListChange(userIds: string[]) {
-    this.filterGroupUsers(userIds);
-  }
-
-  @Watch('groupUserList', { immediate: true })
-  groupUserListChange() {
-    // 群成员发生改变,切换房间
-    this.groupNotice = this.activeRoom.notice;
+ @Watch('activeRoom.groupId')
+  activeRoomGroupChange() {
     this.groupName = this.activeRoom.groupName;
-    this.filterGroupUsers(this.activeGroupUserIdList);
+    this.groupNotice = this.activeRoom.notice;
   }
 
   @Watch('type')
-  changeType() {
-    if (this.type === 'friend') {
-      this.showGroupUser = false;
-    }
-  }
+ changeType() {
+   if (this.type === 'friend') {
+     this.showGroupUser = false;
+   }
+ }
 }
 </script>
 <style lang="scss" scoped>

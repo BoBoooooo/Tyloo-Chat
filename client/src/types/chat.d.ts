@@ -14,6 +14,7 @@ interface Group {
   messages?: GroupMessage[];
   createTime: number;
   isTop?: boolean; // 是否置顶聊天
+  members?: Friend[]; // 群成员列表
 }
 
 // 群与用户关联表
@@ -49,6 +50,7 @@ interface Friend {
   messages?: FriendMessage[];
   createTime?: number;
   isTop?: boolean; // 是否置顶聊天
+  online?: 1 | 0; // 是否在线
 }
 
 // 用户与好友关联表
@@ -98,13 +100,6 @@ interface ServerRes {
   code: number;
   msg: string;
   data: any;
-}
-
-// 所有群的在线用户合集
-interface ActiveGroupUser {
-  [key: string]: {
-    [key: string]: User;
-  };
 }
 
 // 未读消息对象

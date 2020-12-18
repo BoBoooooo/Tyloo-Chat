@@ -1,3 +1,10 @@
+/*
+ * @file: 后台webSocket
+ * @author: BoBo
+ * @copyright: BoBo
+ * @Date: 2020-10-04 18:10:14
+ */
+
 import { GroupService } from './../group/group.service'
 import {
   defaultGroup,
@@ -54,30 +61,43 @@ export class ChatGateway {
 
   // socket连接钩子
   async handleConnection(client: Socket): Promise<string> {
-    const userRoom = client.handshake.query.userId
+    const userId = client.handshake.query.userId
     // 连接默认加入DEFAULG_GROUP
     // TODO 待优化
     client.join(defaultGroup)
     // 进来统计一下在线人数
-    this.getActiveGroupUser()
+    console.log('用户上线', userId)
+    // 上线提醒广播给所有人
+    client.broadcast.emit('userOnline', {
+      code: RCode.OK,
+      msg: 'userOnline',
+      data: userId
+    })
+
     // 用户独有消息房间 根据userId
-    if (userRoom) {
-      client.join(userRoom)
+    if (userId) {
+      client.join(userId)
     }
     return '连接成功'
   }
 
   // socket断连钩子
-  async handleDisconnect(): Promise<any> {
-    this.getActiveGroupUser()
+  async handleDisconnect(client: Socket): Promise<any> {
+    const userId = client.handshake.query.userId
+    console.log('用户下线', userId)
+    // 下线提醒广播给所有人
+    client.broadcast.emit('userOffline', {
+      code: RCode.OK,
+      msg: 'userOffline',
+      data: userId
+    })
   }
 
   // 创建群组
-  // 待优化,可以不走ws放入http请求
   @SubscribeMessage('addGroup')
   async addGroup(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: Group
+    @MessageBody() data: GroupDto
   ): Promise<any> {
     const isUser = await this.userRepository.findOne({ userId: data.userId })
     if (isUser) {
@@ -98,12 +118,14 @@ export class ChatGateway {
       data = await this.groupRepository.save(data)
       client.join(data.groupId)
       const group = await this.groupUserRepository.save(data)
+      const member = isUser as FriendDto
+      member.online = 1
+      data.members = [member]
       this.server.to(group.groupId).emit('addGroup', {
         code: RCode.OK,
         msg: `成功创建群${data.groupName}`,
         data: group
       })
-      this.getActiveGroupUser()
     } else {
       this.server
         .to(data.userId)
@@ -476,6 +498,16 @@ export class ChatGateway {
       let friendArr: FriendDto[] = []
       const userGather: { [key: string]: User } = {}
       let userArr: FriendDto[] = []
+      // @ts-ignore;
+      let onlineUserIdArr = Object.values(this.server.engine.clients).map(
+        item => {
+          // @ts-ignore;
+          return item.request._query.userId
+        }
+      )
+      // 所有在线用户userId
+      // 数组去重
+      onlineUserIdArr = Array.from(new Set(onlineUserIdArr))
 
       // 找到用户所属的群
       const groupMap: GroupMap[] = await this.groupUserRepository.find({
@@ -489,6 +521,7 @@ export class ChatGateway {
       const groupPromise = groupMap.map(async item => {
         return await this.groupRepository.findOne({ groupId: item.groupId })
       })
+      // 获取所有群聊消息
       const groupMessagePromise = groupMap.map(async item => {
         const groupMessage = await getRepository(GroupMessage)
           .createQueryBuilder('group_message')
@@ -537,25 +570,49 @@ export class ChatGateway {
       const groupsMessage: Array<GroupMessageDto[]> = await Promise.all(
         groupMessagePromise
       )
-      groups.map((group, index) => {
-        if (groupsMessage[index] && groupsMessage[index].length) {
-          group.messages = groupsMessage[index]
-        }
-      })
+
+      await Promise.all(
+        groups.map(async (group, index) => {
+          if (groupsMessage[index] && groupsMessage[index].length) {
+            group.messages = groupsMessage[index]
+          }
+          group.members = []
+          // 获取群成员信息
+          const groupUserArr = await this.groupUserRepository.find({
+            groupId: group.groupId
+          })
+          if (groupUserArr.length) {
+            for (const u of groupUserArr) {
+              const _user = await this.userRepository.findOne({
+                userId: u.userId
+              })
+              onlineUserIdArr.includes(_user.userId)
+                ? ((_user as FriendDto).online = 1)
+                : ((_user as FriendDto).online = 0)
+
+              group.members.push(_user)
+            }
+          }
+          return Promise.resolve(group)
+        })
+      )
+
       groupArr = groups
 
       const friends: FriendDto[] = await Promise.all(friendPromise)
       const friendsMessage: Array<FriendMessageDto[]> = await Promise.all(
         friendMessagePromise
       )
+
       friends.map((friend, index) => {
         if (friendsMessage[index] && friendsMessage[index].length) {
           friend.messages = friendsMessage[index]
         }
+        // 设置好友在线状态
+        friend.online = onlineUserIdArr.includes(friend.userId) ? 1 : 0
       })
       friendArr = friends
       userArr = [...Object.values(userGather), ...friendArr]
-
       this.server.to(user.userId).emit('chatData', {
         code: RCode.OK,
         msg: '获取聊天数据成功',
@@ -589,10 +646,9 @@ export class ChatGateway {
     })
     if (user && group && map) {
       await this.groupUserRepository.remove(map)
-      this.server
-        .to(groupMap.userId)
+      return this.server
+        .to(groupMap.groupId)
         .emit('exitGroup', { code: RCode.OK, msg: '退群成功', data: groupMap })
-      return this.getActiveGroupUser()
     }
     this.server
       .to(groupMap.userId)
@@ -712,5 +768,70 @@ export class ChatGateway {
     const res = await this.groupService.update(group)
     this.server.to(data.groupId).emit('updateGroupInfo', res)
     return
+  }
+
+  // 更新用户信息(头像\用户名)
+  @SubscribeMessage('updateUserInfo')
+  async updateUserInfo(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() userId
+  ): Promise<any> {
+    const user = await this.userRepository.findOne({
+      userId
+    })
+    // 广播给所有用户我的信息更新了
+    client.broadcast.emit('updateUserInfo', {
+      code: RCode.OK,
+      msg: 'userOnline',
+      data: user
+    })
+  }
+  // 邀请好友入群
+  @SubscribeMessage('inviteFriendsIntoGroup')
+  async inviteFriendsIntoGroup(
+    @MessageBody() data: FriendsIntoGroup
+  ): Promise<any> {
+    try {
+      // 获取所有邀请好友
+      const isUser = await this.userRepository.findOne({ userId: data.userId })
+      const group = await this.groupRepository.findOne({
+        groupId: data.groupId
+      })
+      const res = {
+        group: group,
+        friendIds: data.friendIds,
+        userId: data.userId,
+        invited: true // 标记为,此处跟单人加群区分
+      }
+      if (isUser) {
+        for (const friendId of data.friendIds) {
+          if (group) {
+            data.groupId = group.groupId
+            await this.groupUserRepository.save({
+              groupId: data.groupId,
+              userId: friendId
+            })
+            // 广播所有被邀请者 (此处暂不判断该好友是否在线,统一广播,后期可优化)
+            this.server.to(friendId).emit('joinGroup', {
+              code: RCode.OK,
+              msg: isUser.username + '邀请您加入群聊' + group.groupName,
+              data: res
+            })
+          }
+        }
+        console.log('inviteFriendsIntoGroup', res)
+        this.server.to(group.groupId).emit('joinGroup', {
+          code: RCode.OK,
+          msg: '邀请' + data.friendIds.length + '位好友加入群聊',
+          data: res
+        })
+      }
+    } catch (error) {
+      this.server.to(data.userId).emit('joinGroup', {
+        code: RCode.FAIL,
+        msg: '邀请失败:' + error,
+        data: null
+      })
+    }
   }
 }

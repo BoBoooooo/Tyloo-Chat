@@ -99,7 +99,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import { parseText, formatTime } from '@/utils/common';
-import { DEFAULT_GROUP, DEFAULT_ROBOT } from '@/common';
+import { DEFAULT_ROBOT } from '@/common';
 
 const chatModule = namespace('chat');
 const appModule = namespace('app');
@@ -112,8 +112,6 @@ export default class Room extends Vue {
   @chatModule.Getter('friendGather') friendGather: FriendGather;
 
   @chatModule.Getter('unReadGather') unReadGather: UnReadGather;
-
-  @chatModule.Getter('activeGroupUser') activeGroupUser: ActiveGroupUser;
 
   @chatModule.Mutation('lose_unread_gather') lose_unread_gather: Function;
 
@@ -133,10 +131,6 @@ export default class Room extends Vue {
   @Watch('friendGather', { deep: true })
   changeFriendGather() {
     this.sortChat();
-  }
-
-  get activeUserGather() {
-    return this.activeGroupUser[DEFAULT_GROUP];
   }
 
   get currentUserId() {
@@ -184,11 +178,12 @@ export default class Room extends Vue {
     }
   }
 
-  // 是否在线
-  avatarOffLine(chat: any) {
+  // 用户是否离线状态
+  avatarOffLine(chat: Friend) {
     // 机器人默认在线
-    return chat.userId !== DEFAULT_ROBOT ? !this.activeUserGather[chat.userId] : false;
+    return chat.userId === DEFAULT_ROBOT ? false : !chat.online;
   }
+
 
   // 获取消息列表数据
   async sortChat() {
@@ -288,6 +283,7 @@ export default class Room extends Vue {
       top: 10px;
       ::v-deep.ant-badge-count {
         box-shadow: none;
+        width: 10px;
       }
     }
     .room-card-type {

@@ -28,6 +28,8 @@ import {
   Badge,
   Tree,
   Collapse,
+  Transfer,
+  ConfigProvider,
 } from 'ant-design-vue';
 
 Vue.use(Avatar);
@@ -50,4 +52,6 @@ Vue.use(Popconfirm);
 Vue.use(Badge);
 Vue.use(Tree);
 Vue.use(Collapse);
+Vue.use(Transfer);
+Vue.use(ConfigProvider);
 Vue.prototype.$message = message;

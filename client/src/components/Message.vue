@@ -5,17 +5,17 @@
  * @Date: 2020年11月05 16:40:11
 -->
 <template>
-  <div class="message">
+  <div class="message-container">
     <div class="message-header">
       <div class="message-header-box">
         <span class="message-header-text"
           >{{ chatName }}
           <template v-if="groupGather[activeRoom.groupId]">
-            ({{ groupUserList.length }})
+            ({{ activeRoom.members.length }})
           </template>
         </span>
         <a-icon type="sync" spin class="message-header-icon" v-if="dropped" />
-        <Panel :groupUserList="groupUserList" v-if="groupGather[activeRoom.groupId]" type="group"></Panel>
+        <Panel v-if="groupGather[activeRoom.groupId]" type="group"></Panel>
         <Panel v-else type="friend"></Panel>
       </div>
     </div>
@@ -65,7 +65,7 @@
               </div>
               <!-- 自定义右键菜单 -->
               <v-contextmenu :ref="'message' + item.userId + item.time">
-                <v-contextmenu-item @click="handleCommand('COPY', item)">复制</v-contextmenu-item>
+                <v-contextmenu-item v-if="item.messageType === 'text'" @click="handleCommand('COPY', item)">复制</v-contextmenu-item>
                 <v-contextmenu-item v-if="isShowRevoke(item)" @click="handleCommand('REVOKE', item)">撤回</v-contextmenu-item>
               </v-contextmenu>
             </div>
@@ -141,8 +141,6 @@ export default class Message extends Vue {
   isNoData: boolean = false;
 
   lastTime: number = 0;
-
-  groupUserList: Array<User> = [];
 
   mounted() {
     this.messageDom = document.getElementsByClassName('message-main')[0] as HTMLElement;
@@ -256,17 +254,6 @@ export default class Message extends Vue {
         FriendMessage[];
     }
     this.scrollToBottom();
-  }
-
-  // 切换至群组聊天窗口时需要获取当前群组所有人员
-  @Watch('activeRoom.groupId', {
-    immediate: true,
-  })
-  async activeRoomChange(val: string) {
-    if (val) {
-      const res = await api.getGroupUser(val);
-      this.groupUserList = res.data.data.list;
-    }
   }
 
   /**
@@ -462,7 +449,7 @@ export default class Message extends Vue {
 <style lang="scss" scoped>
 @import '@/styles/theme';
 
-.message {
+.message-container {
   overflow: hidden;
   height: 100%;
   position: relative;

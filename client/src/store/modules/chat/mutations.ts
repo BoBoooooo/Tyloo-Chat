@@ -1,10 +1,9 @@
 import Vue from 'vue';
 import { MutationTree } from 'vuex';
-import { DEFAULT_GROUP } from '@/common';
 import {
   SET_SOCKET,
   SET_DROPPED,
-  SET_ACTIVE_GROUP_USER,
+  ADD_GROUP_MEMBER,
   ADD_GROUP_MESSAGE,
   SET_GROUP_MESSAGES,
   ADD_FRIEND_MESSAGE,
@@ -14,10 +13,14 @@ import {
   SET_FRIEND_GATHER,
   SET_USER_GATHER,
   DEL_GROUP,
+  DEL_GROUP_MEMBER,
   DEL_FRIEND,
   ADD_UNREAD_GATHER,
   LOSE_UNREAD_GATHER,
   REVOKE_MESSAGE,
+  USER_ONLINE,
+  USER_OFFLINE,
+  UPDATE_USER_INFO,
 } from './mutation-types';
 import { ChatState } from './state';
 
@@ -32,17 +35,53 @@ const mutations: MutationTree<ChatState> = {
     state.dropped = payload;
   },
 
-  // 设置群在线人数
-  [SET_ACTIVE_GROUP_USER](state, payload: ActiveGroupUser) {
-    state.activeGroupUser = payload;
-    const { userGather } = state;
-    // eslint-disable-next-line no-restricted-syntax
-    for (const user of Object.values(payload[DEFAULT_GROUP])) {
-      // 如果当前userGather没有该在线用户, 应该马上存储, 不然该在下雨用户发消息, 就看不见他的信息
-      Vue.set(userGather, user.userId, user);
+  /**
+   * 用户上线
+   * @param state
+   * @param payload userId
+   */
+  [USER_ONLINE](state, userId: string) {
+    // 更新好友列表用户状态
+    if (state.friendGather[userId]) {
+      console.log(`${userId}----上线`);
+      Vue.set(state.friendGather[userId], 'online', 1);
+      console.log(state.friendGather);
     }
+    // 更新所有群组中该成员在线状态
+    (Object.values(state.groupGather) as Group[]).forEach((group) => {
+      const member = group.members!.find(m => m.userId === userId);
+      if (member) {
+        member.online = 1;
+      }
+    });
   },
 
+  // 用户下线
+  [USER_OFFLINE](state, userId: string) {
+    if (state.friendGather[userId]) {
+      console.log(`${userId}----下线`);
+      Vue.set(state.friendGather[userId], 'online', 0);
+    }
+    // 更新所有群组中该成员在线状态
+    (Object.values(state.groupGather) as Group[]).forEach((group) => {
+      const member = group.members!.find(m => m.userId === userId);
+      if (member) {
+        member.online = 0;
+      }
+    });
+  },
+  // 新增群成员
+  [ADD_GROUP_MEMBER](state, payload: {
+    groupId: string,
+    members: Friend[]
+  }) {
+    if (state.groupGather[payload.groupId].members) {
+      state.groupGather[payload.groupId].members = state.groupGather[payload.groupId].members!.concat(payload.members);
+    } else {
+      // vuex对象数组中对象改变不更新问题
+      Vue.set(state.groupGather[payload.groupId], 'members', payload.members);
+    }
+  },
   // 新增一条群消息
   [ADD_GROUP_MESSAGE](state, payload: GroupMessage) {
     if (state.groupGather[payload.groupId].messages) {
@@ -110,9 +149,31 @@ const mutations: MutationTree<ChatState> = {
     Vue.set(state.friendGather, payload.userId, payload);
   },
 
+  // 设置所有的用户的用户详细信息(头像,昵称等)
+  [UPDATE_USER_INFO](state, user: User) {
+    const { userId, username, avatar } = user;
+    const { userGather, friendGather } = state;
+    if (userGather[userId]) {
+      userGather[userId].username = username;
+      userGather[userId].avatar = avatar;
+    }
+    if (friendGather[userId]) {
+      friendGather[userId].username = username;
+      friendGather[userId].avatar = avatar;
+    }
+  },
+
   // 退群
   [DEL_GROUP](state, payload: GroupMap) {
     Vue.delete(state.groupGather, payload.groupId);
+  },
+
+  // 删除群成员
+  [DEL_GROUP_MEMBER](state, payload: GroupMap) {
+    const group = state.groupGather[payload.groupId];
+    if (group) {
+      group.members = group.members!.filter(member => member.userId !== payload.userId);
+    }
   },
 
   // 删好友

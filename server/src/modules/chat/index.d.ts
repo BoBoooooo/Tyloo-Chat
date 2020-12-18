@@ -5,6 +5,7 @@ interface GroupDto {
   groupName: string
   notice: string
   messages?: GroupMessageDto[]
+  members?: FriendDto[]
   createTime: number
 }
 
@@ -31,6 +32,7 @@ interface FriendDto {
   tag?: string
   messages?: FriendMessageDto[]
   createTime: number
+  online?: 1 | 0 // 是否在线
 }
 
 // 好友消息
@@ -52,4 +54,11 @@ interface UserFriendMap {
   userId: string
   friendId: string
   friendUserName: string
+}
+
+// 邀请好友入群DTO
+interface FriendsIntoGroup {
+  friendIds: string[] // 被邀请人
+  groupId: string // 群组ID
+  userId: string // 邀请人
 }

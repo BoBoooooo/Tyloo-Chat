@@ -58,9 +58,13 @@ npm i
 npm run start
 ```
 
-## 部署
+## 如何部署
 
 [Deploy](./deploy.md)
+
+## 思路概述
+
+[webSocket建立流程](./webSocket建立流程.md)
 
 ## 感谢
 
