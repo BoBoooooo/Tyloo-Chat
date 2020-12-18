@@ -65,7 +65,7 @@
               </div>
               <!-- 自定义右键菜单 -->
               <v-contextmenu :ref="'message' + item.userId + item.time">
-                <v-contextmenu-item @click="handleCommand('COPY', item)">复制</v-contextmenu-item>
+                <v-contextmenu-item v-if="item.messageType === 'text'" @click="handleCommand('COPY', item)">复制</v-contextmenu-item>
                 <v-contextmenu-item v-if="isShowRevoke(item)" @click="handleCommand('REVOKE', item)">撤回</v-contextmenu-item>
               </v-contextmenu>
             </div>
