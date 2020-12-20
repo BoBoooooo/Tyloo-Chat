@@ -10,7 +10,7 @@
       <div slot="content" class="avatar-card">
         <a-card :bordered="false" style="width: 300px">
           <template slot="title">
-            <h2>{{ data.username }}</h2>
+            <h2>{{ userGather[data.userId].username }}</h2>
             <a-avatar :size="60" style="float:right" :src="(userGather[data.userId] && userGather[data.userId].avatar) || data.avatar" />
           </template>
           <a-button v-if="user.role === 'admin'" style="margin-bottom: 5px;" @click="deleteUser(data.userId)" type="primary">
@@ -34,7 +34,7 @@
       :class="{ offLine: !data.online && highLight === false }"
       :src="(userGather[data.userId] && userGather[data.userId].avatar) || data.avatar"
     />
-    <div class="avatar-name" style="order: 2">{{ data.username }}</div>
+    <div class="avatar-name" style="order: 2">{{ userGather[data.userId].username }}</div>
     <div class="avatar-time" :style="{ order: data.userId === user.userId && highLight ? '1' : '3' }" v-if="showTime">
       {{ _formatTime(data.time) }}
     </div>

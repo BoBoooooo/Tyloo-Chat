@@ -443,7 +443,7 @@ export class ChatGateway {
         this.server
           .to(roomId)
           .emit('friendMessage', { code: RCode.OK, msg: '', data })
-        // 如果friendID 为小冰机器人,则需要自动回复
+        // 如果friendID 为机器人,则需要自动回复
         // 获取自动回复内容
         if (data.friendId === defaultRobotId) {
           this.autoReply(data, roomId)
