@@ -79,12 +79,12 @@ export class AuthService {
       userId: newUser.userId,
       groupId: defaultGroupId
     })
-    // 默认添加小冰机器人为好友
+    // 默认添加机器人为好友
     await this.userMapRepository.save({
       userId: newUser.userId,
       friendId: defaultRobotId
     })
-    // 小冰机器人欢迎语(默认留言)
+    // 机器人欢迎语(默认留言)
     await this.friendMessageRepository.save({
       userId: defaultRobotId,
       friendId: newUser.userId,
