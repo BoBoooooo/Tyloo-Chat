@@ -296,10 +296,12 @@ export class ChatGateway {
           return
         }
 
-        let friend = await this.userRepository.findOne({
+        let friend = (await this.userRepository.findOne({
           userId: data.friendId
-        })
-        const user = await this.userRepository.findOne({ userId: data.userId })
+        })) as FriendDto
+        const user = (await this.userRepository.findOne({
+          userId: data.userId
+        })) as FriendDto
         if (!friend) {
           // 此处逻辑定制,如果为选择组织架构添加好友
           // 好友不存在的情况下默认帮好友注册
@@ -362,12 +364,25 @@ export class ChatGateway {
           // @ts-ignore
           user.messages = messages
         }
-
+        // @ts-ignore;
+        let onlineUserIdArr = Object.values(this.server.engine.clients).map(
+          item => {
+            // @ts-ignore;
+            return item.request._query.userId
+          }
+        )
+        // 所有在线用户userId
+        // 数组去重
+        onlineUserIdArr = Array.from(new Set(onlineUserIdArr))
+        // 好友是否在线
+        friend.online = onlineUserIdArr.includes(friend.userId) ? 1 : 0
         this.server.to(data.userId).emit('addFriend', {
           code: RCode.OK,
           msg: `添加好友${friend.username}成功`,
           data: friend
         })
+        // 发起添加的人默认在线
+        user.online = 1
         this.server.to(data.friendId).emit('addFriend', {
           code: RCode.OK,
           msg: `${user.username}添加你为好友`,
