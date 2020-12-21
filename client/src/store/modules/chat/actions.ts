@@ -8,10 +8,8 @@ import { RootState } from '../../index';
 import {
   SET_SOCKET,
   SET_DROPPED,
-  SET_ACTIVE_GROUP_USER,
   ADD_GROUP_MESSAGE,
   ADD_FRIEND_MESSAGE,
-  SET_FRIEND_MESSAGES,
   SET_GROUP_GATHER,
   SET_FRIEND_GATHER,
   SET_USER_GATHER,
@@ -121,9 +119,14 @@ const actions: ActionTree<ChatState, RootState> = {
         return Vue.prototype.$message.error(res.msg);
       }
       const newUser: Friend = res.data.user;
+      newUser.online = 1;
       const { group } = res.data;
-      if (!state.groupGather[group.groupId]) {
-        commit(SET_GROUP_GATHER, group);
+      const groupObj = state.groupGather[group.groupId];
+      // 新用户注册后默认进入到DEFAULT_GROUP,此处需要判断一下是否在群内,不在群内的话需要加入本群中
+      // 否则在线的用户无法收到新成员进群的变更
+      if (!groupObj.members!.find(member => member.userId === newUser.userId)) {
+        groupObj.members!.push(newUser);
+        Vue.prototype.$message.info(res.msg);
       }
       commit(SET_USER_GATHER, newUser);
     });

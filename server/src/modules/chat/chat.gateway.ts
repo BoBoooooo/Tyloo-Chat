@@ -164,7 +164,6 @@ export class ChatGateway {
           msg: `${user.username}加入群${group.groupName}`,
           data: res
         })
-        this.getActiveGroupUser()
       } else {
         this.server
           .to(data.userId)
@@ -752,42 +751,6 @@ export class ChatGateway {
         data: messageDto
       })
     }
-  }
-
-  // 获取在线用户
-  // 此处待优化
-  // 目前写法为获取所有在线用户的所有群组全部返回
-  async getActiveGroupUser() {
-    // 从socket中找到连接人数
-    // @ts-ignore;
-    let userIdArr = Object.values(this.server.engine.clients).map(item => {
-      // @ts-ignore;
-      return item.request._query.userId
-    })
-    // 数组去重
-    userIdArr = Array.from(new Set(userIdArr))
-
-    // 群内在线人员列表
-    const activeGroupUserGather = {}
-    for (const userId of userIdArr) {
-      const userGroupArr = await this.groupUserRepository.find({
-        userId: userId
-      })
-      const user = await this.userRepository.findOne({ userId: userId })
-      if (user && userGroupArr.length) {
-        userGroupArr.map(item => {
-          if (!activeGroupUserGather[item.groupId]) {
-            activeGroupUserGather[item.groupId] = {}
-          }
-          activeGroupUserGather[item.groupId][userId] = user
-        })
-      }
-    }
-
-    this.server.to(defaultGroup).emit('activeGroupUser', {
-      msg: 'activeGroupUser',
-      data: activeGroupUserGather
-    })
   }
 
   // 更新群信息(公告,群名)

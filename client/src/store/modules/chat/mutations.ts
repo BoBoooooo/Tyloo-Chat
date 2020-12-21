@@ -59,7 +59,6 @@ const mutations: MutationTree<ChatState> = {
   // 用户下线
   [USER_OFFLINE](state, userId: string) {
     if (state.friendGather[userId]) {
-      console.log(`${userId}----下线`);
       Vue.set(state.friendGather[userId], 'online', 0);
     }
     // 更新所有群组中该成员在线状态
