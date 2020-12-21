@@ -351,6 +351,7 @@ export default class Message extends Vue {
     const data: PagingResponse = processReturn(
       await api.getGroupMessages({
         groupId,
+        userId: this.user.userId,
         current,
         pageSize: this.pageSize,
       }),

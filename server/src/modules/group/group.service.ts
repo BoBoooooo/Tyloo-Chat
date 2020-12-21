@@ -5,6 +5,7 @@ import { Group, GroupMap } from './entity/group.entity'
 import { GroupMessage } from './entity/groupMessage.entity'
 import { RCode } from 'src/common/constant/rcode'
 import { User } from '../user/entity/user.entity'
+import { defaultGroupMessageTime } from 'src/common/constant/global'
 
 @Injectable()
 export class GroupService {
@@ -46,11 +47,24 @@ export class GroupService {
     }
   }
 
-  async getGroupMessages(groupId: string, current: number, pageSize: number) {
+  async getGroupMessages(
+    userId: string,
+    groupId: string,
+    current: number,
+    pageSize: number
+  ) {
+    const groupUser = await this.groupUserRepository.findOne({
+      userId,
+      groupId
+    })
+    const { createTime } = groupUser
     let groupMessage = await getRepository(GroupMessage)
       .createQueryBuilder('groupMessage')
       .orderBy('groupMessage.time', 'DESC')
       .where('groupMessage.groupId = :id', { id: groupId })
+      .andWhere('groupMessage.time >= :createTime', {
+        createTime: createTime - defaultGroupMessageTime // 新用户进群默认可以看群近24小时消息
+      })
       .skip(current)
       .take(pageSize)
       .getMany()
