@@ -189,16 +189,16 @@ export default class Room extends Vue {
   async sortChat() {
     const groups = Object.values(this.groupGather);
     const friends = Object.values(this.friendGather);
-    this.chatArr = [...groups, ...friends];
+    // 此处避免Await造成v-for页面闪烁问题,所以在最后才赋值this.chatArr = roomArr;
+    let roomArr = [...groups, ...friends];
     // 此处需要过滤本地已删除的会话
-
     const deletedChat = (await this.$localforage.getItem(`${this.currentUserId}-deletedChatId`)) as string[];
     if (Array.isArray(deletedChat)) {
-      this.chatArr = this.chatArr.filter(chat => !deletedChat.includes((chat as Group).groupId || chat.userId));
+      roomArr = roomArr.filter(chat => !deletedChat.includes((chat as Group).groupId || chat.userId));
     }
 
     // 对聊天窗进行排序(根据最新消息时间)
-    this.chatArr = this.chatArr.sort((a: Group | Friend, b: Group | Friend) => {
+    roomArr = roomArr.sort((a: Group | Friend, b: Group | Friend) => {
       if (a.messages && b.messages) {
         // @ts-ignore
         return b.messages[b.messages.length - 1].time - a.messages[a.messages.length - 1].time;
@@ -213,14 +213,16 @@ export default class Room extends Vue {
     const topChatId = (await this.$localforage.getItem(`${this.currentUserId}-topChatId`)) as string;
     if (topChatId) {
       // 找到需要置顶的窗口
-      const chat = this.chatArr.find(c => ((c as Group).groupId || c.userId) === topChatId);
+      const chat = roomArr.find(c => ((c as Group).groupId || c.userId) === topChatId);
       if (chat) {
         // 移动至第一位
-        this.chatArr = this.chatArr.filter(k => ((k as Group).groupId || k.userId) !== topChatId);
+        roomArr = roomArr.filter(k => ((k as Group).groupId || k.userId) !== topChatId);
         chat.isTop = true;
-        this.chatArr.unshift(chat);
+        roomArr.unshift(chat);
       }
     }
+
+    this.chatArr = roomArr;
   }
 
   changeActiveRoom(activeRoom: User | Group) {

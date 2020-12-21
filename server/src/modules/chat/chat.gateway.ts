@@ -562,7 +562,6 @@ export class ChatGateway {
         const groupMessage = await getRepository(GroupMessage)
           .createQueryBuilder('group_message')
           .innerJoin('user', 'user', 'user.userId = group_message.userId')
-          .innerJoin('group_map', 'group_map', 'group_map.userId = user.userId')
           .select('group_message.*')
           .addSelect('user.username', 'username')
           .orderBy('group_message.time', 'DESC')

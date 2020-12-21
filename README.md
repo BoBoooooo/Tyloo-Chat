@@ -5,7 +5,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/BoBoooooo/tyloo-chat/LICENSE)
 [![author](https://img.shields.io/github/stars/BoBoooooo/tyloo-chat?style=social)](https://github.com/BoBoooooo/tyloo-chat)
 
-## [线上demo地址](http://server.boboooooo.top:9999)
+## 说明
+本项目fork自[genal-chat]('https://github.com/genaller/genal-chat.git')做了优化升级,感谢大佬`Genal`开源提供思路!
+由于年底比较忙,目前还在抽空持续优化中,敬请期待~
+之后会考虑出electron的版本
+
+## [Tyloo-Chat线上demo地址](http://server.boboooooo.top:9999)
+**tips: 麻烦各位绿色聊天,不要开车,不要上传太大的文件,服务器比较垃圾..**
 
 ## 部分功能截图
 - 整体界面
@@ -80,11 +86,8 @@ npm run start
 
 [webSocket建立流程](./webSocket建立流程.md)
 
-## 感谢
-
-本项目fork自[genal-chat]('https://github.com/genaller/genal-chat.git')做了优化升级,感谢大佬Genal开源提供思路!
-
 ## TODO
 - `@功能实现`
 - `消息转发`
 - `代码性能优化`
+- `群聊功能继续完善`
