@@ -28,4 +28,11 @@ export class GroupMap {
 
   @Column()
   userId: string
+
+  @Column({
+    type: 'double',
+    default: new Date().valueOf(),
+    comment: '进群时间'
+  })
+  createTime: number
 }

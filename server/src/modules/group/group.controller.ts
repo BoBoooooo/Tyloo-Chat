@@ -24,10 +24,16 @@ export class GroupController {
 
   @Get('/groupMessages')
   getGroupMessages(
+    @Query('userId') userId: string,
     @Query('groupId') groupId: string,
     @Query('current') current: number,
     @Query('pageSize') pageSize: number
   ) {
-    return this.groupService.getGroupMessages(groupId, current, pageSize)
+    return this.groupService.getGroupMessages(
+      userId,
+      groupId,
+      current,
+      pageSize
+    )
   }
 }

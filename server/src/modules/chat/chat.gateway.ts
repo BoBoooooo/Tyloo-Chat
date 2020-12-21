@@ -11,7 +11,8 @@ import {
   defaultGroupId,
   defaultRobotId,
   FILE_SAVE_PATH,
-  IMAGE_SAVE_PATH
+  IMAGE_SAVE_PATH,
+  defaultGroupMessageTime
 } from './../../common/constant/global'
 import { AuthService } from './../auth/auth.service'
 import {
@@ -161,7 +162,6 @@ export class ChatGateway {
           msg: `${user.username}加入群${group.groupName}`,
           data: res
         })
-        this.getActiveGroupUser()
       } else {
         this.server
           .to(data.userId)
@@ -293,10 +293,12 @@ export class ChatGateway {
           return
         }
 
-        let friend = await this.userRepository.findOne({
+        let friend = (await this.userRepository.findOne({
           userId: data.friendId
-        })
-        const user = await this.userRepository.findOne({ userId: data.userId })
+        })) as FriendDto
+        const user = (await this.userRepository.findOne({
+          userId: data.userId
+        })) as FriendDto
         if (!friend) {
           // 此处逻辑定制,如果为选择组织架构添加好友
           // 好友不存在的情况下默认帮好友注册
@@ -359,12 +361,25 @@ export class ChatGateway {
           // @ts-ignore
           user.messages = messages
         }
-
+        // @ts-ignore;
+        let onlineUserIdArr = Object.values(this.server.engine.clients).map(
+          item => {
+            // @ts-ignore;
+            return item.request._query.userId
+          }
+        )
+        // 所有在线用户userId
+        // 数组去重
+        onlineUserIdArr = Array.from(new Set(onlineUserIdArr))
+        // 好友是否在线
+        friend.online = onlineUserIdArr.includes(friend.userId) ? 1 : 0
         this.server.to(data.userId).emit('addFriend', {
           code: RCode.OK,
           msg: `添加好友${friend.username}成功`,
           data: friend
         })
+        // 发起添加的人默认在线
+        user.online = 1
         this.server.to(data.friendId).emit('addFriend', {
           code: RCode.OK,
           msg: `${user.username}添加你为好友`,
@@ -510,26 +525,51 @@ export class ChatGateway {
       onlineUserIdArr = Array.from(new Set(onlineUserIdArr))
 
       // 找到用户所属的群
-      const groupMap: GroupMap[] = await this.groupUserRepository.find({
-        userId: user.userId
-      })
+      const groups: GroupDto[] = await getRepository(Group)
+        .createQueryBuilder('group')
+        .innerJoin(
+          'group_map',
+          'group_map',
+          'group_map.groupId = group.groupId'
+        )
+        .select('group.groupName', 'groupName')
+        .addSelect('group.groupId', 'groupId')
+        .addSelect('group.notice', 'notice')
+        .addSelect('group.userId', 'userId')
+        .addSelect('group_map.createTime', 'createTime') // 获取用户进群时间
+        .where('group_map.userId = :id', { id: isUser.userId })
+        .getRawMany()
       // 找到用户所有好友
-      const friendMap: UserMap[] = await this.friendRepository.find({
-        userId: user.userId
-      })
-      // 获取群信息
-      const groupPromise = groupMap.map(async item => {
-        return await this.groupRepository.findOne({ groupId: item.groupId })
-      })
+      const friends: FriendDto[] = await getRepository(User)
+        .createQueryBuilder('user')
+        .select('*')
+        .where((qb: any) => {
+          const subQuery = qb
+            .subQuery()
+            .select('s.userId')
+            .innerJoin('user_map', 'p', 'p.userId = s.userId')
+            .from(`user`, 's')
+            .where('p.friendId = :userId', { userId: isUser.userId })
+            .getQuery()
+          // tslint:disable-next-line:prefer-template
+          return 'user.userId IN ' + subQuery
+        })
+        .getRawMany()
+
       // 获取所有群聊消息
-      const groupMessagePromise = groupMap.map(async item => {
+      const groupMessagePromise = groups.map(async item => {
+        const createTime = item.createTime // 用户进群时间
         const groupMessage = await getRepository(GroupMessage)
           .createQueryBuilder('group_message')
           .innerJoin('user', 'user', 'user.userId = group_message.userId')
+          .innerJoin('group_map', 'group_map', 'group_map.userId = user.userId')
           .select('group_message.*')
           .addSelect('user.username', 'username')
           .orderBy('group_message.time', 'DESC')
           .where('group_message.groupId = :id', { id: item.groupId })
+          .andWhere('group_message.time >= :createTime', {
+            createTime: createTime - defaultGroupMessageTime // 新用户进群默认可以看群近24小时消息
+          })
           .limit(10)
           .getRawMany()
         groupMessage.reverse()
@@ -544,28 +584,23 @@ export class ChatGateway {
         return groupMessage
       })
 
-      const friendPromise = friendMap.map(async item => {
-        return await this.userRepository.findOne({
-          where: { userId: item.friendId }
-        })
-      })
-      const friendMessagePromise = friendMap.map(async item => {
+      // 好友消息
+      const friendMessagePromise = friends.map(async item => {
         const messages = await getRepository(FriendMessage)
           .createQueryBuilder('friendMessage')
           .orderBy('friendMessage.time', 'DESC')
           .where(
             'friendMessage.userId = :userId AND friendMessage.friendId = :friendId',
-            { userId: item.userId, friendId: item.friendId }
+            { userId: user.userId, friendId: item.userId }
           )
           .orWhere(
             'friendMessage.userId = :friendId AND friendMessage.friendId = :userId',
-            { userId: item.userId, friendId: item.friendId }
+            { userId: user.userId, friendId: item.userId }
           )
           .take(10)
           .getMany()
         return messages.reverse()
       })
-      const groups: GroupDto[] = await Promise.all(groupPromise)
 
       const groupsMessage: Array<GroupMessageDto[]> = await Promise.all(
         groupMessagePromise
@@ -598,8 +633,6 @@ export class ChatGateway {
       )
 
       groupArr = groups
-
-      const friends: FriendDto[] = await Promise.all(friendPromise)
       const friendsMessage: Array<FriendMessageDto[]> = await Promise.all(
         friendMessagePromise
       )
@@ -720,42 +753,6 @@ export class ChatGateway {
         data: messageDto
       })
     }
-  }
-
-  // 获取在线用户
-  // 此处待优化
-  // 目前写法为获取所有在线用户的所有群组全部返回
-  async getActiveGroupUser() {
-    // 从socket中找到连接人数
-    // @ts-ignore;
-    let userIdArr = Object.values(this.server.engine.clients).map(item => {
-      // @ts-ignore;
-      return item.request._query.userId
-    })
-    // 数组去重
-    userIdArr = Array.from(new Set(userIdArr))
-
-    // 群内在线人员列表
-    const activeGroupUserGather = {}
-    for (const userId of userIdArr) {
-      const userGroupArr = await this.groupUserRepository.find({
-        userId: userId
-      })
-      const user = await this.userRepository.findOne({ userId: userId })
-      if (user && userGroupArr.length) {
-        userGroupArr.map(item => {
-          if (!activeGroupUserGather[item.groupId]) {
-            activeGroupUserGather[item.groupId] = {}
-          }
-          activeGroupUserGather[item.groupId][userId] = user
-        })
-      }
-    }
-
-    this.server.to(defaultGroup).emit('activeGroupUser', {
-      msg: 'activeGroupUser',
-      data: activeGroupUserGather
-    })
   }
 
   // 更新群信息(公告,群名)

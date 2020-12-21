@@ -59,7 +59,7 @@
       </a-popconfirm>
     </div>
     <!-- 修改群公告 -->
-    <a-modal v-if="activeRoom.notice" title="群公告" :visible="showGroupNoticeDialog">
+    <a-modal v-if="activeRoom.notice" title="群公告" :visible="showGroupNoticeDialog" @cancel="() => (showGroupNoticeDialog = false)">
       <a-textarea v-if="currentUserIsManager" v-model="groupNotice"></a-textarea>
       <p v-else>
         {{ activeRoom.notice }}
@@ -72,7 +72,7 @@
       </template>
     </a-modal>
     <!-- 修改群名称 -->
-    <a-modal v-if="activeRoom.groupName" title="群名称" :visible="showGroupNameDialog">
+    <a-modal v-if="activeRoom.groupName" title="群名称" :visible="showGroupNameDialog"  @cancel="() => (showGroupNameDialog = false)">
       <a-input v-if="currentUserIsManager" v-model="groupName"></a-input>
       <p v-else>
         {{ activeRoom.groupName }}

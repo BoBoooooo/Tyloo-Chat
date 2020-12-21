@@ -103,7 +103,7 @@ export default class Chat extends Vue {
   visibleNav: boolean = true;
 
   created() {
-    // 获取url链接中传递的userName
+    // 单点登陆/获取url链接中传递的userName,直接后台默认注册登陆
     const { userId, username } = this.$route.query;
     if (userId) {
       this.login({
