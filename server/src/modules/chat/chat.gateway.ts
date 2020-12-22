@@ -547,15 +547,14 @@ export class ChatGateway {
           const subQuery = qb
             .subQuery()
             .select('s.userId')
-            .innerJoin('user_map', 'p', 'p.userId = s.userId')
+            .innerJoin('user_map', 'p', 'p.friendId = s.userId')
             .from(`user`, 's')
-            .where('p.friendId = :userId', { userId: isUser.userId })
+            .where('p.userId = :userId', { userId: isUser.userId })
             .getQuery()
           // tslint:disable-next-line:prefer-template
           return 'user.userId IN ' + subQuery
         })
         .getRawMany()
-
       // 获取所有群聊消息
       const groupMessagePromise = groups.map(async item => {
         const createTime = item.createTime // 用户进群时间
