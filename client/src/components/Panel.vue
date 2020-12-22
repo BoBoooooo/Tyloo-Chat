@@ -45,7 +45,7 @@
               <Avatar :data="data" :showTime="false"></Avatar>
               {{ data.username }}
               <!-- 群主标识 -->
-              <a-icon class="icon" type="user" v-if="isManager(data)" />
+              <a-icon class="icon" type="user" v-if="data.isManager === 1" />
             </div>
           </div>
           <a-button type="danger" class="active-content-out" @click="exitGroup">退出群聊</a-button>
@@ -151,7 +151,7 @@ export default class Panel extends Vue {
   // 群成员排序,在线的排在前
   get groupUsers() {
     return this.$lodash.orderBy(this.activeRoom.members,
-      ['online', 'username'], ['desc', 'asc']);
+      ['isManager', 'online', 'username'], ['desc', 'desc', 'asc']);
   }
 
   showContactDialog() {

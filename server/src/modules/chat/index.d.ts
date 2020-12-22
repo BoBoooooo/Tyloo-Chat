@@ -33,6 +33,7 @@ interface FriendDto {
   messages?: FriendMessageDto[]
   createTime: number
   online?: 1 | 0 // 是否在线
+  isManager?: 1 | 0 // 是否为群主
 }
 
 // 好友消息

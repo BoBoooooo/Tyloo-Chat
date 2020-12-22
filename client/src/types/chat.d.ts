@@ -51,6 +51,7 @@ interface Friend {
   createTime?: number;
   isTop?: boolean; // 是否置顶聊天
   online?: 1 | 0; // 是否在线
+  isManager?: 1 | 0; // 是否为群主
 }
 
 // 用户与好友关联表

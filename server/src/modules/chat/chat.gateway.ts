@@ -124,6 +124,7 @@ export class ChatGateway {
       const group = await this.groupUserRepository.save(data)
       const member = isUser as FriendDto
       member.online = 1
+      member.isManager = 1
       data.members = [member]
       this.server.to(group.groupId).emit('addGroup', {
         code: RCode.OK,
@@ -636,13 +637,15 @@ export class ChatGateway {
           })
           if (groupUserArr.length) {
             for (const u of groupUserArr) {
-              const _user = await this.userRepository.findOne({
+              const _user: FriendDto = await this.userRepository.findOne({
                 userId: u.userId
               })
+              // 设置群成员是否在线
               onlineUserIdArr.includes(_user.userId)
                 ? ((_user as FriendDto).online = 1)
                 : ((_user as FriendDto).online = 0)
-
+              // 检查是否为群主
+              _user.isManager = _user.userId === group.userId ? 1 : 0
               group.members.push(_user)
             }
           }

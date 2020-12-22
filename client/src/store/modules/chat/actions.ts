@@ -123,6 +123,7 @@ const actions: ActionTree<ChatState, RootState> = {
       // 新用户注册后默认进入到DEFAULT_GROUP,此处需要判断一下是否在群内,不在群内的话需要加入本群中
       // 否则在线的用户无法收到新成员进群的变更
       if (!groupObj.members!.find(member => member.userId === newUser.userId)) {
+        newUser.isManager = 0;
         groupObj.members!.push(newUser);
         Vue.prototype.$message.info(res.msg);
       }
