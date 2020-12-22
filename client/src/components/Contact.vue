@@ -80,7 +80,7 @@ export default class Contact extends Vue {
   organizationArr: Array<any> = [];
 
   // 组织架构API_URL
-  orgUrl: string = 'http://116.62.78.229:8082/FlowWJBackend/dept/treeDeptUsers';
+  orgUrl: string = '';
 
   replaceFields = {
     children: 'children',
@@ -89,11 +89,7 @@ export default class Contact extends Vue {
   };
 
   created() {
-    if (!window.location.host.includes('server.boboooooo.top:9999')) {
-      axios.post(this.orgUrl).then((res) => {
-        this.organizationArr = res.data.data;
-      });
-    }
+
   }
 
   // 获取联系人列表,按A-Z字母排序

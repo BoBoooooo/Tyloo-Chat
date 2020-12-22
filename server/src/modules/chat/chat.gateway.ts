@@ -505,8 +505,7 @@ export class ChatGateway {
     @MessageBody() user: User
   ): Promise<any> {
     const isUser = await this.userRepository.findOne({
-      userId: user.userId,
-      password: user.password
+      userId: user.userId
     })
     if (isUser) {
       let groupArr: GroupDto[] = []
