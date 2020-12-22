@@ -4,7 +4,7 @@
 ```js
   // client
   npm i
-  npm run build 
+  npm run build:out/in
 ```
 1. 将 dist 下所有文件放到 nginx 下的 html 文件夹中
 2. 配置 nginx 的 gzip (提高传输速度)和请求级别
