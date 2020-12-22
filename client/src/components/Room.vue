@@ -142,6 +142,14 @@ export default class Room extends Vue {
     // 消息ID
     const chatId = chat.groupId || chat.userId;
     if (type === 'TOP') {
+      // 修复重复置顶bug,在已置顶某个窗口的情况下 直接置顶另外一个,需要先取消第一个置顶的窗口
+      const topId = await this.$localforage.getItem(`${this.currentUserId}-topChatId`);
+      if (topId) {
+        const topRoom = this.chatArr.find(room => (room.groupId || room.userId) === topId);
+        if (topRoom) {
+          delete topRoom.isTop;
+        }
+      }
       await this.$localforage.setItem(`${this.currentUserId}-topChatId`, chatId);
       await this.sortChat();
       this.$message.success('置顶成功');
