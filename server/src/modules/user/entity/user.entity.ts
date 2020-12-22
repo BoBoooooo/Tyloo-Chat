@@ -8,7 +8,7 @@ export class User {
   @Column({ default: 'test' })
   username: string
 
-  @Column({ default: '123456' })
+  @Column({ default: '123456', select: false })
   password: string
 
   @Column({ default: 'chenguanxi.png' })
