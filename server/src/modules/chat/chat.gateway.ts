@@ -541,7 +541,10 @@ export class ChatGateway {
       // 找到用户所有好友
       const friends: FriendDto[] = await getRepository(User)
         .createQueryBuilder('user')
-        .select('*')
+        .select('user.userId', 'userId')
+        .addSelect('user.username', 'username')
+        .addSelect('user.avatar', 'avatar')
+        .addSelect('user.role', 'role')
         .where((qb: any) => {
           const subQuery = qb
             .subQuery()
@@ -643,6 +646,7 @@ export class ChatGateway {
       })
       friendArr = friends
       userArr = [...Object.values(userGather), ...friendArr]
+      console.log(friendArr)
       this.server.to(user.userId).emit('chatData', {
         code: RCode.OK,
         msg: '获取聊天数据成功',

@@ -11,7 +11,7 @@ export class User {
   @Column({ default: '123456', select: false })
   password: string
 
-  @Column({ default: 'chenguanxi.png' })
+  @Column({ default: 'avatar1.png' })
   avatar: string
 
   @Column({ default: 'user' })
