@@ -7,7 +7,6 @@
 
 import { GroupService } from './../group/group.service'
 import {
-  defaultGroup,
   defaultGroupId,
   defaultRobotId,
   FILE_SAVE_PATH,
@@ -68,7 +67,7 @@ export class ChatGateway {
     const userId = client.handshake.query.userId
     // 连接默认加入DEFAULG_GROUP
     // TODO 待优化
-    client.join(defaultGroup)
+    client.join(defaultGroupId)
     // 进来统计一下在线人数
     console.log('用户上线', userId)
     // 上线提醒广播给所有人

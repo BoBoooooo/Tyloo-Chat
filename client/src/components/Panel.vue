@@ -42,7 +42,8 @@
           </div>
           <div class="active-content-users">
             <div class="active-content-user" v-for="(data, index) in groupUsers" :key="data.userId + index">
-              <Avatar :data="data" :showTime="false"></Avatar>
+              <!-- 群成员头像,智能助手默认在线 highLight强制头像高亮-->
+              <Avatar :highLight="data.userId === 'robot'" :data="data" :showTime="false"></Avatar>
               {{ data.username }}
               <!-- 群主标识 -->
               <a-icon class="icon" type="user" v-if="data.isManager === 1" />
