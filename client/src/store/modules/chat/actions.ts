@@ -30,14 +30,12 @@ const actions: ActionTree<ChatState, RootState> = {
   async connectSocket({
     commit, state, dispatch, rootState,
   }, callback) {
-    const { user } = rootState.app;
+    const { user, token } = rootState.app;
     const socket: SocketIOClient.Socket = io.connect(`/?userId=${user.userId}`, { reconnection: true });
-    console.log(user);
     socket.on('connect', async () => {
       console.log('连接成功');
-
       // 获取聊天室所需所有信息
-      socket.emit('chatData', user);
+      socket.emit('chatData', token);
 
       // 先保存好socket对象
       commit(SET_SOCKET, socket);
@@ -80,7 +78,7 @@ const actions: ActionTree<ChatState, RootState> = {
         if (friendIds.includes(user.userId) && !state.groupGather[group.groupId]) {
           // commit(SET_GROUP_GATHER, group);
           // 获取群里面所有用户的用户信息
-          socket.emit('chatData', user);
+          socket.emit('chatData', token);
         } else if (userId === user.userId) { // 邀请发起者
           commit(ADD_GROUP_MEMBER, {
             groupId: group.groupId,
@@ -106,7 +104,7 @@ const actions: ActionTree<ChatState, RootState> = {
         if (!state.groupGather[group.groupId]) {
           commit(SET_GROUP_GATHER, group);
           // 获取群里面所有用户的用户信息
-          socket.emit('chatData', user);
+          socket.emit('chatData', token);
         }
         Vue.prototype.$message.info(`成功加入群${group.groupName}`);
         commit(SET_ACTIVE_ROOM, state.groupGather[group.groupId]);

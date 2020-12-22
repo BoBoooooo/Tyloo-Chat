@@ -519,12 +519,13 @@ export class ChatGateway {
   @SubscribeMessage('chatData')
   async getAllData(
     @ConnectedSocket() client: Socket,
-    @MessageBody() user: User
+    @MessageBody() token: string
   ): Promise<any> {
-    const isUser = await this.userRepository.findOne({
-      userId: user.userId
-    })
-    if (isUser) {
+    const user = this.authService.getUserInfoFromToken(token)
+    if (user) {
+      const isUser = await this.userRepository.findOne({
+        userId: user.userId
+      })
       let groupArr: GroupDto[] = []
       let friendArr: FriendDto[] = []
       const userGather: { [key: string]: User } = {}
@@ -663,7 +664,6 @@ export class ChatGateway {
       })
       friendArr = friends
       userArr = [...Object.values(userGather), ...friendArr]
-      console.log(friendArr)
       this.server.to(user.userId).emit('chatData', {
         code: RCode.OK,
         msg: '获取聊天数据成功',
