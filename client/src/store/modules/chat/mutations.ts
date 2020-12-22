@@ -74,11 +74,15 @@ const mutations: MutationTree<ChatState> = {
     groupId: string,
     members: Friend[]
   }) {
-    if (state.groupGather[payload.groupId].members) {
-      state.groupGather[payload.groupId].members = state.groupGather[payload.groupId].members!.concat(payload.members);
+    const members:Friend[] = payload.members.map(member => ({
+      ...member,
+      isManager: 0,
+    }));
+    if (state.groupGather[payload.groupId].members && members) {
+      state.groupGather[payload.groupId].members = state.groupGather[payload.groupId].members!.concat(members);
     } else {
       // vuex对象数组中对象改变不更新问题
-      Vue.set(state.groupGather[payload.groupId], 'members', payload.members);
+      Vue.set(state.groupGather[payload.groupId], 'members', members);
     }
   },
   // 新增一条群消息

@@ -1,5 +1,9 @@
 import { GroupModule } from './../group/group.module'
-import { defaultGroup as defaultGroupName } from './../../common/constant/global'
+import {
+  defaultGroup as defaultGroupName,
+  defaultGroupId,
+  defaultRobotId
+} from './../../common/constant/global'
 import { AuthModule } from './../auth/auth.module'
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -33,21 +37,28 @@ export class ChatModule {
     @InjectRepository(Group)
     private readonly groupRepository: Repository<Group>,
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(GroupMap)
+    private readonly groupUserRepository: Repository<GroupMap>
   ) {}
   async onModuleInit() {
     // 默认新增群组 用户问题反馈群
-    const defaultGroup = await this.groupRepository.find({
-      groupName: defaultGroupName
+    const defaultGroup = await this.groupRepository.findOne({
+      groupId: defaultGroupId
     })
-    if (!defaultGroup.length) {
+    if (!defaultGroup) {
       await this.groupRepository.save({
-        groupId: 'group',
+        groupId: defaultGroupId,
         groupName: defaultGroupName,
-        userId: 'robot', // 群主默认为智能助手
+        userId: defaultRobotId, // 群主默认为智能助手
         createTime: new Date().valueOf()
       })
       console.log('create default group ' + defaultGroupName)
+      // 机器人默认加入群组
+      await this.groupUserRepository.save({
+        userId: defaultRobotId,
+        groupId: defaultGroupId
+      })
     }
 
     // 默认新建机器人

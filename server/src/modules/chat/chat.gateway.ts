@@ -7,7 +7,6 @@
 
 import { GroupService } from './../group/group.service'
 import {
-  defaultGroup,
   defaultGroupId,
   defaultRobotId,
   FILE_SAVE_PATH,
@@ -65,7 +64,7 @@ export class ChatGateway {
     const userId = client.handshake.query.userId
     // 连接默认加入DEFAULG_GROUP
     // TODO 待优化
-    client.join(defaultGroup)
+    client.join(defaultGroupId)
     // 进来统计一下在线人数
     console.log('用户上线', userId)
     // 上线提醒广播给所有人
@@ -121,6 +120,7 @@ export class ChatGateway {
       const group = await this.groupUserRepository.save(data)
       const member = isUser as FriendDto
       member.online = 1
+      member.isManager = 1
       data.members = [member]
       this.server.to(group.groupId).emit('addGroup', {
         code: RCode.OK,
@@ -502,12 +502,13 @@ export class ChatGateway {
   @SubscribeMessage('chatData')
   async getAllData(
     @ConnectedSocket() client: Socket,
-    @MessageBody() user: User
+    @MessageBody() token: string
   ): Promise<any> {
-    const isUser = await this.userRepository.findOne({
-      userId: user.userId
-    })
-    if (isUser) {
+    const user = this.authService.getUserInfoFromToken(token)
+    if (user) {
+      const isUser = await this.userRepository.findOne({
+        userId: user.userId
+      })
       let groupArr: GroupDto[] = []
       let friendArr: FriendDto[] = []
       const userGather: { [key: string]: User } = {}
@@ -618,13 +619,15 @@ export class ChatGateway {
           })
           if (groupUserArr.length) {
             for (const u of groupUserArr) {
-              const _user = await this.userRepository.findOne({
+              const _user: FriendDto = await this.userRepository.findOne({
                 userId: u.userId
               })
+              // 设置群成员是否在线
               onlineUserIdArr.includes(_user.userId)
                 ? ((_user as FriendDto).online = 1)
                 : ((_user as FriendDto).online = 0)
-
+              // 检查是否为群主
+              _user.isManager = _user.userId === group.userId ? 1 : 0
               group.members.push(_user)
             }
           }
@@ -646,7 +649,6 @@ export class ChatGateway {
       })
       friendArr = friends
       userArr = [...Object.values(userGather), ...friendArr]
-      console.log(friendArr)
       this.server.to(user.userId).emit('chatData', {
         code: RCode.OK,
         msg: '获取聊天数据成功',

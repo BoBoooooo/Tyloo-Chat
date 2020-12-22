@@ -42,10 +42,11 @@
           </div>
           <div class="active-content-users">
             <div class="active-content-user" v-for="(data, index) in groupUsers" :key="data.userId + index">
-              <Avatar :data="data" :showTime="false"></Avatar>
+              <!-- 群成员头像,智能助手默认在线 highLight强制头像高亮-->
+              <Avatar :highLight="data.userId === 'robot'" :data="data" :showTime="false"></Avatar>
               {{ data.username }}
               <!-- 群主标识 -->
-              <a-icon class="icon" type="user" v-if="isManager(data)" />
+              <a-icon class="icon" type="user" v-if="data.isManager === 1" />
             </div>
           </div>
           <a-button type="danger" class="active-content-out" @click="exitGroup">退出群聊</a-button>
@@ -151,7 +152,7 @@ export default class Panel extends Vue {
   // 群成员排序,在线的排在前
   get groupUsers() {
     return this.$lodash.orderBy(this.activeRoom.members,
-      ['online', 'username'], ['desc', 'asc']);
+      ['isManager', 'online', 'username'], ['desc', 'desc', 'asc']);
   }
 
   showContactDialog() {
@@ -204,7 +205,9 @@ export default class Panel extends Vue {
     this.showGroupNoticeDialog = false;
   }
 
- @Watch('activeRoom.groupId')
+ @Watch('activeRoom.groupId', {
+   immediate: true,
+ })
   activeRoomGroupChange() {
     this.groupName = this.activeRoom.groupName;
     this.groupNotice = this.activeRoom.notice;

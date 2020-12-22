@@ -163,6 +163,11 @@ export default class Room extends Vue {
     } else if (type === 'READ') {
       this.lose_unread_gather(chatId);
     } else if (type === 'DELETE') {
+      // 如果删除的是默认群组,不允许删除
+      if (chat.groupId === 'group') {
+        this.$message.error('默认群组不允许删除');
+        return;
+      }
       // 如果聊天列表仅有一个消息不允许删除
       if (this.chatArr.length > 1) {
         // 先查询本地时候有删除记录

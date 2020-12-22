@@ -16,8 +16,6 @@ const appModule = namespace('app');
 
 @Component
 export default class Chat extends Vue {
-  @appModule.Getter('user') user: User;
-
   @appModule.Getter('background') background: string;
 
   @appModule.Mutation('set_mobile') setMobile: Function;

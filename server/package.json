@@ -31,6 +31,7 @@
     "@nestjs/typeorm": "^7.1.0",
     "@nestjs/websockets": "^7.2.0",
     "axios": "^0.21.0",
+    "crypto": "^1.0.1",
     "mongodb": "^3.5.9",
     "mysql": "^2.18.1",
     "passport": "^0.4.1",

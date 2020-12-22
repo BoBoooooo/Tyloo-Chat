@@ -1,3 +1,5 @@
+import cookie from 'js-cookie';
+
 export interface AppState {
   user: User;
   token: string;
@@ -14,7 +16,7 @@ const appState: AppState = {
     avatar: '',
     createTime: 0,
   },
-  token: '',
+  token: cookie.get('token') as string,
   mobile: false,
   background: '',
   activeTabName: 'message',

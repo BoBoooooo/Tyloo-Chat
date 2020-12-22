@@ -14,7 +14,16 @@ import { User } from '../user/entity/user.entity'
 import { GroupMap } from '../group/entity/group.entity'
 import { nameVerify, passwordVerify } from 'src/common/tool/utils'
 import { RCode } from 'src/common/constant/rcode'
+import * as jwt from 'jsonwebtoken'
+import { jwtConstants } from './constants'
+const crypto = require('crypto')
 
+// md5加盐处理password
+function md5(str) {
+  const m = crypto.createHash('md5')
+  m.update(str, 'utf8')
+  return m.digest('hex')
+}
 @Injectable()
 export class AuthService {
   constructor(
@@ -45,7 +54,7 @@ export class AuthService {
     } else {
       user = await this.userRepository.findOne({
         username: data.username,
-        password: data.password
+        password: md5(data.password)
       })
     }
     if (!user) {
@@ -72,6 +81,7 @@ export class AuthService {
     user.avatar = `api/avatar/avatar${Math.round(Math.random() * 19 + 1)}.png`
     user.role = 'user'
     user.userId = user.userId
+    user.password = md5(user.password)
     const newUser = await this.userRepository.save(user)
     const payload = { userId: newUser.userId, password: newUser.password }
     // 默认加入群组
@@ -99,5 +109,17 @@ export class AuthService {
         token: this.jwtService.sign(payload)
       }
     }
+  }
+
+  /**
+   * 获取当前token携带信息
+   * jwt token
+   * @param authorization
+   */
+  getUserInfoFromToken(token): User {
+    if (!token) return null
+
+    const user = jwt.verify(token, jwtConstants.secret) as User
+    return user
   }
 }
