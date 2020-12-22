@@ -204,7 +204,9 @@ export default class Panel extends Vue {
     this.showGroupNoticeDialog = false;
   }
 
- @Watch('activeRoom.groupId')
+ @Watch('activeRoom.groupId', {
+   immediate: true,
+ })
   activeRoomGroupChange() {
     this.groupName = this.activeRoom.groupName;
     this.groupNotice = this.activeRoom.notice;
