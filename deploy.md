@@ -1,56 +1,40 @@
 # 部署说明
-## 部署前端服务
-1. 打包前端文件生成 dist 文件夹
+## ⚠️
+MacOS Catalina 10.15以上版本无法打exe安装包
+https://github.com/electron-userland/electron-builder/issues/4305
+## 客户端打包
+0. 设置后台服务器地址,生成环境默认使用.env.out环境,修改其中`VUE_APP_API_URL`即可
+1. 打包客户端程序
 ```js
   // client
   npm i
-  npm run build:out/in
+  npm run build // 根据本地系统自动打包相应安装包 (windows则会打成exe,mac则为dmg)
+  npm run build:win32 // win32版本
+  npm run build:win64 // win64版本
+  npm run build:mac // mac版本
+  // 更多参数命令参考官网 https://www.electron.build/cli
+  Building:
+  --mac, -m, -o, --macos   Build for macOS, accepts target list (see
+                           https://goo.gl/5uHuzj).                       [array]
+  --linux, -l              Build for Linux, accepts target list (see
+                           https://goo.gl/4vwQad)                        [array]
+  --win, -w, --windows     Build for Windows, accepts target list (see
+                           https://goo.gl/jYsTEJ)                        [array]
+  --x64                    Build for x64                               [boolean]
+  --ia32                   Build for ia32                              [boolean]
+  --armv7l                 Build for armv7l                            [boolean]
+  --arm64                  Build for arm64                             [boolean]
+  --dir                    Build unpacked dir. Useful to test.         [boolean]
+  --prepackaged, --pd      The path to prepackaged app (to pack in a
+                           distributable format)
+  --projectDir, --project  The path to project directory. Defaults to current
+                           working directory.
+  --config, -c             The path to an electron-builder config. Defaults to
+                           `electron-builder.yml` (or `json`, or `json5`), see
+                           https://goo.gl/YFRJOM
+
 ```
-1. 将 dist 下所有文件放到 nginx 下的 html 文件夹中
-2. 配置 nginx 的 gzip (提高传输速度)和请求级别
-```js
-// nginx.conf
-http {
-  #避免mime类型丢失导致css样式无法正常加载
-  include mime.types;
-  #nginx开启gzip
-  #前端文件在build的时候已经配置好压缩,需要再配置一下nginx;
-  gzip on; 
-  gzip_static on;
-  gzip_buffers 4 16k;
-  gzip_comp_level 5;
-  gzip_types text/plain application/javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg 
-              image/gif image/png;
-  
-  #nginx请求级别配置
-  server {
-    listen       80;
-    server_name  www.genal.fun;
-    location / {
-      root   html;
-      index  index.html index.htm;
-      add_header Cache-Control public;
-    }
-
-    location ^~/api/ {
-      rewrite ^/api/(.*) /$1 break;
-      proxy_pass http://localhost:3000;
-    }
-
-    location ^~/socket.io/ {
-      proxy_pass http://localhost:3000;
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "upgrade";
-    }
-    error_page   500 502 503 504  /50x.html;
-    location = /50x.html {
-        root   html;
-    }
-  }  
-}
-```
-3. nginx -s reload
-
+2. 客户端安装
 ## 数据库配置
 1. 创建名为 `chat` 的数据库
 2. 配置后端 `app.module.ts` 中的 mysql 账号密码

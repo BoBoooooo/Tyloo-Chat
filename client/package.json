@@ -6,9 +6,13 @@
   "scripts": {
     "start": "vue-cli-service electron:serve --mode dev",
     "lint": "vue-cli-service lint",
-    "build:in": "vue-cli-service electron:build --mode in",
-    "build:out": "vue-cli-service electron:build --mode out"
+    "build": "vue-cli-service electron:build --mode out",
+    "build:win32": "vue-cli-service electron:build --mode out --win --ia32",
+    "build:win64": "vue-cli-service electron:build --mode out --win --x64",
+    "build:mac": "vue-cli-service electron:build --mac",
+    "rebuild": "electron-rebuild -f -w"
   },
+  "main": "background.js",
   "dependencies": {
     "@types/js-cookie": "^2.2.6",
     "@types/node": "^12.12.24",

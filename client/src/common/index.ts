@@ -6,17 +6,10 @@
  */
 
 // 默认群组Id
-let bg = '';
-if (process.env.VUE_APP_CDN !== 'true' && process.env.NODE_ENV === 'production') {
-  // 默认背景图片
-  bg = 'http://11.176.37.20:8090/img/secret.jpg';
-} else {
-  bg = 'https://pic.downk.cc/item/5fc744ea394ac5237897a81d.jpg';
-}
+
 
 export const DEFAULT_GROUP = 'group';
 
-export const DEFAULT_BACKGROUND = bg;
 // 默认机器人Id
 export const DEFAULT_ROBOT = 'robot';
 

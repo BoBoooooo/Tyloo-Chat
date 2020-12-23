@@ -12,7 +12,7 @@ import {
 } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 
-const isProduction = process.env.VUE_APP_PKG === 'pro';
+const isProduction = process.env.NODE_ENV !== 'development';
 
 // 保持一个对于window对象的全局引用，不然当JavaScript被GC，window会被自动地关闭
 let win: BrowserWindow | null;
@@ -21,10 +21,9 @@ let win: BrowserWindow | null;
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
 
 function createWindow() {
-  console.log(1);
   // 创建浏览器窗口
   win = new BrowserWindow({
-    icon: './deployment/icons/icon.ico',
+    icon: './public/icon.ico',
     width: 1280,
     minWidth: 800,
     minHeight: 600,
