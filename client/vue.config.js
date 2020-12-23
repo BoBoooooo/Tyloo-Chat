@@ -58,7 +58,7 @@ module.exports = {
         },
         // mac系统相关配置
         mac: {
-          icon: 'public/icon.icns',
+          icon: 'public/icon.png',
         },
         // 制作成安装程序配置
         nsis: {
