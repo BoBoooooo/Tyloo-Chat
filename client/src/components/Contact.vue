@@ -39,7 +39,6 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
-import axios from 'axios';
 import cnchar from 'cnchar';
 
 const chatModule = namespace('chat');
