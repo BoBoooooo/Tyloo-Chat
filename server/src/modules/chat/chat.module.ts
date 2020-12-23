@@ -16,6 +16,7 @@ import { FriendMessage } from '../friend/entity/friendMessage.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { defaultRobot } from 'src/common/constant/global'
+import { md5 } from 'src/common/tool/utils'
 
 @Module({
   imports: [
@@ -74,7 +75,7 @@ export class ChatModule {
         tag: '',
         status: 'on',
         createTime: new Date().valueOf(),
-        password: 'robot'
+        password: md5('robot')
       })
       console.log('create default robot ' + defaultRobot)
     }

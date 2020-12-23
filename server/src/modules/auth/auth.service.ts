@@ -12,18 +12,10 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { User } from '../user/entity/user.entity'
 import { GroupMap } from '../group/entity/group.entity'
-import { nameVerify, passwordVerify } from 'src/common/tool/utils'
+import { md5, nameVerify, passwordVerify } from 'src/common/tool/utils'
 import { RCode } from 'src/common/constant/rcode'
 import * as jwt from 'jsonwebtoken'
 import { jwtConstants } from './constants'
-const crypto = require('crypto')
-
-// md5加盐处理password
-function md5(str) {
-  const m = crypto.createHash('md5')
-  m.update(str, 'utf8')
-  return m.digest('hex')
-}
 @Injectable()
 export class AuthService {
   constructor(

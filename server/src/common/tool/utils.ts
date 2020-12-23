@@ -48,3 +48,13 @@ export function formatBytes(bytes, decimals = 2) {
   const i = Math.floor(Math.log(bytes) / Math.log(k))
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + sizes[i]
 }
+
+// md5加盐
+const crypto = require('crypto')
+
+// md5加盐处理password
+export function md5(str) {
+  const m = crypto.createHash('md5')
+  m.update(str, 'utf8')
+  return m.digest('hex')
+}
