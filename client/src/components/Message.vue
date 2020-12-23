@@ -48,7 +48,7 @@
               <div class="message-content-text" v-text="_parseText(item.content)" v-else-if="item.messageType === 'text'"></div>
               <div class="message-content-image" v-if="item.messageType === 'image'" :style="getImageStyle(item.content)">
                 <viewer style="display:flex;align-items:center;">
-                  <img :src="apiUrl + '/api/static/image/' + item.content" alt="" />
+                  <img :src="apiUrl + '/static/image/' + item.content" alt="" />
                 </viewer>
               </div>
               <!-- 附件类型消息 -->
