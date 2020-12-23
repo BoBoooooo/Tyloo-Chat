@@ -1,4 +1,3 @@
-import cookie from 'js-cookie';
 import { MutationTree } from 'vuex';
 import {
   SET_USER, CLEAR_USER, SET_TOKEN, SET_ACTIVETABNAME,
@@ -9,7 +8,7 @@ const mutations: MutationTree<AppState> = {
   [SET_USER](state, payload: User) {
     state.user = payload;
     // 数据持久化
-    cookie.set('user', payload, { expires: 3650 });
+    localStorage.setItem('user', JSON.stringify(payload));
   },
 
   [CLEAR_USER](state) {
@@ -20,13 +19,12 @@ const mutations: MutationTree<AppState> = {
       avatar: '',
       createTime: 0,
     };
-    cookie.set('user', '');
-    // cookie.set('token', '');
+    localStorage.setItem('user', '');
   },
 
   [SET_TOKEN](state, payload) {
     state.token = payload;
-    cookie.set('token', payload, { expires: 3 });
+    localStorage.setItem('token', payload);
   },
 
   [SET_ACTIVETABNAME](state, payload: 'message' | 'contacts') {

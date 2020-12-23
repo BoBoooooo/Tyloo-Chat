@@ -1,5 +1,3 @@
-import cookie from 'js-cookie';
-
 export interface AppState {
   user: User;
   token: string;
@@ -15,7 +13,7 @@ const appState: AppState = {
     avatar: '',
     createTime: 0,
   },
-  token: cookie.get('token') as string,
+  token: localStorage.getItem('token') as string,
   activeTabName: 'message',
   apiUrl: process.env.VUE_APP_API_URL,
 };

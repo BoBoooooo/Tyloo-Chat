@@ -1,12 +1,11 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
-import cookie from 'js-cookie';
 import Vue from 'vue';
 import store from '@/store/index';
 import { CLEAR_USER } from '../../store/modules/app/mutation-types';
 
 // 请求拦截器
 export const requestSuccess = (request: AxiosRequestConfig) => {
-  const token = cookie.get('token');
+  const token = localStorage.getItem('token');
   // eslint-disable-next-line no-param-reassign
   request.headers.token = token;
   return request;
