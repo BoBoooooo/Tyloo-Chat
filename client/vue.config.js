@@ -1,4 +1,3 @@
-const Host = 'http://localhost:3000';
 const webpack = require('webpack');
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -94,25 +93,10 @@ module.exports = {
       },
     },
   },
-  // webSocket本身不存在跨域问题，所以我们可以利用webSocket来进行非同源之间的通信。
   publicPath: './',
   devServer: {
     port: 1997,
-    proxy: {
-      '/api': {
-        target: Host,
-        ws: true,
-        changeOrigin: true,
-        pathRewrite: {
-          '^/api': '',
-        },
-      },
-      'socket.io': {
-        target: Host,
-        ws: true,
-        changeOrigin: true,
-      },
-    },
+    // electron版本直接请求后台服务,不作反向代理
   },
   productionSourceMap: false,
   pluginOptions: {

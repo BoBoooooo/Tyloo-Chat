@@ -65,7 +65,7 @@
           <v-contextmenu-item @click="handleCommand('DELETE', chat)">删除</v-contextmenu-item>
         </v-contextmenu>
         <a-badge class="room-card-badge" :count="unReadGather[chat.userId]" />
-        <img class="room-card-type" :src="friendGather[chat.userId].avatar" :class="{ offLine: avatarOffLine(chat) }" alt="" />
+        <img class="room-card-type" :src="apiUrl + '/' + friendGather[chat.userId].avatar" :class="{ offLine: avatarOffLine(chat) }" alt="" />
         <div class="room-card-message">
           <div class="room-card-info">
             <div class="room-card-name">{{ chat.username }}</div>
@@ -116,6 +116,8 @@ export default class Room extends Vue {
   @chatModule.Mutation('lose_unread_gather') lose_unread_gather: Function;
 
   @appModule.Getter('user') user: User;
+
+  @appModule.Getter('apiUrl') apiUrl: string;
 
   chatArr: Array<Group | Friend> = [];
 

@@ -7,20 +7,17 @@ const getters: GetterTree<AppState, RootState> = {
   user(state) {
     // eslint-disable-next-line no-unused-expressions
     state.user;
-    const user = cookie.get('user');
-    if (!user) {
+    const userString = cookie.get('user');
+    if (!userString) {
       return {};
     }
-    state.user = JSON.parse(user);
+    const user = JSON.parse(userString);
+    user.avatar = `${state.apiUrl}/${user.avatar}`;
+    state.user = user;
     return state.user;
   },
-  mobile(state) {
-    return state.mobile;
-  },
-  background(state) {
-    // eslint-disable-next-line no-unused-expressions
-    state.background;
-    return localStorage.getItem('background');
+  apiUrl(state) {
+    return state.apiUrl;
   },
   activeTabName(state) {
     return state.activeTabName;

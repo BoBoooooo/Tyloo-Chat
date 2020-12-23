@@ -25,10 +25,10 @@ function createWindow() {
   // 创建浏览器窗口
   win = new BrowserWindow({
     icon: './deployment/icons/icon.ico',
-    width: 1600,
-    minWidth: 1366,
-    minHeight: 768,
-    height: 1000,
+    width: 1280,
+    minWidth: 800,
+    minHeight: 600,
+    height: 780,
     resizable: true, // 可否缩放
     webPreferences: {
       nodeIntegration: true,

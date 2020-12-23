@@ -6,11 +6,6 @@
 -->
 <template>
   <div class="tool">
-    <div class="tool-panel">
-      <div class="close"></div>
-      <div class="zoom-in"></div>
-      <div class="zoom-out"></div>
-    </div>
     <!-- 顶部头像区域 -->
     <div class="tool-avatar">
       <div class="tool-avatar-img" @click="showUserInfo('showUserModal')">
@@ -22,7 +17,7 @@
     <!-- 底部工具栏 -->
     <a-tooltip placement="topLeft" arrow-point-at-center>
       <div slot="title">
-        <div>有问题咨询客服</div>
+        <div>有问题加群289438105</div>
         <div>截图粘贴可发送图片</div>
       </div>
       <a-icon type="bulb" class="tool-tip icon" />
@@ -49,8 +44,7 @@
         @click="setActiveTabName('contacts')"
       />
     </a-tooltip>
-    <a-icon type="skin" class="tool-skin icon" @click="showBackgroundModal = true" />
-    <a v-if="isDemo" href="https://github.com/BoBoooooo/tyloo-chat" target="_blank" class="tool-github icon"><a-icon type="github"/></a>
+    <a href="https://github.com/BoBoooooo/tyloo-chat" target="_blank" class="tool-github icon"><a-icon type="github"/></a>
     <a-icon class="tool-out icon" type="poweroff" @click="logout" />
     <a-modal title="用户信息" :visible="showUserModal" footer="" @cancel="showUserModal = false">
       <div class="tool-user">
@@ -81,38 +75,15 @@
         </div>
       </div>
     </a-modal>
-    <a-modal title="主题" :visible="showBackgroundModal" footer="" @cancel="showBackgroundModal = false">
-      <div class="tool-user-info">
-        <div class="tool-user-title" style="width: 65px;">
-          <span>背景图</span>
-          <a-tooltip placement="topLeft" arrow-point-at-center>
-            <div slot="title">
-              <span>输入空格时为默认背景, 支持 jpg, png, gif等格式</span>
-            </div>
-            <a-icon type="exclamation-circle" style="margin-left: 5px;" />
-          </a-tooltip>
-        </div>
-        <a-input v-model="background" class="tool-user-input" placeholder="请输入背景图片网址"></a-input>
-        <a-button type="primary" @click="changeBackground">确认</a-button>
-      </div>
-      <div class="tool-recommend">
-        <div class="recommend" v-for="(theme, index) in themes" :key="index" @click="setBackground(theme.url)">
-          <img :src="theme.url" alt="" />
-          <span class="text">{{ theme.name }}</span>
-        </div>
-      </div>
-    </a-modal>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { setUserAvatar } from '@/api/apis';
-import { DEFAULT_BACKGROUND } from '@/common/index';
 import { namespace } from 'vuex-class';
 import * as apis from '@/api/apis';
 import { processReturn, nameVerify, passwordVerify } from '@/utils/common';
-import themes from '@/common/theme';
 
 const appModule = namespace('app');
 const chatModule = namespace('chat');
@@ -122,8 +93,6 @@ export default class Tool extends Vue {
   @appModule.Getter('user') user: User;
 
   @appModule.Getter('activeTabName') activeTabName: string;
-
-  @appModule.Mutation('set_background') setBackground: Function;
 
   @appModule.Mutation('set_user') setUser: Function;
 
@@ -137,8 +106,6 @@ export default class Tool extends Vue {
 
   showUserModal: boolean = false;
 
-  showBackgroundModal: boolean = false;
-
   username: string = '';
 
   password: string = '';
@@ -148,11 +115,6 @@ export default class Tool extends Vue {
   uploading: boolean = false;
 
   avatar: any = '';
-
-  themes: {
-    name: string;
-    url: string;
-  }[] = themes;
 
   @Watch('user')
   userChange() {
@@ -239,19 +201,6 @@ export default class Tool extends Vue {
       this.socket.emit('updateUserInfo', data.userId);
     }
   }
-
-  changeBackground() {
-    if (!this.background.trim().length) {
-      this.setBackground(DEFAULT_BACKGROUND);
-    } else {
-      this.setBackground(this.background);
-    }
-    this.showBackgroundModal = false;
-  }
-
-  get isDemo() {
-    return window.location.host.includes('server.boboooooo.top:9999') || process.env.NODE_ENV === 'development';
-  }
 }
 </script>
 <style lang="scss" scoped>
@@ -318,15 +267,11 @@ export default class Tool extends Vue {
   }
   .tool-tip {
     // bottom: 190px;
-    bottom: 130px;
-  }
-  .tool-skin {
-    // bottom: 130px;
     bottom: 70px;
   }
   .tool-github {
     color: rgba(255, 255, 255, 0.85);
-    bottom: 190px;
+    bottom: 130px;
   }
   .tool-message {
     top: 150px;

@@ -1,7 +1,7 @@
 import cookie from 'js-cookie';
 import { MutationTree } from 'vuex';
 import {
-  SET_USER, CLEAR_USER, SET_TOKEN, SET_MOBILE, SET_BACKGROUND, SET_ACTIVETABNAME,
+  SET_USER, CLEAR_USER, SET_TOKEN, SET_ACTIVETABNAME,
 } from './mutation-types';
 import { AppState } from './state';
 
@@ -29,14 +29,6 @@ const mutations: MutationTree<AppState> = {
     cookie.set('token', payload, { expires: 3 });
   },
 
-  [SET_MOBILE](state, payload: boolean) {
-    state.mobile = payload;
-  },
-
-  [SET_BACKGROUND](state, payload: string) {
-    state.background = payload;
-    localStorage.setItem('background', payload);
-  },
   [SET_ACTIVETABNAME](state, payload: 'message' | 'contacts') {
     state.activeTabName = payload;
   },

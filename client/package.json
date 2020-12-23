@@ -4,12 +4,10 @@
   "author": "boboooooo159@gmail.com",
   "license": "MIT",
   "scripts": {
-    "start": "vue-cli-service serve",
-    "build:in": "vue-cli-service build --mode in",
-    "build:out": "vue-cli-service build --mode out",
+    "start": "vue-cli-service electron:serve --mode dev",
     "lint": "vue-cli-service lint",
-    "electron:build": "vue-cli-service electron:build --mode out",
-    "electron:serve": "vue-cli-service electron:serve"
+    "build:in": "vue-cli-service electron:build --mode in",
+    "build:out": "vue-cli-service electron:build --mode out"
   },
   "dependencies": {
     "@types/js-cookie": "^2.2.6",

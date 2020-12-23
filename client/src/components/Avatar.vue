@@ -24,7 +24,7 @@
         :style="{ order: data.userId === user.userId && highLight ? '3' : '1' }"
         class="avatar-img"
         :class="{ offLine: !data.online && highLight === false }"
-        :src="(userGather[data.userId] && userGather[data.userId].avatar) || data.avatar"
+        :src="apiUrl +  '/' + ((userGather[data.userId] && userGather[data.userId].avatar) || data.avatar)"
       />
     </a-popover>
     <a-avatar
@@ -32,7 +32,7 @@
       class="avatar-img"
       :style="{ order: data.userId === user.userId && highLight ? '3' : '1' }"
       :class="{ offLine: !data.online && highLight === false }"
-      :src="(userGather[data.userId] && userGather[data.userId].avatar) || data.avatar"
+      :src="apiUrl +  '/' + ((userGather[data.userId] && userGather[data.userId].avatar) || data.avatar)"
     />
     <div class="avatar-name" style="order: 2">{{ userGather[data.userId] && userGather[data.userId].username  || data.username}}</div>
     <div class="avatar-time" :style="{ order: data.userId === user.userId && highLight ? '1' : '3' }" v-if="showTime">
@@ -59,6 +59,8 @@ export default class Avatar extends Vue {
   @Prop({ type: Boolean, default: false }) highLight: boolean; // 头像是否常亮
 
   @appModule.Getter('user') user: User;
+
+  @appModule.Getter('apiUrl') apiUrl: string;
 
   @chatModule.Getter('userGather') userGather: FriendGather;
 

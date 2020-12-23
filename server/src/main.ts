@@ -12,7 +12,9 @@ const fix_socket_io_bug = require('./fix')
 async function bootstrap() {
   await fix_socket_io_bug()
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule)
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true
+  })
 
   // https://github.com/vercel/ncc/issues/513
   // fix ncc打包后提示找不到该依赖问题
@@ -29,7 +31,7 @@ async function bootstrap() {
 
   // 配置静态资源
   app.useStaticAssets(join(__dirname, '../public', '/'), {
-    prefix: '/'
+    prefix: '/api'
   })
 
   await app.listen(3000)

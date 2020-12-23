@@ -12,30 +12,16 @@
           <emoji @addEmoji="addEmoji"></emoji>
         </template>
         <div class="message-tool-item">
-          <div class="messagte-tool-icon" v-if="mobile">😃</div>
-          <a-icon v-else type="smile" />
+          <a-icon type="smile" />
         </div>
       </a-popover>
-      <div class="message-tool-item" v-if="!mobile">
+      <div class="message-tool-item">
         <a-upload :show-upload-list="false" :before-upload="beforeFileUpload">
           <a-icon type="folder-open" />
         </a-upload>
       </div>
     </div>
-
-    <a-input
-      v-if="mobile"
-      autocomplete="off"
-      type="text"
-      autoFocus
-      placeholder="say hello..."
-      v-model="text"
-      ref="input"
-      style="color:#000;"
-      @pressEnter="throttle(preSendMessage)"
-    />
     <a-textarea
-      v-else
       autocomplete="off"
       v-model="text"
       ref="input"
@@ -49,7 +35,6 @@
         }
       "
     />
-    <img class="message-input-button" v-if="mobile" @click="throttle(preSendMessage)" src="~@/assets/send.png" alt="" />
   </div>
 </template>
 
@@ -68,8 +53,6 @@ const appModule = namespace('app');
 })
 export default class Entry extends Vue {
   @appModule.Getter('user') user: User;
-
-  @appModule.Getter('mobile') mobile: boolean;
 
   @chatModule.State('activeRoom') activeRoom: Group & Friend;
 
@@ -198,10 +181,8 @@ export default class Entry extends Vue {
    * focus input框
    */
   focusInput() {
-    if (!this.mobile) {
-      // @ts-ignore
-      this.$refs.input.focus();
-    }
+    // @ts-ignore
+    this.$refs.input.focus();
   }
 
   /**

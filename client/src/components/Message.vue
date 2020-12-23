@@ -48,7 +48,7 @@
               <div class="message-content-text" v-text="_parseText(item.content)" v-else-if="item.messageType === 'text'"></div>
               <div class="message-content-image" v-if="item.messageType === 'image'" :style="getImageStyle(item.content)">
                 <viewer style="display:flex;align-items:center;">
-                  <img :src="'api/static/image/' + item.content" alt="" />
+                  <img :src="apiUrl + '/api/static/image/' + item.content" alt="" />
                 </viewer>
               </div>
               <!-- 附件类型消息 -->
@@ -100,8 +100,6 @@ const appModule = namespace('app');
 export default class Message extends Vue {
   @appModule.Getter('user') user: User;
 
-  @appModule.Getter('mobile') mobile: boolean;
-
   @chatModule.State('activeRoom') activeRoom: Group & Friend;
 
   @chatModule.Getter('socket') socket: SocketIOClient.Socket;
@@ -119,6 +117,8 @@ export default class Message extends Vue {
   @chatModule.Mutation('set_friend_messages') set_friend_messages: Function;
 
   @chatModule.Mutation('set_user_gather') set_user_gather: Function;
+
+  @appModule.Getter('apiUrl') apiUrl: string;
 
   text: string = '';
 
@@ -411,19 +411,8 @@ export default class Message extends Vue {
    */
   getImageStyle(src: string) {
     const arr = src.split('$');
-    let width = Number(arr[2]);
-    let height = Number(arr[3]);
-    if (this.mobile) {
-      // 如果是移动端,图片最大宽度138, 返回值加12是因为设置的是图片框的宽高要加入padding值
-      if (width > 138) {
-        height = (height * 138) / width;
-        width = 138;
-        return {
-          width: `${width + 12}px`,
-          height: `${height + 12}px`,
-        };
-      }
-    }
+    const width = Number(arr[2]);
+    const height = Number(arr[3]);
     return {
       width: `${width + 12}px`,
       height: `${height + 12}px`,
