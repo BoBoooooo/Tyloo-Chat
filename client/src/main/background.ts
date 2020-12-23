@@ -12,6 +12,17 @@ import {
 } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 
+const log = require('electron-log');
+
+
+process.on('uncaughtException', (err) => {
+  log.warn(err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  log.warn(reason);
+});
+
 const isProduction = process.env.NODE_ENV !== 'development';
 
 // 保持一个对于window对象的全局引用，不然当JavaScript被GC，window会被自动地关闭

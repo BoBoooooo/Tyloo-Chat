@@ -39,6 +39,7 @@
     "vuex-class": "^0.3.2",
     "lodash": "^4.17.20",
     "electron": "^7.1.8",
+    "electron-log": "^4.1.0",
     "vue-cli-plugin-electron-builder": "^1.4.2"
   },
   "devDependencies": {
