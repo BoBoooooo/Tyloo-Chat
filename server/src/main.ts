@@ -15,7 +15,6 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true
   })
-
   // https://github.com/vercel/ncc/issues/513
   // fix ncc打包后提示找不到该依赖问题
   app.useWebSocketAdapter(new IoAdapter(app))

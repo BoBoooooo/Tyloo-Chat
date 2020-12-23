@@ -34,10 +34,7 @@ import { join } from 'path'
 import { RCode } from 'src/common/constant/rcode'
 import { formatBytes, nameVerify } from 'src/common/tool/utils'
 import { defaultPassword } from 'src/common/constant/global'
-import { getElasticData } from 'src/common/middleware/elasticsearch'
-const nodejieba = require('nodejieba')
-
-// const axios = require('axios');
+const axios = require('axios')
 const fs = require('fs')
 
 @WebSocketGateway()
@@ -476,34 +473,20 @@ export class ChatGateway {
     }
   }
 
-  // 通过输入内容模糊匹配自动回复词条
-  async getReplyMessage(content: string) {
-    const failMessage = '智能助手不知道你在说什么。'
-    try {
-      // 此处引用分词器进行中文分词
-      // nodejieba
-      // https://github.com/yanyiwu/nodejieba
-      const splitWords = nodejieba.cut(content).join(' ')
-      console.log(splitWords)
-      const res = await getElasticData(splitWords)
-      console.log(res.data)
-      const result = res.data.hits.hits
-      if (result.length > 0) {
-        return result[0]._source.title
-      }
-      return failMessage
-    } catch (e) {
-      return failMessage
-    }
-  }
-  // 机器人自动回复
+  // 小冰机器人自动回复
   async autoReply(data, roomId) {
-    // 获取自动回复内容
-    const message = await this.getReplyMessage(data.content)
-
+    const url =
+      'http://i.itpk.cn/api.php?api_key=68b8fafef36d3906f8f8b0e71b29d277&api_secret=4rdiunvqd0xw'
+    const res = await axios({
+      url,
+      method: 'get',
+      params: {
+        question: data.content
+      }
+    })
     const reply = {
       time: new Date().valueOf(),
-      content: message,
+      content: res.data,
       userId: defaultRobotId,
       friendId: data.userId,
       messageType: 'text'
