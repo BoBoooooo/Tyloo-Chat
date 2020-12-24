@@ -63,6 +63,19 @@
 - chat数据库 (需要手动创建,注意数据库编码格式为utf8bm64)
 - node v10.16.3
 
+
+## 拉取代码时注意事项
+
+```
+// windows系统需要配置一下,提交时转换为LF，检出时不转换
+git config --global core.autocrlf input
+```
+
+```
+// 设置为区分大小写
+git config core.ignorecase false
+```
+
 ## 运行项目
 ```js
 // client
