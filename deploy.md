@@ -3,8 +3,8 @@
 1. 打包前端文件生成 dist 文件夹
 ```js
   // client
-  npm i
-  npm run build:out/in
+  cnpm i
+  npm run build:out/npm run build:in  (out为cdn版本,in为离线部署版本不走cdn)
 ```
 1. 将 dist 下所有文件放到 nginx 下的 html 文件夹中
 2. 配置 nginx 的 gzip (提高传输速度)和请求级别
