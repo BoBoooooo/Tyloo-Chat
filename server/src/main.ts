@@ -30,7 +30,7 @@ async function bootstrap() {
 
   // 配置静态资源
   app.useStaticAssets(join(__dirname, '../public', '/'), {
-    prefix: '/api'
+    prefix: '/'
   })
 
   await app.listen(3000)
