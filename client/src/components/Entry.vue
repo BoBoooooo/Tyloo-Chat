@@ -299,7 +299,7 @@ export default class Entry extends Vue {
     } else {
       // 如果上传附件的为图片则类型为image,其他附件为file类型
       // eslint-disable-next-line no-param-reassign
-      messageType = isJpgOrPng ? 'image' : 'file';
+      messageType = isJpgOrPng ? 'image' as MessageType : 'file' as MessageType;
       this.sendMessage({
         type: this.activeRoom.groupId ? 'group' : 'friend',
         message: file,
