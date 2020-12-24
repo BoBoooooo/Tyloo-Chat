@@ -173,9 +173,41 @@ export default class Entry extends Vue {
    * 添加emoji到input
    */
   addEmoji(emoji: string) {
-    this.text += emoji;
-    this.focusInput();
+    const myField = (this.$refs.input as Vue).$el as HTMLFormElement;
+    if (myField.selectionStart || myField.selectionStart === '0') {
+      // 得到光标前的位置
+      const startPos = myField.selectionStart;
+      // 得到光标后的位置
+      const endPos = myField.selectionEnd;
+      // 在加入数据之前获得滚动条的高度
+      const restoreTop = myField.scrollTop;
+      this.text = this.text.substring(0, startPos) + emoji + this.text.substring(endPos, this.text.length);
+      // 如果滚动条高度大于0
+      if (restoreTop > 0) {
+        // 返回
+        myField.scrollTop = restoreTop;
+      }
+      myField.focus();
+      // 设置光标位置
+      const position = startPos + emoji.length;
+      if (myField.setSelectionRange) {
+        myField.focus();
+        setTimeout(() => {
+          myField.setSelectionRange(position, position);
+        }, 10);
+      } else if (myField.createTextRange) {
+        const range = myField.createTextRange();
+        range.collapse(true);
+        range.moveEnd('character', position);
+        range.moveStart('character', position);
+        range.select();
+      }
+    } else {
+      this.text += emoji;
+      myField.focus();
+    }
   }
+
 
   /**
    * focus input框
@@ -219,8 +251,9 @@ export default class Entry extends Vue {
    * @params file
    */
   async handleUpload(file: File, messageType: MessageType) {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/gif';
+
     if (messageType === 'image') {
-      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/gif';
       if (!isJpgOrPng) {
         return this.$message.error('请选择jpeg/jpg/png/gif格式的图片!');
       }
@@ -245,6 +278,9 @@ export default class Entry extends Vue {
         });
       };
     } else {
+      // 如果上传附件的为图片则类型为image,其他附件为file类型
+      // eslint-disable-next-line no-param-reassign
+      messageType = isJpgOrPng ? 'image' as MessageType : 'file' as MessageType;
       this.sendMessage({
         type: this.activeRoom.groupId ? 'group' : 'friend',
         message: file,
