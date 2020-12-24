@@ -72,6 +72,7 @@ module.exports = {
           createStartMenuShortcut: true, // 创建开始菜单图标
           shortcutName: 'TylooChat', // 图标名称
         },
+        extraResources: ['public/mime'],
       },
     },
   },
