@@ -270,8 +270,9 @@ export default class Entry extends Vue {
    * @params file
    */
   async handleUpload(file: File, messageType: MessageType) {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/gif';
+
     if (messageType === 'image') {
-      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/gif';
       if (!isJpgOrPng) {
         return this.$message.error('请选择jpeg/jpg/png/gif格式的图片!');
       }
@@ -296,6 +297,9 @@ export default class Entry extends Vue {
         });
       };
     } else {
+      // 如果上传附件的为图片则类型为image,其他附件为file类型
+      // eslint-disable-next-line no-param-reassign
+      messageType = isJpgOrPng ? 'image' : 'file';
       this.sendMessage({
         type: this.activeRoom.groupId ? 'group' : 'friend',
         message: file,
