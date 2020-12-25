@@ -1,3 +1,4 @@
+import { AuthModule } from './../auth/auth.module'
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from '../user/entity/user.entity'
@@ -17,7 +18,8 @@ import { FriendMessage } from '../friend/entity/friendMessage.entity'
       GroupMessage,
       UserMap,
       FriendMessage
-    ])
+    ]),
+    AuthModule
   ],
   providers: [UserService],
   controllers: [UserController]

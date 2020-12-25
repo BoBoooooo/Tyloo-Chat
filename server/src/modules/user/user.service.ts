@@ -9,7 +9,8 @@ import { RCode } from 'src/common/constant/rcode'
 import { GroupMessage } from '../group/entity/groupMessage.entity'
 import { UserMap } from '../friend/entity/friend.entity'
 import { FriendMessage } from '../friend/entity/friendMessage.entity'
-import { nameVerify, passwordVerify } from 'src/common/tool/utils'
+import { md5, nameVerify, passwordVerify } from 'src/common/tool/utils'
+import { AuthService } from './../auth/auth.service'
 
 @Injectable()
 export class UserService {
@@ -25,7 +26,8 @@ export class UserService {
     @InjectRepository(UserMap)
     private readonly friendRepository: Repository<UserMap>,
     @InjectRepository(FriendMessage)
-    private readonly friendMessageRepository: Repository<FriendMessage>
+    private readonly friendMessageRepository: Repository<FriendMessage>,
+    private readonly authService: AuthService
   ) {}
 
   async getUser(userId: string) {
@@ -63,23 +65,20 @@ export class UserService {
     }
   }
 
-  async updateUserName(user: User) {
+  async updateUserName(oldUser: User, username: string) {
     try {
-      const oldUser = await this.userRepository.findOne({
-        userId: user.userId,
-        password: user.password
-      })
-      if (oldUser && nameVerify(user.username)) {
+      if (oldUser && nameVerify(username)) {
         const isHaveName = await this.userRepository.findOne({
-          username: user.username
+          username
         })
         if (isHaveName) {
           return { code: 1, msg: '用户名重复', data: '' }
         }
-        const newUser = JSON.parse(JSON.stringify(oldUser))
-        newUser.username = user.username
-        newUser.password = user.password
-        await this.userRepository.update(oldUser, newUser)
+        const newUser = await this.userRepository.findOne({
+          userId: oldUser.userId
+        })
+        newUser.username = username
+        await this.userRepository.update(oldUser.userId, newUser)
         return { msg: '更新用户名成功', data: newUser }
       }
       return { code: RCode.FAIL, msg: '更新失败', data: '' }
@@ -90,16 +89,14 @@ export class UserService {
 
   async updatePassword(user: User, password: string) {
     try {
-      const oldUser = await this.userRepository.findOne({
-        userId: user.userId,
-        username: user.username,
-        password: user.password
-      })
-      if (oldUser && passwordVerify(password)) {
-        const newUser = JSON.parse(JSON.stringify(oldUser))
-        newUser.password = password
-        await this.userRepository.update(oldUser, newUser)
-        return { msg: '更新用户密码成功', data: newUser }
+      if (user && passwordVerify(password)) {
+        const newUser = await this.userRepository.findOne({
+          userId: user.userId
+        })
+        const backUser = JSON.parse(JSON.stringify(newUser))
+        newUser.password = md5(password)
+        await this.userRepository.update(user.userId, newUser)
+        return { msg: '更新用户密码成功', data: backUser }
       }
       return { code: RCode.FAIL, msg: '更新失败', data: '' }
     } catch (e) {
@@ -107,23 +104,9 @@ export class UserService {
     }
   }
 
-  async jurisdiction(userId: string) {
-    const user = await this.userRepository.findOne({ userId: userId })
-    const newUser = JSON.parse(JSON.stringify(user))
-    if (user.username === '陈冠希') {
-      newUser.role = 'admin'
-      await this.userRepository.update(user, newUser)
-      return { msg: '更新用户信息成功', data: newUser }
-    }
-  }
-
-  async delUser(uid: string, psw: string, did: string) {
+  async delUser(user: User, did: string) {
     try {
-      const user = await this.userRepository.findOne({
-        userId: uid,
-        password: psw
-      })
-      if (user.role === 'admin' && user.username === '陈冠希') {
+      if (user.role === 'admin') {
         // 被删用户自己创建的群
         const groups = await this.groupRepository.find({ userId: did })
         for (const group of groups) {
@@ -164,8 +147,7 @@ export class UserService {
 
   async setUserAvatar(user: User, file) {
     const newUser = await this.userRepository.findOne({
-      userId: user.userId,
-      password: user.password
+      userId: user.userId
     })
     if (newUser) {
       const random = Date.now() + '&'
@@ -174,7 +156,6 @@ export class UserService {
       )
       stream.write(file.buffer)
       newUser.avatar = `api/avatar/${random}${file.originalname}`
-      newUser.password = user.password
       await this.userRepository.save(newUser)
       return { msg: '修改头像成功', data: newUser }
     } else {

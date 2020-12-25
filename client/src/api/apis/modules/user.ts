@@ -2,21 +2,16 @@ import axios from '@/api/axios';
 
 /**
  * 更新用户名
- * @param params
+ * @param username
  */
-export const patchUserName = (params: User) => axios.patch('/user/username', {
-  ...params,
-});
+export const patchUserName = (username: string) => axios.patch(`/user/username?username=${username}`);
 
 /**
  * 更新用户密码
- * @param user
  * @param password
  *
  */
-export const patchPassword = (user: User, password: string) => axios.patch(`/user/password?password=${password}`, {
-  ...user,
-});
+export const patchPassword = (password: string) => axios.patch(`/user/password?password=${password}`);
 
 /**
  * 用户名模糊搜索用户
