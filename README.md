@@ -9,9 +9,9 @@
 本项目fork自[genal-chat]('https://github.com/genaller/genal-chat.git')做了优化升级,感谢大佬`Genal`开源提供思路!
 由于年底比较忙,目前还在抽空持续优化中,敬请期待~
 
-## 🚀 Electron版本客户端已出炉,暂时没有上传release
+## 🚀 Electron版本客户端已出炉,详见release
 
-## 🚀 可以加qq群`289438105`获取
+## 🚀 欢迎各位大佬提提意见建议/Bug反馈 qq群`289438105`
 
 ## [🏖Tyloo-Chat线上demo地址](http://server.boboooooo.top:9999)
 **tips: 麻烦各位绿色聊天,不要开车,不要上传太大的文件,服务器比较垃圾..**
