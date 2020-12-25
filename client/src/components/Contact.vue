@@ -184,15 +184,17 @@ $color: #6f6f6f;
       border-bottom: 1px solid rgb(198, 198, 198);
     }
     .contact-box {
-      padding: 10px 20px;
+      padding: 10px 25px 10px 20px;
       margin: 0 -20px;
+      text-overflow: ellipsis; //溢出用省略号显示
+      white-space: nowrap; //溢出不换行
+      overflow: hidden;
       cursor: pointer;
       &:hover {
         background: #d6d6d6;
       }
       .contact-name {
         margin-left: 10px;
-
         color: #080808;
       }
       .contact-avatar {
