@@ -1,6 +1,6 @@
 {
-  "name": "tyloo-chat",
-  "version": "2.1.4",
+  "name": "tyloo-chat-client",
+  "version": "2.1.5",
   "author": "boboooooo159@gmail.com",
   "license": "MIT",
   "scripts": {

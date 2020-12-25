@@ -65,12 +65,12 @@
         </div>
         <div class="tool-user-info">
           <div class="tool-user-title">更改用户名</div>
-          <a-input class="tool-user-input" v-model="username" placeholder="请输入用户名"></a-input>
+          <a-input class="tool-user-input" v-model="username" placeholder="请输入新用户名"></a-input>
           <a-button type="primary" @click="changeUserName">确认</a-button>
         </div>
         <div class="tool-user-info">
           <div class="tool-user-title">更改密码</div>
-          <a-input-password class="tool-user-input" v-model="password" placeholder="请输入密码"></a-input-password>
+          <a-input-password class="tool-user-input" v-model="password" placeholder="请输入新密码"></a-input-password>
           <a-button type="primary" @click="changePassword">确认</a-button>
         </div>
       </div>
@@ -91,6 +91,8 @@ const chatModule = namespace('chat');
 @Component
 export default class Tool extends Vue {
   @appModule.Getter('user') user: User;
+
+  @appModule.Getter('token') token: string;
 
   @appModule.Getter('activeTabName') activeTabName: string;
 
@@ -145,9 +147,7 @@ export default class Tool extends Vue {
     if (!nameVerify(this.username)) {
       return;
     }
-    const user: User = JSON.parse(JSON.stringify(this.user));
-    user.username = this.username;
-    const res = await apis.patchUserName(user);
+    const res = await apis.patchUserName(this.username);
     const data = processReturn(res);
     if (data) {
       console.log(data);
@@ -162,8 +162,7 @@ export default class Tool extends Vue {
     if (!passwordVerify(this.password)) {
       return;
     }
-    const user: User = JSON.parse(JSON.stringify(this.user));
-    const res = await apis.patchPassword(user, this.password);
+    const res = await apis.patchPassword(this.password);
     const data = processReturn(res);
     if (data) {
       this.setUser(data);
@@ -189,8 +188,6 @@ export default class Tool extends Vue {
     this.uploading = true;
     const formData = new FormData();
     formData.append('avatar', this.avatar);
-    formData.append('userId', this.user.userId);
-    formData.append('password', this.user.password);
     const data = processReturn(await setUserAvatar(formData));
     if (data) {
       this.setUser(data);

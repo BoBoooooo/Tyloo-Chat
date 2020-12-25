@@ -21,6 +21,9 @@ const getters: GetterTree<AppState, RootState> = {
   activeTabName(state) {
     return state.activeTabName;
   },
+  token(state) {
+    return state.token;
+  },
 };
 
 export default getters;
