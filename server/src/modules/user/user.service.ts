@@ -89,7 +89,7 @@ export class UserService {
 
   async updatePassword(user: User, password: string) {
     try {
-      if (user && passwordVerify(password)) {
+      if (user) {
         const newUser = await this.userRepository.findOne({
           userId: user.userId
         })
