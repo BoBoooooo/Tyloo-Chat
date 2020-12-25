@@ -186,7 +186,7 @@ const mutations: MutationTree<ChatState> = {
 
   // 给某个聊天组添加未读消息
   [ADD_UNREAD_GATHER](state, payload: string) {
-    document.title = `【有未读消息】${document.title}`;
+    document.title = '【有未读消息】TylooChat聊天室';
     if (!state.unReadGather[payload]) {
       Vue.set(state.unReadGather, payload, 1);
     } else {
