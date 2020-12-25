@@ -11,7 +11,8 @@
         <a-card :bordered="false" style="width: 300px">
           <template slot="title">
             <h2>{{ userGather[data.userId] && userGather[data.userId].username  || data.username}}</h2>
-            <a-avatar :size="60" style="float:right" :src="(userGather[data.userId] && userGather[data.userId].avatar) || data.avatar" />
+            <a-avatar :size="60" style="float:right"
+              :src="apiUrl +  '/' + ((userGather[data.userId] && userGather[data.userId].avatar) || data.avatar).split('api/')[1]" />
           </template>
           <a-button v-if="user.role === 'admin'" style="margin-bottom: 5px;" @click="deleteUser(data.userId)" type="primary">
             删除用户
