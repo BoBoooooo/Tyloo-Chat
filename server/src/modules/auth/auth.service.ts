@@ -52,7 +52,7 @@ export class AuthService {
     if (!user) {
       return { code: 1, msg: '用户名或密码错误', data: '' }
     }
-    const payload = { userId: user.userId, password: user.password }
+    const payload = { userId: user.userId }
     return {
       msg: '登录成功',
       data: {
@@ -75,7 +75,7 @@ export class AuthService {
     user.userId = user.userId
     user.password = md5(user.password)
     const newUser = await this.userRepository.save(user)
-    const payload = { userId: newUser.userId, password: newUser.password }
+    const payload = { userId: newUser.userId }
     // 默认加入群组
     await this.groupUserRepository.save({
       userId: newUser.userId,
@@ -110,7 +110,6 @@ export class AuthService {
    */
   getUserInfoFromToken(token): User {
     if (!token) return null
-
     const user = jwt.verify(token, jwtConstants.secret) as User
     return user
   }
