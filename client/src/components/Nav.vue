@@ -25,7 +25,7 @@
     <!-- 消息列表/通讯录切换 -->
     <a-tooltip placement="left" title="消息列表" arrow-point-at-center>
       <a-icon
-        type="message"
+        type="wechat"
         theme="filled"
         class="tool-message icon"
         :class="{
@@ -39,7 +39,7 @@
         :class="{
           'tool-active': activeTabName === 'contacts',
         }"
-        type="contacts"
+        type="team"
         class="tool-contacts icon"
         @click="setActiveTabName('contacts')"
       />

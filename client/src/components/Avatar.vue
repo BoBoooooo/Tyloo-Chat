@@ -113,6 +113,12 @@ export default class Avatar extends Vue {
   .avatar-name {
     margin: 0 12px;
     color: #080808;
+    margin: 0 12px;
+    max-width: 160px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #080808;
   }
   .avatar-time {
     font-size: 12px;
@@ -130,6 +136,10 @@ export default class Avatar extends Vue {
   h2 {
     display: inline-block;
     line-height: 60px;
+    max-width: 190px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
   > div {
     margin: 4px;
