@@ -4,7 +4,7 @@
 ```js
   // client
   cnpm i
-  npm run build:out/npm run build:in  (out为cdn版本,in为离线部署版本不走cdn)
+  npm run build
 ```
 1. 将 dist 下所有文件放到 nginx 下的 html 文件夹中
 2. 配置 nginx 的 gzip (提高传输速度)和请求级别
@@ -30,17 +30,6 @@ http {
       root   html;
       index  index.html index.htm;
       add_header Cache-Control public;
-    }
-
-    location ^~/api/ {
-      rewrite ^/api/(.*) /$1 break;
-      proxy_pass http://localhost:3000;
-    }
-
-    location ^~/socket.io/ {
-      proxy_pass http://localhost:3000;
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "upgrade";
     }
     error_page   500 502 503 504  /50x.html;
     location = /50x.html {

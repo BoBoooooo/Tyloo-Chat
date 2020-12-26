@@ -15,7 +15,7 @@
     <div class="tool-avatar">
       <div class="tool-avatar-img" @click="showUserInfo('showUserModal')">
         <a-tooltip v-if="user" placement="left" arrow-point-at-center :title="user.username">
-          <img :src="user.avatar" alt="" />
+          <img :src="apiUrl + user.avatar" alt="" />
         </a-tooltip>
       </div>
     </div>
@@ -60,7 +60,7 @@
           class="tool-user-avatar"
           :class="{ active: showUpload || uploading }"
         >
-          <a-avatar :src="user.avatar" class="img" :size="120"></a-avatar>
+          <a-avatar :src="apiUrl + user.avatar" class="img" :size="120"></a-avatar>
           <a-upload v-if="showUpload && !uploading" class="tool-user-upload" :show-upload-list="false" :before-upload="beforeUpload">
             <div class="text">
               <a-icon type="upload" style="margin-right: 4px;" />
@@ -120,6 +120,8 @@ const chatModule = namespace('chat');
 @Component
 export default class Tool extends Vue {
   @appModule.Getter('user') user: User;
+
+  @appModule.Getter('apiUrl') apiUrl: string;
 
   @appModule.Getter('token') token: string;
 

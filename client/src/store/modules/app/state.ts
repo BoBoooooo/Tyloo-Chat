@@ -6,6 +6,7 @@ export interface AppState {
   mobile: boolean;
   background: string;
   activeTabName: 'message' | 'contacts';
+  apiUrl: string;
 }
 
 const appState: AppState = {
@@ -20,6 +21,7 @@ const appState: AppState = {
   mobile: false,
   background: '',
   activeTabName: 'message',
+  apiUrl: process.env.VUE_APP_API_URL,
 };
 
 export default appState;

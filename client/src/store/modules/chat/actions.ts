@@ -29,9 +29,15 @@ const actions: ActionTree<ChatState, RootState> = {
   // 初始化socket连接和监听socket事件
   async connectSocket({
     commit, state, dispatch, rootState,
-  }, callback) {
+  }) {
     const { user, token } = rootState.app;
-    const socket: SocketIOClient.Socket = io.connect(`/?userId=${user.userId}`, { reconnection: true });
+    const socket: SocketIOClient.Socket = io.connect(`ws://${process.env.VUE_APP_API_URL.split('http://')[1]}`, {
+      reconnection: true,
+      query: {
+        userId: user.userId,
+      },
+    });
+
     socket.on('connect', async () => {
       console.log('连接成功');
       // 获取聊天室所需所有信息

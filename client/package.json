@@ -4,9 +4,8 @@
   "author": "boboooooo159@gmail.com",
   "license": "MIT",
   "scripts": {
-    "start": "vue-cli-service serve --mode",
-    "build:in": "vue-cli-service build --mode in",
-    "build:out": "vue-cli-service build --mode out",
+    "start": "vue-cli-service serve --mode dev",
+    "build": "vue-cli-service build --mode out",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

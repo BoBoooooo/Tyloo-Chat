@@ -28,6 +28,9 @@ const getters: GetterTree<AppState, RootState> = {
   token(state) {
     return state.token;
   },
+  apiUrl(state) {
+    return state.apiUrl;
+  },
 };
 
 export default getters;
