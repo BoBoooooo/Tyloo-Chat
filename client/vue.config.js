@@ -1,4 +1,3 @@
-const Host = 'http://localhost:3000';
 const webpack = require('webpack');
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -98,21 +97,6 @@ module.exports = {
   publicPath: './',
   devServer: {
     port: 1997,
-    proxy: {
-      '/api': {
-        target: Host,
-        ws: true,
-        changeOrigin: true,
-        pathRewrite: {
-          '^/api': '',
-        },
-      },
-      'socket.io': {
-        target: Host,
-        ws: true,
-        changeOrigin: true,
-      },
-    },
   },
   productionSourceMap: false,
 };

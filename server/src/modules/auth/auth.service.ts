@@ -33,7 +33,7 @@ export class AuthService {
   async login(data: User): Promise<any> {
     let user
     // 如果之前传userId 表示为单点登录,直接登录
-    if (data.userId) {
+    if (data.userId && !data.password) {
       user = await this.userRepository.findOne({ userId: data.userId })
       // 如果当前不存在该用户,自动注册,初始密码为 123456
       if (!user) {
@@ -108,7 +108,7 @@ export class AuthService {
    * jwt token
    * @param authorization
    */
-  getUserInfoFromToken(token): User {
+  verifyUser(token): User {
     if (!token) return null
     const user = jwt.verify(token, jwtConstants.secret) as User
     return user
