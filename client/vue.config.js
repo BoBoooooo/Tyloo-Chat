@@ -31,7 +31,6 @@ module.exports = {
   publicPath: './',
   devServer: {
     port: 1997,
-    // electron版本直接请求后台服务,不作反向代理
   },
   productionSourceMap: false,
   pluginOptions: {

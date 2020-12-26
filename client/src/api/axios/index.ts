@@ -10,6 +10,8 @@ const fetch: AxiosInstance = axios.create({
     'Cache-Control': 'no-cache',
     Pragma: 'no-cache',
   },
+  // 不携带cookie
+  withCredentials: false,
 });
 
 fetch.interceptors.request.use(requestSuccess, requestFail);

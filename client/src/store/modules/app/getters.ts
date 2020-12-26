@@ -11,7 +11,6 @@ const getters: GetterTree<AppState, RootState> = {
       return {};
     }
     const user = JSON.parse(userString);
-    user.avatar = `${state.apiUrl}/${user.avatar.split('api/')[1]}`;
     state.user = user;
     return state.user;
   },

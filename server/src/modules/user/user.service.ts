@@ -155,7 +155,7 @@ export class UserService {
         join('public/avatar', random + file.originalname)
       )
       stream.write(file.buffer)
-      newUser.avatar = `api/avatar/${random}${file.originalname}`
+      newUser.avatar = `/avatar/${random}${file.originalname}`
       await this.userRepository.save(newUser)
       return { msg: '修改头像成功', data: newUser }
     } else {

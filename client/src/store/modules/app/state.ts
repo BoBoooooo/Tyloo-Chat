@@ -2,7 +2,7 @@ export interface AppState {
   user: User;
   token: string;
   activeTabName: 'message' | 'contacts';
-  apiUrl?: string;
+  apiUrl: string;
 }
 
 const appState: AppState = {
@@ -15,7 +15,7 @@ const appState: AppState = {
   },
   token: localStorage.getItem('token') as string,
   activeTabName: 'message',
-  apiUrl: process.env.VUE_APP_API_URL,
+  apiUrl: process.env.VUE_APP_API_URL || '',
 };
 
 export default appState;
