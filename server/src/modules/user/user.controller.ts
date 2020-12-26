@@ -36,19 +36,19 @@ export class UserController {
 
   @Patch('username')
   updateUserName(@Req() req, @Query('username') username) {
-    const oldUser = this.authService.getUserInfoFromToken(req.headers.token)
+    const oldUser = this.authService.verifyUser(req.headers.token)
     return this.userService.updateUserName(oldUser, username)
   }
 
   @Patch('password')
   updatePassword(@Req() req, @Query('password') password) {
-    const user = this.authService.getUserInfoFromToken(req.headers.token)
+    const user = this.authService.verifyUser(req.headers.token)
     return this.userService.updatePassword(user, password)
   }
 
   @Delete()
   delUser(@Req() req, @Query() { did }) {
-    const user = this.authService.getUserInfoFromToken(req.headers.token)
+    const user = this.authService.verifyUser(req.headers.token)
     return this.userService.delUser(user, did)
   }
 
@@ -60,7 +60,7 @@ export class UserController {
   @Post('/avatar')
   @UseInterceptors(FileInterceptor('avatar'))
   setUserAvatar(@Req() req, @UploadedFile() file) {
-    const user = this.authService.getUserInfoFromToken(req.headers.token)
+    const user = this.authService.verifyUser(req.headers.token)
     return this.userService.setUserAvatar(user, file)
   }
 }

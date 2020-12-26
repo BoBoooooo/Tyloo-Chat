@@ -24,7 +24,6 @@ import {
 import { Server, Socket } from 'socket.io'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, getRepository } from 'typeorm'
-import { User } from '../user/entity/user.entity'
 import { Group, GroupMap } from '../group/entity/group.entity'
 import { GroupMessage } from '../group/entity/groupMessage.entity'
 import { UserMap } from '../friend/entity/friend.entity'
@@ -35,6 +34,9 @@ import { RCode } from 'src/common/constant/rcode'
 import { formatBytes, nameVerify } from 'src/common/tool/utils'
 import { defaultPassword } from 'src/common/constant/global'
 import { getElasticData } from 'src/common/middleware/elasticsearch'
+import { UseGuards } from '@nestjs/common'
+import { User } from './../user/entity/user.entity'
+import { WsJwtGuard } from './../../common/guards/WsJwtGuard'
 const nodejieba = require('nodejieba')
 
 // const axios = require('axios');
@@ -64,7 +66,9 @@ export class ChatGateway {
 
   // socket连接钩子
   async handleConnection(client: Socket): Promise<string> {
-    const userId = client.handshake.query.userId
+    const token = client.handshake.query.token
+    const user = this.authService.verifyUser(token)
+    const { userId } = user
     // 连接默认加入DEFAULG_GROUP
     // TODO 待优化
     client.join(defaultGroupId)
@@ -97,6 +101,7 @@ export class ChatGateway {
   }
 
   // 创建群组
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('addGroup')
   async addGroup(
     @ConnectedSocket() client: Socket,
@@ -138,6 +143,7 @@ export class ChatGateway {
   }
 
   // 加入群组
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('joinGroup')
   async joinGroup(
     @ConnectedSocket() client: Socket,
@@ -178,6 +184,7 @@ export class ChatGateway {
   }
 
   // 加入群组的socket连接
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('joinGroupSocket')
   async joinGroupSocket(
     @ConnectedSocket() client: Socket,
@@ -203,6 +210,7 @@ export class ChatGateway {
   }
 
   // 发送群消息
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('groupMessage')
   async sendGroupMessage(@MessageBody() data: GroupMessageDto): Promise<any> {
     const isUser = await this.userRepository.findOne({ userId: data.userId })
@@ -258,6 +266,7 @@ export class ChatGateway {
   }
 
   // 添加好友
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('addFriend')
   async addFriend(
     @ConnectedSocket() client: Socket,
@@ -397,6 +406,7 @@ export class ChatGateway {
   }
 
   // 加入私聊的socket连接
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('joinFriendSocket')
   async joinFriend(
     @ConnectedSocket() client: Socket,
@@ -423,6 +433,7 @@ export class ChatGateway {
   }
 
   // 发送私聊消息
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('friendMessage')
   async friendMessage(
     @ConnectedSocket() client: Socket,
@@ -516,12 +527,10 @@ export class ChatGateway {
   }
 
   // 获取所有群和好友数据
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('chatData')
-  async getAllData(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() token: string
-  ): Promise<any> {
-    const user = this.authService.getUserInfoFromToken(token)
+  async getAllData(@MessageBody() token: string): Promise<any> {
+    const user = this.authService.verifyUser(token)
     if (user) {
       const isUser = await this.userRepository.findOne({
         userId: user.userId
@@ -679,6 +688,7 @@ export class ChatGateway {
   }
 
   // 退群
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('exitGroup')
   async exitGroup(
     @ConnectedSocket() client: Socket,
@@ -709,6 +719,7 @@ export class ChatGateway {
   }
 
   // 删好友
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('exitFriend')
   async exitFriend(
     @ConnectedSocket() client: Socket,
@@ -741,6 +752,7 @@ export class ChatGateway {
   }
 
   // 消息撤回
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('revokeMessage')
   async revokeMessage(
     @ConnectedSocket() client: Socket,
@@ -776,6 +788,7 @@ export class ChatGateway {
   }
 
   // 更新群信息(公告,群名)
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('updateGroupInfo')
   async updateGroupNotice(@MessageBody() data: GroupDto): Promise<any> {
     console.log(data)
@@ -788,6 +801,7 @@ export class ChatGateway {
   }
 
   // 更新用户信息(头像\用户名)
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('updateUserInfo')
   async updateUserInfo(
     @ConnectedSocket() client: Socket,
@@ -804,6 +818,7 @@ export class ChatGateway {
     })
   }
   // 邀请好友入群
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('inviteFriendsIntoGroup')
   async inviteFriendsIntoGroup(
     @MessageBody() data: FriendsIntoGroup

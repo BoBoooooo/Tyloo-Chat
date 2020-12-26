@@ -34,7 +34,7 @@ const actions: ActionTree<ChatState, RootState> = {
     const socket: SocketIOClient.Socket = io.connect(`ws://${process.env.VUE_APP_API_URL.split('http://')[1]}`, {
       reconnection: true,
       query: {
-        userId: user.userId,
+        token,
       },
     });
 
