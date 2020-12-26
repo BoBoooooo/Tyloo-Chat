@@ -7,7 +7,8 @@
 
 ## 说明
 本项目fork自[genal-chat]('https://github.com/genaller/genal-chat.git')做了优化升级,感谢大佬`Genal`开源提供思路!
-由于年底比较忙,目前还在抽空持续优化中,敬请期待~
+由于年底比较忙,目前还在抽空持续优化中,敬请期待!!!
+觉得还不错的话可以点个Star鼓励一下!!!
 
 ## 🚀 Electron版本客户端已出炉,详见release
 
