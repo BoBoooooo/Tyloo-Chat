@@ -31,7 +31,7 @@ const actions: ActionTree<ChatState, RootState> = {
     commit, state, dispatch, rootState,
   }) {
     const { user, token } = rootState.app;
-    const socket: SocketIOClient.Socket = io.connect(`ws://${process.env.VUE_APP_API_URL.split('http://')[1]}`, {
+    const socket: SocketIOClient.Socket = io.connect(`ws://${process.env.VUE_APP_API_URL!.split('http://')[1]}`, {
       reconnection: true,
       query: {
         token,
