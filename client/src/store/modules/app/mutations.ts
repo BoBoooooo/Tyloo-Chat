@@ -20,6 +20,7 @@ const mutations: MutationTree<AppState> = {
       createTime: 0,
     };
     localStorage.setItem('user', '');
+    localStorage.setItem('token', '');
   },
 
   [SET_TOKEN](state, payload) {

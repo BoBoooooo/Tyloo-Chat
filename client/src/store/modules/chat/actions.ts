@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import Vue from 'vue';
 import { DEFAULT_GROUP } from '@/common/index';
 import localforage from 'localforage';
+import { CLEAR_USER } from '../app/mutation-types';
 import { ChatState } from './state';
 import { RootState } from '../../index';
 import {
@@ -36,6 +37,13 @@ const actions: ActionTree<ChatState, RootState> = {
       query: {
         token,
       },
+    });
+    // token校验,失败则要求重新登录
+    socket.on('unauthorized', (msg: string) => {
+      Vue.prototype.$message.error(msg);
+      // 清空token,socket
+      commit(`app/${CLEAR_USER}`, {}, { root: true });
+      setTimeout(() => { window.location.reload(); }, 2000);
     });
 
     socket.on('connect', async () => {
