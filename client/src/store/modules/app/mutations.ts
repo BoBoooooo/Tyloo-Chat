@@ -21,7 +21,7 @@ const mutations: MutationTree<AppState> = {
       createTime: 0,
     };
     cookie.set('user', '');
-    // cookie.set('token', '');
+    cookie.set('token', '');
   },
 
   [SET_TOKEN](state, payload) {
