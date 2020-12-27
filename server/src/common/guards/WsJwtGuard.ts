@@ -14,13 +14,15 @@ export class WsJwtGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    let client: Socket
     try {
-      const client: Socket = context.switchToWs().getClient<Socket>()
+      client = context.switchToWs().getClient<Socket>()
       const authToken: string = client.handshake?.query?.token
       const user = this.authService.verifyUser(authToken)
       return Boolean(user)
     } catch (err) {
-      console.log(err)
+      client.emit('unauthorized', '用户信息校验失败,请重新登录!')
+      client.disconnect()
       throw new WsException(err.message)
     }
   }
