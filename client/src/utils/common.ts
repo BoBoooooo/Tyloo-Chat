@@ -100,7 +100,7 @@ export function passwordVerify(password: string): boolean {
     return false;
   }
   if (password.length > 16) {
-    Vue.prototype.$message.error('密码太长');
+    Vue.prototype.$message.error('密码最多16位,请重新输入');
     return false;
   }
   return true;

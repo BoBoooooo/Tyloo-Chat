@@ -12,7 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { User } from '../user/entity/user.entity'
 import { GroupMap } from '../group/entity/group.entity'
-import { md5, nameVerify, passwordVerify } from 'src/common/tool/utils'
+import { md5 } from 'src/common/tool/utils'
 import { RCode } from 'src/common/constant/rcode'
 import * as jwt from 'jsonwebtoken'
 import { jwtConstants } from './constants'
@@ -66,9 +66,6 @@ export class AuthService {
     const isHave = await this.userRepository.find({ username: user.username })
     if (isHave.length) {
       return { code: RCode.FAIL, msg: '用户名重复', data: '' }
-    }
-    if (!passwordVerify(user.password) || !nameVerify(user.username)) {
-      return { code: RCode.FAIL, msg: '注册校验不通过！', data: '' }
     }
     user.avatar = `/avatar/avatar${Math.round(Math.random() * 19 + 1)}.png`
     user.role = 'user'

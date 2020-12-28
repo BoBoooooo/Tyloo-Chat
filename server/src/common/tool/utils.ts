@@ -17,25 +17,6 @@ export function nameVerify(name: string): boolean {
 }
 
 /**
- * 密码校验
- * @param password
- */
-export function passwordVerify(password: string): boolean {
-  console.log(password)
-  // const passwordReg = /^\w+$/gis;
-  if (password.length === 0) {
-    return false
-  }
-  // if (!passwordReg.test(password)) {
-  //   return false;
-  // }
-  if (password.length > 16) {
-    return false
-  }
-  return true
-}
-
-/**
  * 获取文件大小
  * @param bytes
  * @param decimals

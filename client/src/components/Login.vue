@@ -49,7 +49,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import { nameVerify } from '@/utils/common';
+import { nameVerify, passwordVerify } from '@/utils/common';
 
 @Component
 export default class Login extends Vue {
@@ -85,6 +85,9 @@ export default class Login extends Vue {
         // eslint-disable-next-line no-param-reassign
         delete (user as any).remember;
         if (!nameVerify(user.username)) {
+          return;
+        }
+        if (!passwordVerify(user.password)) {
           return;
         }
         this.$emit(this.type, user);
