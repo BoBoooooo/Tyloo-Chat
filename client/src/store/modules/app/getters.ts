@@ -31,6 +31,9 @@ const getters: GetterTree<AppState, RootState> = {
   apiUrl(state) {
     return state.apiUrl;
   },
+  loading(state) {
+    return state.loading;
+  },
 };
 
 export default getters;
