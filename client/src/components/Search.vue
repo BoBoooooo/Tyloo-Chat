@@ -37,7 +37,7 @@
     <a-modal v-model="visibleAddGroup" footer="" title="创建群聊">
       <div style="display:flex">
         <a-input v-model="groupName" placeholder="请输入群名字"></a-input>
-        <a-button @click="addGroup" type="primary">确定</a-button>
+        <a-button @click="addGroup" :loadig="loading" type="primary">确定</a-button>
       </div>
     </a-modal>
     <a-modal v-model="visibleJoinGroup" footer="" title="搜索群组">
@@ -57,7 +57,7 @@
             <div>{{ group.groupName }}</div>
           </a-select-option>
         </a-select>
-        <a-button @click="joinGroup" type="primary">加入群</a-button>
+        <a-button @click="joinGroup" type="primary" :loading="loading">加入群</a-button>
       </div>
     </a-modal>
     <a-modal v-model="visibleAddFriend" footer="" title="创建聊天/搜索用户">
@@ -77,7 +77,7 @@
             <div>{{ user.username }}</div>
           </a-select-option>
         </a-select>
-        <a-button @click="addFriend" type="primary">添加好友</a-button>
+        <a-button @click="addFriend" type="primary" :loading="loading">添加好友</a-button>
       </div>
     </a-modal>
   </div>
@@ -92,14 +92,19 @@ import { isContainStr, processReturn, nameVerify } from '@/utils/common';
 import * as apis from '@/api/apis';
 
 const chatModule = namespace('chat');
+const appModule = namespace('app');
 
 @Component
 export default class Search extends Vue {
   @chatModule.State('activeRoom') activeRoom: Group & Friend;
 
+  @appModule.Getter('loading') loading: boolean;
+
   @chatModule.Getter('groupGather') groupGather: GroupGather;
 
   @chatModule.Getter('friendGather') friendGather: FriendGather;
+
+  @appModule.Mutation('set_loading') setLoading: Function;
 
   visibleAddGroup: boolean = false;
 
@@ -195,6 +200,7 @@ export default class Search extends Vue {
   }
 
   addGroup() {
+    this.setLoading(true);
     this.visibleAddGroup = false;
     if (!nameVerify(this.groupName)) {
       this.visibleAddGroup = true;
@@ -205,12 +211,14 @@ export default class Search extends Vue {
   }
 
   joinGroup() {
+    this.setLoading(true);
     this.visibleJoinGroup = false;
     this.$emit('joinGroup', this.groupId);
     this.groupId = '';
   }
 
   addFriend() {
+    this.setLoading(true);
     this.visibleAddFriend = false;
     this.$emit('addFriend', this.friend);
     this.friend = {
@@ -241,6 +249,7 @@ export default class Search extends Vue {
     right: 15px;
     top: 13px;
     font-size: 20px;
+    padding: 0 ;
     cursor: pointer;
     line-height: 40px;
     color: gray;

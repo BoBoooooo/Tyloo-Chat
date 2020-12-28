@@ -23,6 +23,9 @@ const getters: GetterTree<AppState, RootState> = {
   token(state) {
     return state.token;
   },
+  loading(state) {
+    return state.loading;
+  },
 };
 
 export default getters;

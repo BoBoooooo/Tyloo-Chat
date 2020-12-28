@@ -9,7 +9,7 @@ import { RCode } from 'src/common/constant/rcode'
 import { GroupMessage } from '../group/entity/groupMessage.entity'
 import { UserMap } from '../friend/entity/friend.entity'
 import { FriendMessage } from '../friend/entity/friendMessage.entity'
-import { md5, nameVerify, passwordVerify } from 'src/common/tool/utils'
+import { md5 } from 'src/common/tool/utils'
 import { AuthService } from './../auth/auth.service'
 
 @Injectable()
@@ -67,7 +67,7 @@ export class UserService {
 
   async updateUserName(oldUser: User, username: string) {
     try {
-      if (oldUser && nameVerify(username)) {
+      if (oldUser) {
         const isHaveName = await this.userRepository.findOne({
           username
         })
