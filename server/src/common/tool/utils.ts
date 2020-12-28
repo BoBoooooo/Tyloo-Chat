@@ -29,7 +29,7 @@ export function passwordVerify(password: string): boolean {
   // if (!passwordReg.test(password)) {
   //   return false;
   // }
-  if (password.length > 9) {
+  if (password.length > 16) {
     return false
   }
   return true
