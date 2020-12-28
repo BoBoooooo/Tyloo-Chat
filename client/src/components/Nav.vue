@@ -161,7 +161,6 @@ export default class Tool extends Vue {
   @Watch('user')
   userChange() {
     this.username = this.user.username;
-    this.password = this.user.password;
   }
 
   @Watch('activeTabName')
@@ -171,7 +170,6 @@ export default class Tool extends Vue {
 
   created() {
     this.username = this.user.username;
-    this.password = this.user.password;
   }
 
   logout() {

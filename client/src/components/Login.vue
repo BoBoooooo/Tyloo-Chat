@@ -38,7 +38,7 @@
           >
             记住密码
           </a-checkbox>
-          <a-button type="primary" html-type="submit" class="login-form-button">
+          <a-button type="primary" html-type="submit" :loading="loading" class="login-form-button">
             {{ buttonText }}
           </a-button>
         </a-form-item>
@@ -49,10 +49,15 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import { nameVerify } from '@/utils/common';
+import { nameVerify, passwordVerify } from '@/utils/common';
+import { namespace } from 'vuex-class';
+
+const appModule = namespace('app');
 
 @Component
 export default class Login extends Vue {
+  @appModule.Getter('loading') loading: boolean;
+
   @Prop() showModal: boolean;
 
   form: any = null;
@@ -85,6 +90,9 @@ export default class Login extends Vue {
         // eslint-disable-next-line no-param-reassign
         delete (user as any).remember;
         if (!nameVerify(user.username)) {
+          return;
+        }
+        if (!passwordVerify(user.password)) {
           return;
         }
         this.$emit(this.type, user);

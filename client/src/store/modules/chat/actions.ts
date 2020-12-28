@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 import Vue from 'vue';
 import { DEFAULT_GROUP } from '@/common/index';
 import localforage from 'localforage';
-import { CLEAR_USER } from '../app/mutation-types';
+import { SET_LOADING, CLEAR_USER } from '../app/mutation-types';
 import { ChatState } from './state';
 import { RootState } from '../../index';
 import {
@@ -75,6 +75,7 @@ const actions: ActionTree<ChatState, RootState> = {
       }
       Vue.prototype.$message.success(res.msg);
       commit(SET_GROUP_GATHER, res.data);
+      commit(`app/${SET_LOADING}`, false, { root: true });
     });
 
     // 加入群组
@@ -123,6 +124,7 @@ const actions: ActionTree<ChatState, RootState> = {
         }
         Vue.prototype.$message.info(`成功加入群${group.groupName}`);
         commit(SET_ACTIVE_ROOM, state.groupGather[group.groupId]);
+        commit(`app/${SET_LOADING}`, false, { root: true });
       }
     });
     //
@@ -163,6 +165,7 @@ const actions: ActionTree<ChatState, RootState> = {
       if (!res.code) {
         commit(SET_FRIEND_GATHER, res.data);
         commit(SET_USER_GATHER, res.data);
+        // 取消loading
         Vue.prototype.$message.info(res.msg);
         socket.emit('joinFriendSocket', {
           userId: user.userId,
@@ -171,6 +174,7 @@ const actions: ActionTree<ChatState, RootState> = {
       } else {
         Vue.prototype.$message.error(res.msg);
       }
+      commit(`app/${SET_LOADING}`, false, { root: true });
     });
 
     socket.on('joinFriendSocket', (res: ServerRes) => {

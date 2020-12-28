@@ -17,11 +17,11 @@
               :src="apiUrl + ((userGather[data.userId] && userGather[data.userId].avatar) || data.avatar)"
             />
           </template>
-          <a-button v-if="user.role === 'admin'" style="margin-bottom: 5px;" @click="deleteUser(data.userId)" type="primary">
+          <a-button v-if="user.role === 'admin'" style="margin-bottom: 5px;" @click="deleteUser(data.userId)" :loading="loading" type="primary">
             删除用户
           </a-button>
           <a-button @click="_setActiveRoom(data.userId)" type="primary" v-if="friendGather[data.userId]">发消息</a-button>
-          <a-button @click="addFriend(data.userId)" type="primary" v-else>添加好友</a-button>
+          <a-button @click="addFriend(data.userId)" :loading="loading" type="primary" v-else>添加好友</a-button>
         </a-card>
       </div>
       <a-avatar
@@ -66,6 +66,8 @@ export default class Avatar extends Vue {
 
   @appModule.Getter('apiUrl') apiUrl: string;
 
+  @appModule.Getter('loading') loading: boolean;
+
   @chatModule.Getter('userGather') userGather: FriendGather;
 
   @chatModule.Getter('friendGather') friendGather: FriendGather;
@@ -74,7 +76,11 @@ export default class Avatar extends Vue {
 
   @chatModule.Mutation('set_active_room') setActiveRoom: Function;
 
+  @appModule.Mutation('set_loading') setLoading: Function;
+
   addFriend(friendId: string) {
+    // 设置按钮loading,避免网络延迟重复点击造成多次执行
+    this.setLoading(true);
     this.socket.emit('addFriend', {
       userId: this.user.userId,
       friendId,
@@ -87,11 +93,13 @@ export default class Avatar extends Vue {
   }
 
   async deleteUser(userId: string) {
+    this.setLoading(true);
     await api.deleteUser({
       uid: this.user.userId,
       psw: this.user.password,
       did: userId,
     });
+    this.setLoading(false);
   }
 
   _setActiveRoom(userId: string) {
