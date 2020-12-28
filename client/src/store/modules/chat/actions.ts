@@ -36,6 +36,7 @@ const actions: ActionTree<ChatState, RootState> = {
       reconnection: true,
       query: {
         token,
+        userId: user.userId,
       },
     });
     // token校验,失败则要求重新登录
