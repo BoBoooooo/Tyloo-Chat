@@ -57,6 +57,8 @@ https://github.com/electron-userland/electron-builder/issues/4305
 ```
 
 ## 部署后端服务
+
+**后台服务默认端口号为`3000`有需要自行修改 main.ts文件**
 - 方式一(整个项目拷贝至服务器)
   1. 安装 pm2
   ```js
@@ -81,4 +83,8 @@ https://github.com/electron-userland/electron-builder/issues/4305
 
   ## 其他注意事项
 
-  如果在CentOS上部署出现libc.so.6版本过低,考虑是系统环境问题,升级版本.
+  - 如果在CentOS上部署出现libc.so.6版本过低,考虑是系统环境问题,升级版本
+
+  - 后端服务器注意安全策略中放行`3000`端口
+
+  - 加qq群..
