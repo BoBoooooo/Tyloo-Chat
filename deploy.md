@@ -1,4 +1,7 @@
 # 部署说明
+- main分支的机器人采用ES搜索引擎+nodejieba分词来实现自动问答
+- feature_APIROBOT使用第三方机器人api进行问答
+- **建议使用`feature_APIROBOT`分支进行部署**
 ## 部署前端服务
 1. 打包前端文件生成 dist 文件夹
 ```js
@@ -83,3 +86,7 @@ http {
   ```js
     node deploy/index 或者 pm2 deploy/index
   ```
+
+  ## 其他注意事项
+
+  如果在CentOS上部署出现libc.so.6版本过低,考虑是系统环境问题,升级版本.
