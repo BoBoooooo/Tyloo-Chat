@@ -1,4 +1,7 @@
 # 部署说明
+- main分支的机器人采用ES搜索引擎+nodejieba分词来实现自动问答
+- feature_APIROBOT使用第三方机器人api进行问答
+- **建议使用`feature_APIROBOT`分支进行部署**
 ## 部署前端服务
 1. 打包前端文件生成 dist 文件夹
 ```js
