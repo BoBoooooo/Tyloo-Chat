@@ -1,16 +1,20 @@
 # 部署说明
-- main分支的机器人采用ES搜索引擎+nodejieba分词来实现自动问答
-- feature_APIROBOT使用第三方机器人api进行问答
-- **建议使用`feature_APIROBOT`分支进行部署**
-## 部署前端服务
-1. 打包前端文件生成 dist 文件夹
+- 部署策略采用前后端分离部署,后端采用CORS解决跨域问题
+- **请先切换`feature_APIROBOT`分支进行部署**
+
+## 前端部署
+1. 修改.env.out环境变量中的`VUE_APP_API_URL`地址为你的服务器地址
+  ```js
+  VUE_APP_API_URL=http://xxx.xxx.xxx.xxx:3000
+  ```
+2. 构建前端包
 ```js
   // client
   cnpm i
   npm run build
 ```
-1. 将 dist 下所有文件放到 nginx 下的 html 文件夹中
-2. 配置 nginx 的 gzip (提高传输速度)和请求级别
+3. 将 dist 下所有文件放到 nginx 下的 html 文件夹中 (或者是其他http服务器的对应目录下)
+4. nginx conf
 ```js
 // nginx.conf
 http {
@@ -41,7 +45,7 @@ http {
   }  
 }
 ```
-3. nginx -s reload
+5. nginx -s reload
 
 ## 数据库配置
 1. 创建名为 `chat` 的数据库
@@ -65,6 +69,8 @@ http {
 ```
 
 ## 部署后端服务
+
+**后台服务默认端口号为`3000`有需要自行修改 main.ts文件**
 - 方式一(整个项目拷贝至服务器)
   1. 安装 pm2
   ```js
@@ -89,4 +95,8 @@ http {
 
   ## 其他注意事项
 
-  如果在CentOS上部署出现libc.so.6版本过低,考虑是系统环境问题,升级版本.
+  - 如果在CentOS上部署出现libc.so.6版本过低,考虑是系统环境问题,升级版本
+
+  - 后端服务器注意安全策略中放行`3000`端口
+
+  - 加qq群..
