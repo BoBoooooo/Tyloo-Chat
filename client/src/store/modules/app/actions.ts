@@ -25,12 +25,12 @@ const actions: ActionTree<AppState, RootState> = {
       ...payload,
     });
     const data = processReturn(res);
+    commit(SET_LOADING, false);
     if (data) {
       commit(SET_USER, data.user);
       commit(SET_TOKEN, data.token);
       return data;
     }
-    commit(SET_LOADING, false);
   },
 };
 
