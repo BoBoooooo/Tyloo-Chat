@@ -11,7 +11,7 @@
         <div class="contact-list" v-for="(value, key, index) in contactList" :key="index">
           <span class="contact-letter">{{ key }}</span>
           <div class="contact-box" v-for="(friend, sindex) in value" :key="sindex" @click="chooseObject(friend)">
-            <a-avatar :src="apiUrl +  '/' + (friend.avatar).split('api/')[1]" class="contact-avatar" :size="40"></a-avatar>
+            <a-avatar :src="apiUrl + friend.avatar" class="contact-avatar" :size="40"></a-avatar>
             <span class="contact-name">{{ friend.username }}</span>
           </div>
         </div>
