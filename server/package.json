@@ -18,7 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "pm2": "pm2 start --name nest dist/main.js -i max",
+    "pm2": "pm2 start --name tyloochat dist/main.js -i max",
     "pkg": "npm run build && ncc build dist/main.js -o deploy"
   },
   "dependencies": {
