@@ -70,7 +70,7 @@ export class ChatModule {
       await this.userRepository.save({
         userId: 'robot',
         username: defaultRobot,
-        avatar: 'api/avatar/robot.png',
+        avatar: '/avatar/robot.png',
         role: 'robot',
         tag: '',
         status: 'on',
