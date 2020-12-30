@@ -7,7 +7,7 @@ https://github.com/electron-userland/electron-builder/issues/4305
 1. 打包客户端程序
 ```js
   // client
-  npm i
+  cnpm i  // 建议不要使用npm i 容易鬼畜安装失败
   npm run build // 根据本地系统自动打包相应安装包 (windows则会打成exe,mac则为dmg)
   npm run build:win32 // win32版本
   npm run build:win64 // win64版本
