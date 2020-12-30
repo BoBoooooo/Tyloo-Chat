@@ -9,7 +9,6 @@
     "build": "vue-cli-service electron:build --mode out",
     "build:win32": "vue-cli-service electron:build --mode out --win --ia32",
     "build:win64": "vue-cli-service electron:build --mode out --win --x64",
-    "build:mac": "vue-cli-service electron:build --mac",
     "rebuild": "electron-rebuild -f -w"
   },
   "main": "background.js",

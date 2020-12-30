@@ -11,7 +11,6 @@ https://github.com/electron-userland/electron-builder/issues/4305
   npm run build // 根据本地系统自动打包相应安装包 (windows则会打成exe,mac则为dmg)
   npm run build:win32 // win32版本
   npm run build:win64 // win64版本
-  npm run build:mac // mac版本
   // 更多参数命令参考官网 https://www.electron.build/cli
   Building:
   --mac, -m, -o, --macos   Build for macOS, accepts target list (see
