@@ -2,7 +2,7 @@ import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import cookie from 'js-cookie';
 import Vue from 'vue';
 import store from '@/store/index';
-import { CLEAR_USER } from '../../store/modules/app/mutation-types';
+import { CLEAR_USER, SET_LOADING } from '../../store/modules/app/mutation-types';
 
 // 请求拦截器
 export const requestSuccess = (request: AxiosRequestConfig) => {
@@ -12,7 +12,11 @@ export const requestSuccess = (request: AxiosRequestConfig) => {
   return request;
 };
 
-export const requestFail = (error: AxiosRequestConfig) => Promise.reject(error);
+export const requestFail = (error: any) => {
+  store.commit(`app/${SET_LOADING}`, false);
+  Vue.prototype.$message.error(error.message);
+  return Promise.reject(error);
+};
 
 // 接收拦截器
 export const responseSuccess = (response: AxiosResponse) => {
@@ -28,4 +32,8 @@ export const responseSuccess = (response: AxiosResponse) => {
   return response;
 };
 
-export const responseFail = (error: AxiosResponse) => Promise.reject(error);
+export const responseFail = (error: any) => {
+  store.commit(`app/${SET_LOADING}`, false);
+  Vue.prototype.$message.error(error.message);
+  return Promise.reject(error);
+};
