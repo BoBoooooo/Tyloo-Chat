@@ -21,8 +21,8 @@ export const DEFAULT_BACKGROUND = bg;
 export const DEFAULT_ROBOT = 'robot';
 
 // 图片/附件请求路径
-export const IMAGE_SAVE_PATH = 'api/static/image/';
-export const FILE_SAVE_PATH = 'api/static/file/';
+export const IMAGE_SAVE_PATH = '/static/image/';
+export const FILE_SAVE_PATH = '/static/file/';
 
 // MIME类型
 export const MIME_TYPE = ['xls', 'xlsx', 'doc', 'docx', 'exe', 'pdf', 'ppt', 'txt', 'zip', 'img', 'rar'];
