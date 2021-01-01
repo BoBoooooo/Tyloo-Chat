@@ -55,18 +55,18 @@
 - **智能助手(默认,位于main分支,采用ES搜索引擎需要手动创建ES词库)**
 - **第三方API机器人(当前线上demo版本,位于feature_APIROBOT分支)**
 - **Electron版本(位于electron_version分支,支持生成dmg,exe客户端)**
-## Tech Stack
-- **Typescript**：JavaScript 的一个超集，它最大的优势是提供了类型系统和提高了代码的可读性和可维护性。
-- **Vue2.6.x**：前端渐进式框架。
-- **Socket/io**：实现实时通信，websocket第三方库。
-- **Vuex**：状态管理。
-- **Nestjs**：是一个用于构建高效、可扩展的 Node.js 服务端应用框架，基于 TypeScript 编写并且结合了 OOP1、FP2、FRP3 的相关理念。
-- **Typeorm**: 支持最新的 JavaScript 特性并提供额外的特性以帮助你开发任何使用数据库的应用程序。
-- **ES6+**：采用ES6+语法，箭头函数、async/await等等语法很好用。
-- **SASS(SCSS)**：用SCSS做CSS预处理语言，可以使用最高效的方式，以少量的代码创建复杂的设计。
-- **ElasticSearch** Elasticsearch是一个基于Lucene的搜索服务器。它提供了一个分布式多用户能力的全文搜索引擎，基于RESTful web接口。
-- **[Nodejieba](https://github.com/yanyiwu/nodejieba)** node版本中文分词器
+## 技术栈
+- **前端**
+	- **vue cli 4.x**
+    - **Antd for vue**
+- **后端**
+	- **NestJS**
+    - **TypeORM**
+	- **Mysql**
+- **Socket.io**
 
+- **ElasticSearch** ES搜索引擎(用于机器人快捷自动回复)
+- **[Nodejieba](https://github.com/yanyiwu/nodejieba)** node版本中文分词器
 ## 数据库表结构设计
 ![](./assets/database.png)
 

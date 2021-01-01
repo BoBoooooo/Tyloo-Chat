@@ -48,7 +48,7 @@
               <div class="message-content-text" v-text="_parseText(item.content)" v-else-if="item.messageType === 'text'"></div>
               <div class="message-content-image" v-if="item.messageType === 'image'" :style="getImageStyle(item.content)">
                 <viewer style="display:flex;align-items:center;">
-                  <img :src="'api/static/image/' + item.content" alt="" />
+                  <img :src="apiUrl + '/static/image/' + item.content" alt="" />
                 </viewer>
               </div>
               <!-- 附件类型消息 -->
@@ -120,6 +120,8 @@ export default class Message extends Vue {
 
   @chatModule.Mutation('set_user_gather') set_user_gather: Function;
 
+  @appModule.Getter('apiUrl') apiUrl: string;
+
   text: string = '';
 
   needScrollToBottom: boolean = true;
@@ -190,7 +192,7 @@ export default class Message extends Vue {
   download(message: FriendMessage & GroupMessage) {
     const a = document.createElement('a');
     a.id = '__downloadFile__';
-    a.href = `${FILE_SAVE_PATH}${message.content}`;
+    a.href = `${this.apiUrl}${FILE_SAVE_PATH}${message.content}`;
     a.setAttribute('target', '__blank');
     document.body.append(a);
     a.click();
