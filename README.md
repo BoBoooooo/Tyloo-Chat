@@ -106,7 +106,7 @@ npm run start
 
 [Deploy](./deploy.md)
 
-[CentOS下部署聊天室](https://zhangxiaocai.cn/posts/39142aea.html)
+[CentOS下部署聊天室](https://notes.zhangxiaocai.cn/posts/39142aea.html)
 ## 思路概述
 
 [webSocket建立流程](./webSocket建立流程.md)
