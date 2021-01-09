@@ -87,7 +87,8 @@ interface SendMessage {
 declare enum MessageType {
   text = 'text',
   image = 'image',
-  file = 'file'
+  file = 'file',
+  video = 'video'
 }
 
 // 图片尺寸

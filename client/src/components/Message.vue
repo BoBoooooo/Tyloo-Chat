@@ -51,6 +51,12 @@
                   <img :src="apiUrl + '/static/image/' + item.content" alt="" />
                 </viewer>
               </div>
+              <!-- 视频格式文件 -->
+              <div class="message-content-image" v-if="item.messageType === 'video'">
+                <video :src="apiUrl + '/static/file/' + item.content" controls="controls">
+                  您的浏览器不支持 video 标签。
+                </video>
+              </div>
               <!-- 附件类型消息 -->
               <div class="message-content-file" v-else-if="item.messageType === 'file'" @click="download(item)">
                 <img class="message-content-icon" :src="getFileIcon(item)" alt="" />
