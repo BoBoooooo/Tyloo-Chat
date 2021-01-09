@@ -228,7 +228,11 @@ export class ChatGateway {
         })
         return
       }
-      if (data.messageType === 'file' || data.messageType === 'image') {
+      if (
+        data.messageType === 'file' ||
+        data.messageType === 'image' ||
+        data.messageType === 'video'
+      ) {
         // 根据文件类型判断保存路径
         const SAVE_PATH =
           data.messageType === 'image' ? IMAGE_SAVE_PATH : FILE_SAVE_PATH
@@ -238,9 +242,6 @@ export class ChatGateway {
             : `${Date.now()}$${data.userId}$${formatBytes(data.size)}$${
                 data.fileName
               }`
-        if (!fs.existsSync(SAVE_PATH)) {
-          fs.mkdirSync(SAVE_PATH)
-        }
         console.log(data.content)
         const stream = createWriteStream(join(SAVE_PATH, saveName))
         stream.write(data.content)
@@ -447,7 +448,11 @@ export class ChatGateway {
             ? data.userId + data.friendId
             : data.friendId + data.userId
         // 根据文件类型判断保存路径
-        if (data.messageType === 'file' || data.messageType === 'image') {
+        if (
+          data.messageType === 'file' ||
+          data.messageType === 'image' ||
+          data.messageType === 'video'
+        ) {
           const SAVE_PATH =
             data.messageType === 'image' ? IMAGE_SAVE_PATH : FILE_SAVE_PATH
           const saveName =
@@ -456,9 +461,6 @@ export class ChatGateway {
               : `${Date.now()}$${data.userId}$${formatBytes(data.size)}$${
                   data.fileName
                 }`
-          if (!fs.existsSync(SAVE_PATH)) {
-            fs.mkdirSync(SAVE_PATH)
-          }
           console.log(data.content)
           const stream = createWriteStream(join(SAVE_PATH, saveName))
           stream.write(data.content)
