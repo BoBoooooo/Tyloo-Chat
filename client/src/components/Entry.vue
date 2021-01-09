@@ -117,7 +117,7 @@ export default class Entry extends Vue {
         }
       }
       if (file) {
-        this.throttle(this.handleUpload, file, 'image' as MessageType);
+        this.throttle(this.handleUpload, file);
       }
     });
   }
@@ -125,14 +125,14 @@ export default class Entry extends Vue {
   /**
    * 消息发送节流
    */
-  throttle(fn: Function, file?: File, messageType?: MessageType) {
+  throttle(fn: Function, file?: File) {
     const nowTime = +new Date();
     console.log(this.lastTime);
     console.log(nowTime);
     if (nowTime - this.lastTime < 200) {
       return this.$message.error('消息发送太频繁！');
     }
-    fn(file, messageType);
+    fn(file);
     this.lastTime = nowTime;
   }
 
@@ -261,7 +261,7 @@ export default class Entry extends Vue {
    * @params file
    */
   beforeFileUpload(file: File) {
-    this.throttle(this.handleUpload, file, 'file' as MessageType);
+    this.throttle(this.handleUpload, file);
     return false;
   }
 
@@ -269,18 +269,19 @@ export default class Entry extends Vue {
    * 上传附件/图片发送
    * @params file
    */
-  async handleUpload(file: File, messageType: MessageType) {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/gif';
-
-    if (messageType === 'image') {
-      if (!isJpgOrPng) {
-        return this.$message.error('请选择jpeg/jpg/png/gif格式的图片!');
-      }
+  async handleUpload(file: File) {
+    let messageType:string;
+    if (file.type.includes('image')) {
+      messageType = 'image';
+    } else if (file.type.includes('video')) {
+      messageType = 'video';
+    } else {
+      messageType = 'file';
     }
-    const maxSize = messageType === 'image' ? 0.5 : 100;
+    const maxSize = messageType === 'image' ? 0.5 : 20;
     const isLt1M = file.size / 1024 / 1024 < maxSize;
     if (!isLt1M) {
-      return this.$message.error(messageType === 'image' ? '图片必须小于500K!' : '文件必须小于100M!');
+      return this.$message.error(messageType === 'image' ? '图片必须小于500K!' : '文件必须小于20M!');
     }
     if (messageType === 'image') {
       const image = new Image();
@@ -297,9 +298,8 @@ export default class Entry extends Vue {
         });
       };
     } else {
-      // 如果上传附件的为图片则类型为image,其他附件为file类型
-      // eslint-disable-next-line no-param-reassign
-      messageType = isJpgOrPng ? 'image' as MessageType : 'file' as MessageType;
+      // 如果上传附件的为图片则类型为image,其他附件为file/video类型
+      console.log(messageType);
       this.sendMessage({
         type: this.activeRoom.groupId ? 'group' : 'friend',
         message: file,
