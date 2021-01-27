@@ -30,6 +30,7 @@ import {
   Collapse,
   Transfer,
   ConfigProvider,
+  Alert,
 } from 'ant-design-vue';
 
 Vue.use(Avatar);
@@ -54,4 +55,5 @@ Vue.use(Tree);
 Vue.use(Collapse);
 Vue.use(Transfer);
 Vue.use(ConfigProvider);
+Vue.use(Alert);
 Vue.prototype.$message = message;

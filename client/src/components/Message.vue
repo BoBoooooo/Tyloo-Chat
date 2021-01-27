@@ -24,7 +24,13 @@
         <a-icon type="sync" spin class="message-loading-icon" />
       </div>
     </transition>
-    <div class="message-main" :style="{ opacity: messageOpacity }">
+      <!-- 群公告 -->
+    <template v-if="groupGather[activeRoom.groupId] && messageOpacity">
+      <a-alert ref="notification" class="message-notification" banner closable :description="activeRoom.notice" show-icon>
+        <a-icon slot="icon" type="notification" />
+      </a-alert>
+    </template>
+    <div class="message-main" :style="{ opacity: messageOpacity}">
       <div class="message-content">
         <transition name="noData">
           <div class="message-content-noData" v-if="isNoData">没有更多消息了~</div>
@@ -462,6 +468,8 @@ export default class Message extends Vue {
   overflow: hidden;
   height: 100%;
   position: relative;
+  display: flex;
+  flex-direction: column;
   background: $message-bg-color;
   .message-header {
     height: 60px;
@@ -500,9 +508,16 @@ export default class Message extends Vue {
     }
   }
   .message-main {
-    height: calc(100% - 240px);
     overflow: auto;
+      flex:1;
     position: relative;
+    .message-notification{
+      ::v-deep .ant-alert-description{
+        text-align: left;
+        max-height: 22px;
+        overflow: auto;
+      }
+  }
     .message-content {
       .message-content-noData {
         line-height: 50px;
@@ -578,23 +593,6 @@ export default class Message extends Vue {
           justify-content: flex-end;
         }
       }
-    }
-  }
-  .message-input {
-    display: flex;
-    flex-wrap: nowrap;
-    position: absolute;
-    width: 100%;
-    bottom: 0px;
-    input {
-      height: 40px;
-    }
-    .message-input-button {
-      width: 30px;
-      cursor: pointer;
-      position: absolute;
-      right: 10px;
-      top: 4px;
     }
   }
 }
