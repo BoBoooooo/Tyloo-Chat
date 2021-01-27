@@ -44,7 +44,7 @@ const actions: ActionTree<ChatState, RootState> = {
       Vue.prototype.$message.error(msg);
       // 清空token,socket
       commit(`app/${CLEAR_USER}`, {}, { root: true });
-      setTimeout(() => { window.location.reload(); }, 2000);
+      setTimeout(() => { window.location.reload(); }, 1000);
     });
 
     socket.on('connect', async () => {

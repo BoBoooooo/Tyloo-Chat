@@ -14,4 +14,4 @@ export const defaultGroupId = 'group' // 默认用户群组ID
 export const IMAGE_SAVE_PATH = 'public/static/image' // 聊天图片缓存路径
 export const FILE_SAVE_PATH = 'public/static/file' // 聊天附件缓存路径
 
-export const defaultGroupMessageTime = 86400000 // 新用户进群默认可以看历史消息的时限(此处默认为24小时内的消息)
+export const defaultGroupMessageTime = 86400000 * 30 // 新用户进群默认可以看历史消息的时限(此处默认为24小时内的消息)

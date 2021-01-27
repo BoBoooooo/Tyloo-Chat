@@ -300,9 +300,7 @@ export default class Entry extends Vue {
   // border-top: 1px solid #d1d1d1;
   background: $message-bg-color;
   flex-wrap: nowrap;
-  position: absolute;
   width: 100%;
-  bottom: 0px;
   textarea {
     border-left: none !important;
     border-top-left-radius: 0;
@@ -353,7 +351,6 @@ export default class Entry extends Vue {
 .message-tool {
   position: absolute;
   left: 0;
-  top: 0;
   right: 0;
   display: flex;
   align-items: center;
