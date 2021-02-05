@@ -32,11 +32,20 @@ http {
   #nginx请求级别配置
   server {
     listen       80;
-    server_name  www.genal.fun;
+    server_name  www.server.com;
     location / {
       root   html;
       index  index.html index.htm;
       add_header Cache-Control public;
+    }
+    location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$
+    {
+        expires      30d;
+    }
+
+    location ~ .*\.(js|css)?$
+    {
+        expires      12h;
     }
     error_page   500 502 503 504  /50x.html;
     location = /50x.html {
