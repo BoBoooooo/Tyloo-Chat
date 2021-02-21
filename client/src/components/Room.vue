@@ -353,7 +353,7 @@ export default class Room extends Vue {
           font-weight: bold;
           font-size: 16px;
           display: inline-block;
-          max-width: 115px;
+          max-width: 110px;
         }
         .room-card-time {
           overflow: hidden; //超出的文本隐藏
