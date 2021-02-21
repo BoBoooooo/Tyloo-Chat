@@ -477,15 +477,14 @@ export default class Message extends Vue {
   }
   .message-loading {
     position: absolute;
-    left: calc(50% - 18px);
-    top: 60px;
-    z-index: 99;
+    top: 2px;
+    right: 50px;
+    z-index: 199;
     .message-loading-icon {
       margin: 10px auto;
       font-size: 20px;
       padding: 8px;
-      border-radius: 50%;
-      background-color: rgb(0, 0, 0, 0.8);
+      color:#2b2b2b;
     }
   }
   // 移动端样式

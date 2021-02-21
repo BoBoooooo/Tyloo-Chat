@@ -5,7 +5,7 @@
  * @Date: 2020年11月05 16:40:11
 -->
 <template>
-  <div class="room">
+  <div class="room" ref="room">
     <div v-for="(chat) in chatArr" :key="(chat.groupId || chat.userId)">
       <div
         v-if="chat.groupId"
@@ -125,6 +125,25 @@ export default class Room extends Vue {
     this.sortChat();
   }
 
+  mounted() {
+    // hack方法 页面初始化时定位到当前room
+    setTimeout(() => {
+      this.setRoomScrollTop();
+    }, 100);
+  }
+
+  // 重置滚动条至当前activeRoom位置
+  setRoomScrollTop() {
+    const { offsetHeight: roomHeight, scrollTop: roomTop } = (document.querySelector('.room') as HTMLElement)!;
+    const activeRommDom = (document.querySelector('.room-card.active')as HTMLElement);
+    if (activeRommDom) {
+      const { offsetTop: domTop } = activeRommDom!;
+      if (domTop - roomHeight >= roomTop) {
+        document.querySelector('.room')!.scrollTop = domTop - roomHeight;
+      }
+    }
+  }
+
   @Watch('groupGather', { deep: true })
   changeGroupGather() {
     this.sortChat();
@@ -133,6 +152,13 @@ export default class Room extends Vue {
   @Watch('friendGather', { deep: true })
   changeFriendGather() {
     this.sortChat();
+  }
+
+  @Watch('activeRoom')
+  changeActiveRoomEvent() {
+    this.$nextTick(() => {
+      this.setRoomScrollTop();
+    });
   }
 
   get currentUserId() {
@@ -327,7 +353,7 @@ export default class Room extends Vue {
           font-weight: bold;
           font-size: 16px;
           display: inline-block;
-          max-width: 115px;
+          max-width: 110px;
         }
         .room-card-time {
           overflow: hidden; //超出的文本隐藏
