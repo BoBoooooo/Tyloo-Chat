@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import Vue from 'vue';
 import { DEFAULT_GROUP } from '@/common/index';
 import localforage from 'localforage';
+import Notification from '@/main/notification';
 import { SET_LOADING, CLEAR_USER } from '../app/mutation-types';
 import { ChatState } from './state';
 import { RootState } from '../../index';
@@ -25,6 +26,7 @@ import {
   ADD_GROUP_MEMBER,
   UPDATE_USER_INFO,
 } from './mutation-types';
+
 
 const actions: ActionTree<ChatState, RootState> = {
   // 初始化socket连接和监听socket事件
@@ -155,6 +157,7 @@ const actions: ActionTree<ChatState, RootState> = {
         if (activeRoom && activeRoom.groupId !== res.data.groupId) {
           commit(ADD_UNREAD_GATHER, res.data.groupId);
         }
+        Notification(`${res.data.username || '新消息'}`, res.data.content);
       } else {
         Vue.prototype.$message.error(res.msg);
       }
@@ -208,6 +211,7 @@ const actions: ActionTree<ChatState, RootState> = {
           if (activeRoom && activeRoom.userId !== res.data.userId && activeRoom.userId !== res.data.friendId) {
             commit(ADD_UNREAD_GATHER, res.data.userId);
           }
+          Notification(`${res.data.username || '新消息'}`, res.data.content);
         }
       } else {
         Vue.prototype.$message.error(res.msg);

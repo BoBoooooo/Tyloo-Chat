@@ -470,9 +470,14 @@ export class ChatGateway {
 
         data.time = new Date().valueOf()
         await this.friendMessageRepository.save(data)
-        this.server
-          .to(roomId)
-          .emit('friendMessage', { code: RCode.OK, msg: '', data })
+        this.server.to(roomId).emit('friendMessage', {
+          code: RCode.OK,
+          msg: '',
+          data: {
+            ...data,
+            username: isUser.username
+          }
+        })
         // 如果friendID 为机器人,则需要自动回复
         // 获取自动回复内容
         if (data.friendId === defaultRobotId) {
