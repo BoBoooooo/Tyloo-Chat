@@ -14,7 +14,7 @@
 
 ## 🚀 欢迎各位大佬提提意见建议/Bug反馈 qq群`289438105`
 
-## [🏖Tyloo-Chat线上demo地址](http://server.boboooooo.top:9999)
+## [🏖Tyloo-Chat线上demo地址](http://tyloochat.fun)
 **tips: 麻烦各位绿色聊天,不要开车,不要上传太大的文件,服务器比较垃圾..**
 
 ## 部分功能截图
@@ -37,7 +37,7 @@
 ![](./assets/electron2.png)
 ## Feature
 - 用户登陆注册 (支持嵌入第三方系统单点登陆)
-    - [单点登陆地址](http://server.boboooooo.top:9999/admin/),登录后点击右上角在线交流按钮
+    - [单点登陆地址](http://server.boboooooo.top:9998),登录后点击右上角在线交流按钮
 - 群聊 (类似qq群)
     - 邀请好友加入群聊
     - 修改群名/群公告
