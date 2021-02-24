@@ -14,7 +14,7 @@
 
 ## 🚀 欢迎各位大佬提提意见建议/Bug反馈 qq群`289438105`
 
-## [🏖Tyloo-Chat线上demo地址](http://tyloochat.fun)
+## [🏖Tyloo-Chat线上demo地址](http://tyloochat.fun:9999/)
 **tips: 麻烦各位绿色聊天,不要开车,不要上传太大的文件,服务器比较垃圾..**
 
 ## 部分功能截图
