@@ -40,6 +40,7 @@
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import cnchar from 'cnchar';
+import axios from 'axios';
 
 const chatModule = namespace('chat');
 const appModule = namespace('app');
@@ -80,9 +81,6 @@ export default class Contact extends Vue {
   // 组织架构
   organizationArr: Array<any> = [];
 
-  // 组织架构API_URL
-  orgUrl: string = '';
-
   replaceFields = {
     children: 'children',
     title: 'label',
@@ -90,7 +88,12 @@ export default class Contact extends Vue {
   };
 
   created() {
-
+    // 根据环境变量判断是否需要请求第三方组织架构
+    if (process.env.VUE_APP_ORG_URL) {
+      axios.post(process.env.VUE_APP_ORG_URL).then((res) => {
+        this.organizationArr = res.data.data;
+      });
+    }
   }
 
   // 获取联系人列表,按A-Z字母排序
