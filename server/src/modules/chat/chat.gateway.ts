@@ -635,13 +635,15 @@ export class ChatGateway {
               const _user: FriendDto = await this.userRepository.findOne({
                 userId: u.userId
               })
-              // 设置群成员是否在线
-              onlineUserIdArr.includes(_user.userId)
-                ? ((_user as FriendDto).online = 1)
-                : ((_user as FriendDto).online = 0)
-              // 检查是否为群主
-              _user.isManager = _user.userId === group.userId ? 1 : 0
-              group.members.push(_user)
+              if (_user) {
+                // 设置群成员是否在线
+                onlineUserIdArr.includes(_user.userId)
+                  ? ((_user as FriendDto).online = 1)
+                  : ((_user as FriendDto).online = 0)
+                // 检查是否为群主
+                _user.isManager = _user.userId === group.userId ? 1 : 0
+                group.members.push(_user)
+              }
             }
           }
           return Promise.resolve(group)

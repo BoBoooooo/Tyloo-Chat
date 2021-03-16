@@ -7,7 +7,9 @@
 
 ## 说明
 本项目fork自[genal-chat]('https://github.com/genaller/genal-chat.git')做了优化升级,感谢大佬`Genal`开源提供思路!
-由于年底比较忙,目前还在抽空持续优化中,敬请期待!!!
+
+目前还在抽空持续优化中,敬请期待!!!
+
 觉得还不错的话可以点个Star鼓励一下!!!
 
 ## 🚀 Electron版本客户端已出炉,详见release
@@ -19,21 +21,28 @@
 
 ## 部分功能截图
 - 整体界面
+
 ![](./assets/demo1.png)
 - 通讯录
+
 ![](./assets/demo2.png)
+
 - 群聊功能(群成员列表,在线状态,支持添加群成员)
 ![](./assets/demo3.png)
 - 会话列表(置顶/删除)
+
 ![](./assets/demo5.png)
 - 消息撤回功能
+
 ![](./assets/demo4.png)
 
 ## Electron版本客户端(位于electron_version分支)
 - windows版本(exe)
+
 ![](./assets/electron1.png)
 
 - mac版本(dmg)
+
 ![](./assets/electron2.png)
 ## Feature
 - 用户登陆注册 (支持嵌入第三方系统单点登陆)
@@ -107,10 +116,54 @@ npm run start
 [Deploy](./deploy.md)
 
 [CentOS下部署聊天室](https://notes.zhangxiaocai.cn/posts/39142aea.html)
+
+## 第三方集成/单点登陆
+
+- 第三方系统里嵌入如下跳转代码,需要携带`userId`以及`username`参数
+
+``` javascript
+let chatUrl // 当前聊天室客户端地址
+let userId // 当前系统用户userId
+let username // 当前系统用户昵称
+
+window.open(`${chatUrl}?userId=${userId}&username=${username}`);
+
+```
+
+- 聊天室获取参数并自动完成登陆(若为首次登陆会自动注册账号)
+
+- 设置聊天室client `VUE_APP_ORG_URL` 为获取第三方系统组织架构的接口地址
+
+    - 设置VUE_APP_ORG_URL
+    ``` javascript
+
+    // .env.xxx
+    // 此接口可以获取到第三方系统的所有部门和人员信息,注意为嵌套tree结构
+    VUE_APP_ORG_URL=http://127.0.0.1:8080/api/getDeptUsersTree
+
+    ```
+
+    - 切换到联系人界面自动发出请求
+    ``` javascript
+    // Contact.vue
+    axios.post(process.env.VUE_APP_ORG_URL).then((res) => {
+        this.organizationArr = res.data.data;
+    });
+    ```
+
+    - 返回值格式如下
+    ``` javascript
+    interface node {
+        id: string; // id
+        label: string;// 名称
+        flag: boolean;// 是否有下级结点
+        children: node[];// 下级结点
+    }
+    ```
+    - 若不需要集成第三方组织架构清空`VUE_APP_ORG_URL`即可,其他情况自行定制修改。
+
 ## 思路概述
-
 [webSocket建立流程](./webSocket建立流程.md)
-
 ## TODO
 - `@功能实现`
 - `消息转发`
