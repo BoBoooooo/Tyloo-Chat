@@ -21,21 +21,28 @@
 
 ## 部分功能截图
 - 整体界面
+
 ![](./assets/demo1.png)
 - 通讯录
+
 ![](./assets/demo2.png)
+
 - 群聊功能(群成员列表,在线状态,支持添加群成员)
 ![](./assets/demo3.png)
 - 会话列表(置顶/删除)
+
 ![](./assets/demo5.png)
 - 消息撤回功能
+
 ![](./assets/demo4.png)
 
 ## Electron版本客户端(位于electron_version分支)
 - windows版本(exe)
+
 ![](./assets/electron1.png)
 
 - mac版本(dmg)
+
 ![](./assets/electron2.png)
 ## Feature
 - 用户登陆注册 (支持嵌入第三方系统单点登陆)
