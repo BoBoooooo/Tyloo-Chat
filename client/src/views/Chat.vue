@@ -29,7 +29,7 @@
     <Login @register="handleRegister" @login="handleLogin" :showModal="showModal"></Login>
 
     <!-- 移动端兼容 -->
-    <a-drawer placement="left" :closable="false" :visible="visibleDrawer" @close="toggleDrawer" style="height:100%">
+    <a-drawer placement="left" :closable="false" :visible="visibleDrawer" @close="toggleDrawer" style="height: 100%">
       <div class="chat-drawer">
         <template v-if="activeTabName === 'message'">
           <Search @addGroup="addGroup" @joinGroup="joinGroup" @addFriend="addFriend" @setActiveRoom="setActiveRoom"> </Search>

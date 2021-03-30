@@ -26,7 +26,7 @@
       v-model="text"
       ref="input"
       autoFocus
-      style="color:#000;"
+      style="color: #000"
       @pressEnter="
         (e) => {
           // 此处拦截enter后光标换行
@@ -208,7 +208,6 @@ export default class Entry extends Vue {
     }
   }
 
-
   /**
    * focus input框
    */
@@ -251,7 +250,7 @@ export default class Entry extends Vue {
    * @params file
    */
   async handleUpload(file: File) {
-    let messageType:string;
+    let messageType: string;
     if (file.type.includes('image')) {
       messageType = 'image';
     } else if (file.type.includes('video')) {
@@ -337,12 +336,12 @@ export default class Entry extends Vue {
     height: 40px;
   }
   .message-tool {
-    right: unset!important;
+    right: unset !important;
     padding: 0 0 0 10px !important;
-    .message-tool-item{
-       .anticon{
-         margin-right: 0!important;
-       }
+    .message-tool-item {
+      .anticon {
+        margin-right: 0 !important;
+      }
     }
   }
 }
@@ -362,7 +361,7 @@ export default class Entry extends Vue {
   color: #828282;
   .message-tool-item {
     .anticon {
-      margin-right: 25px ;
+      margin-right: 25px;
     }
   }
 }

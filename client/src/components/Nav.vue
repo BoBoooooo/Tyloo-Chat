@@ -45,7 +45,7 @@
         @click="setActiveTabName('contacts')"
       />
     </a-tooltip>
-    <a href="https://github.com/BoBoooooo/tyloo-chat" target="_blank" class="tool-github icon"><a-icon type="github"/></a>
+    <a href="https://github.com/BoBoooooo/tyloo-chat" target="_blank" class="tool-github icon"><a-icon type="github" /></a>
     <a-icon class="tool-out icon" type="poweroff" @click="logout" />
     <a-modal title="用户信息" :visible="showUserModal" footer="" @cancel="showUserModal = false">
       <div class="tool-user">
@@ -58,7 +58,7 @@
           <a-avatar :src="apiUrl + user.avatar" class="img" :size="120"></a-avatar>
           <a-upload v-if="showUpload && !uploading" class="tool-user-upload" :show-upload-list="false" :before-upload="beforeUpload">
             <div class="text">
-              <a-icon type="upload" style="margin-right: 4px;" />
+              <a-icon type="upload" style="margin-right: 4px" />
               <span>更换头像</span>
             </div>
           </a-upload>

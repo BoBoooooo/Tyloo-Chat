@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 
-
 module.exports = {
   configureWebpack: (config) => {
     // 不打包moment的语言包

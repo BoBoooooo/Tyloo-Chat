@@ -30,9 +30,7 @@ import {
 
 const actions: ActionTree<ChatState, RootState> = {
   // 初始化socket连接和监听socket事件
-  async connectSocket({
-    commit, state, dispatch, rootState,
-  }) {
+  async connectSocket({ commit, state, dispatch, rootState }) {
     const { user, token } = rootState.app;
     const socket: SocketIOClient.Socket = io.connect(`ws://${process.env.VUE_APP_API_URL!.split('http://')[1]}`, {
       reconnection: true,
@@ -46,7 +44,9 @@ const actions: ActionTree<ChatState, RootState> = {
       Vue.prototype.$message.error(msg);
       // 清空token,socket
       commit(`app/${CLEAR_USER}`, {}, { root: true });
-      setTimeout(() => { window.location.reload(); }, 1000);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     });
 
     socket.on('connect', async () => {
@@ -97,10 +97,11 @@ const actions: ActionTree<ChatState, RootState> = {
           // commit(SET_GROUP_GATHER, group);
           // 获取群里面所有用户的用户信息
           socket.emit('chatData', token);
-        } else if (userId === user.userId) { // 邀请发起者
+        } else if (userId === user.userId) {
+          // 邀请发起者
           commit(ADD_GROUP_MEMBER, {
             groupId: group.groupId,
-            members: Object.values(state.friendGather).filter(friend => friendIds.includes(friend.userId)),
+            members: Object.values(state.friendGather).filter((friend) => friendIds.includes(friend.userId)),
           });
           const groupGather2 = state.groupGather;
           // ?? 待优化
@@ -141,7 +142,7 @@ const actions: ActionTree<ChatState, RootState> = {
       const groupObj = state.groupGather[group.groupId];
       // 新用户注册后默认进入到DEFAULT_GROUP,此处需要判断一下是否在群内,不在群内的话需要加入本群中
       // 否则在线的用户无法收到新成员进群的变更
-      if (!groupObj.members!.find(member => member.userId === newUser.userId)) {
+      if (!groupObj.members!.find((member) => member.userId === newUser.userId)) {
         newUser.isManager = 0;
         groupObj.members!.push(newUser);
         Vue.prototype.$message.info(res.msg);
@@ -198,12 +199,12 @@ const actions: ActionTree<ChatState, RootState> = {
           console.log('ADD_FRIEND_MESSAGE', res.data);
           commit(ADD_FRIEND_MESSAGE, res.data);
           // 新增私聊信息需要检测本地是否已删除聊天,如已删除需要恢复
-          let deletedChat = await localforage.getItem(`${user.userId}-deletedChatId`) as string[];
+          let deletedChat = (await localforage.getItem(`${user.userId}-deletedChatId`)) as string[];
           if (deletedChat) {
             if (res.data.friendId === user.userId) {
-              deletedChat = deletedChat.filter(id => id !== res.data.userId);
+              deletedChat = deletedChat.filter((id) => id !== res.data.userId);
             } else {
-              deletedChat = deletedChat.filter(id => id !== res.data.friendId);
+              deletedChat = deletedChat.filter((id) => id !== res.data.friendId);
             }
             await localforage.setItem(`${user.userId}-deletedChatId`, deletedChat);
           }
@@ -246,7 +247,7 @@ const actions: ActionTree<ChatState, RootState> = {
     });
 
     // 更新群信息
-    socket.on('updateGroupInfo', (res:ServerRes) => {
+    socket.on('updateGroupInfo', (res: ServerRes) => {
       if (!res.code) {
         const group = state.groupGather[res.data.groupId];
         if (group) {
@@ -264,7 +265,7 @@ const actions: ActionTree<ChatState, RootState> = {
     });
 
     // 更新好友信息
-    socket.on('updateUserInfo', (res:ServerRes) => {
+    socket.on('updateUserInfo', (res: ServerRes) => {
       if (!res.code) {
         commit(UPDATE_USER_INFO, res.data);
       }
@@ -293,9 +294,7 @@ const actions: ActionTree<ChatState, RootState> = {
   // 根据chatData返回的好友列表群组列表
   // 建立各自socket连接
   // 并保存至各自Gather
-  async handleChatData({
-    commit, dispatch, state, rootState,
-  }, payload) {
+  async handleChatData({ commit, dispatch, state, rootState }, payload) {
     const { user } = rootState.app;
     const { socket } = state;
     const { groupGather } = state;

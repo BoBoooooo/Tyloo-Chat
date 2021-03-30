@@ -10,10 +10,20 @@
       <div slot="content" class="avatar-card">
         <a-card :bordered="false" style="width: 300px">
           <template slot="title">
-            <h2>{{ userGather[data.userId] && userGather[data.userId].username  || data.username}}</h2>
-            <a-avatar :size="60" style="float:right" :src="apiUrl + ((userGather[data.userId] && userGather[data.userId].avatar) || data.avatar)" />
+            <h2>{{ (userGather[data.userId] && userGather[data.userId].username) || data.username }}</h2>
+            <a-avatar
+              :size="60"
+              style="float: right"
+              :src="apiUrl + ((userGather[data.userId] && userGather[data.userId].avatar) || data.avatar)"
+            />
           </template>
-          <a-button v-if="user.role === 'admin'" style="margin-bottom: 5px;" @click="deleteUser(data.userId)" :loading="loading" type="primary">
+          <a-button
+            v-if="user.role === 'admin'"
+            style="margin-bottom: 5px"
+            @click="deleteUser(data.userId)"
+            :loading="loading"
+            type="primary"
+          >
             删除用户
           </a-button>
           <a-button @click="_setActiveRoom(data.userId)" type="primary" v-if="friendGather[data.userId]">发消息</a-button>
@@ -32,9 +42,9 @@
       class="avatar-img"
       :style="{ order: data.userId === user.userId && highLight ? '3' : '1' }"
       :class="{ offLine: !data.online && highLight === false }"
-      :src="(apiUrl + (userGather[data.userId] && userGather[data.userId].avatar) || data.avatar)"
+      :src="apiUrl + (userGather[data.userId] && userGather[data.userId].avatar) || data.avatar"
     />
-    <div class="avatar-name" style="order: 2">{{ userGather[data.userId] && userGather[data.userId].username  || data.username}}</div>
+    <div class="avatar-name" style="order: 2">{{ (userGather[data.userId] && userGather[data.userId].username) || data.username }}</div>
     <div class="avatar-time" :style="{ order: data.userId === user.userId && highLight ? '1' : '3' }" v-if="showTime">
       {{ _formatTime(data.time) }}
     </div>

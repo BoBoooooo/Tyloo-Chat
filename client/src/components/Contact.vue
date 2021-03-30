@@ -24,7 +24,7 @@
       </div>
     </a-collapse-panel>
     <a-collapse-panel key="group" header="群组" v-if="visibleList.group">
-      <div class="contact-container" style="padding-top:0">
+      <div class="contact-container" style="padding-top: 0">
         <div class="contact-list" v-for="(group, index) in groupList" :key="index">
           <div class="contact-box" @click="chooseObject(group)">
             <img class="contact-avatar" src="~@/assets/group.png" alt="" />
@@ -40,6 +40,7 @@
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import cnchar from 'cnchar';
+import axios from 'axios';
 
 const chatModule = namespace('chat');
 const appModule = namespace('app');
@@ -80,9 +81,6 @@ export default class Contact extends Vue {
   // 组织架构
   organizationArr: Array<any> = [];
 
-  // 组织架构API_URL
-  orgUrl: string = '';
-
   replaceFields = {
     children: 'children',
     title: 'label',
@@ -90,7 +88,12 @@ export default class Contact extends Vue {
   };
 
   created() {
-
+    // 根据环境变量判断是否需要请求第三方组织架构
+    if (process.env.VUE_APP_ORG_URL) {
+      axios.post(process.env.VUE_APP_ORG_URL).then((res) => {
+        this.organizationArr = res.data.data;
+      });
+    }
   }
 
   // 获取联系人列表,按A-Z字母排序
@@ -98,24 +101,12 @@ export default class Contact extends Vue {
     const list = Object.values(this.friendGather);
     // 此处拿到所有好友拼音首字母,使用cnchar插件
     // https://github.com/theajack/cnchar
-    const charList = list
-      .map(k => cnchar
-        .spell(k.username)
-        .toString()
-        .charAt(0)
-        .toUpperCase())
-      .sort();
+    const charList = list.map((k) => cnchar.spell(k.username).toString().charAt(0).toUpperCase()).sort();
     const contactObj = {} as any;
     // eslint-disable-next-line no-restricted-syntax
     for (const char of Array.from(new Set(charList))) {
       // eslint-disable-next-line no-restricted-syntax
-      contactObj[char] = list.filter(
-        k => cnchar
-          .spell(k.username)
-          .toString()
-          .charAt(0)
-          .toUpperCase() === char,
-      );
+      contactObj[char] = list.filter((k) => cnchar.spell(k.username).toString().charAt(0).toUpperCase() === char);
     }
     return contactObj;
   }
@@ -147,7 +138,7 @@ export default class Contact extends Vue {
     // 激活聊天窗口,如果已删除需要重新恢复
     let deletedChat = (await this.$localforage.getItem(`${userId}-deletedChatId`)) as string[];
     if (Array.isArray(deletedChat)) {
-      deletedChat = deletedChat.filter(id => id !== chatId);
+      deletedChat = deletedChat.filter((id) => id !== chatId);
       await this.$localforage.setItem(`${userId}-deletedChatId`, deletedChat);
     }
     this._setActiveTabName('message');
