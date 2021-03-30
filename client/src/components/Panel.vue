@@ -20,7 +20,7 @@
         :visible="showGroupUser"
         :get-container="getElement"
         @close="toggleGroupUser"
-        :wrap-style="{ position: 'absolute',top: '0' }"
+        :wrap-style="{ position: 'absolute', top: '0' }"
       >
         <div class="active-content">
           <div class="active-content-title">
@@ -66,22 +66,18 @@
         {{ activeRoom.notice }}
       </p>
       <template #footer>
-        <a-button v-if="currentUserIsManager" type="primary" @click="handleUpdateGroupInfo">
-          修改
-        </a-button>
+        <a-button v-if="currentUserIsManager" type="primary" @click="handleUpdateGroupInfo"> 修改 </a-button>
         <a-button @click="() => (showGroupNoticeDialog = false)">关闭</a-button>
       </template>
     </a-modal>
     <!-- 修改群名称 -->
-    <a-modal v-if="activeRoom.groupName" title="群名称" :visible="showGroupNameDialog"  @cancel="() => (showGroupNameDialog = false)">
+    <a-modal v-if="activeRoom.groupName" title="群名称" :visible="showGroupNameDialog" @cancel="() => (showGroupNameDialog = false)">
       <a-input v-if="currentUserIsManager" v-model="groupName"></a-input>
       <p v-else>
         {{ activeRoom.groupName }}
       </p>
       <template #footer>
-        <a-button type="primary" @click="handleUpdateGroupInfo">
-          修改
-        </a-button>
+        <a-button type="primary" @click="handleUpdateGroupInfo"> 修改 </a-button>
         <a-button @click="() => (showGroupNameDialog = false)">关闭</a-button>
       </template>
     </a-modal>
@@ -91,9 +87,7 @@
 </template>
 
 <script lang="ts">
-import {
-  Component, Vue, Prop, Watch,
-} from 'vue-property-decorator';
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import Avatar from './Avatar.vue';
 import ContactModal from './ContactModal.vue';
@@ -135,7 +129,7 @@ export default class Panel extends Vue {
   get activeNum() {
     // 修复在线人数bug,当前聊天窗口为私聊窗口时 "(error during evaluation)"
     if (this.type === 'group' && this.activeRoom.members) {
-      return this.activeRoom.members!.filter(item => item.online).length;
+      return this.activeRoom.members!.filter((item) => item.online).length;
     }
     return 0;
   }
@@ -151,8 +145,7 @@ export default class Panel extends Vue {
 
   // 群成员排序,在线的排在前
   get groupUsers() {
-    return this.$lodash.orderBy(this.activeRoom.members,
-      ['isManager', 'online', 'username'], ['desc', 'desc', 'asc']);
+    return this.$lodash.orderBy(this.activeRoom.members, ['isManager', 'online', 'username'], ['desc', 'desc', 'asc']);
   }
 
   showContactDialog() {
@@ -205,20 +198,20 @@ export default class Panel extends Vue {
     this.showGroupNoticeDialog = false;
   }
 
- @Watch('activeRoom.groupId', {
-   immediate: true,
- })
+  @Watch('activeRoom.groupId', {
+    immediate: true,
+  })
   activeRoomGroupChange() {
     this.groupName = this.activeRoom.groupName;
     this.groupNotice = this.activeRoom.notice;
   }
 
   @Watch('type')
- changeType() {
-   if (this.type === 'friend') {
-     this.showGroupUser = false;
-   }
- }
+  changeType() {
+    if (this.type === 'friend') {
+      this.showGroupUser = false;
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

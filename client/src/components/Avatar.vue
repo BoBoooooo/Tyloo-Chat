@@ -13,11 +13,17 @@
             <h2>{{ (userGather[data.userId] && userGather[data.userId].username) || data.username }}</h2>
             <a-avatar
               :size="60"
-              style="float:right"
+              style="float: right"
               :src="apiUrl + ((userGather[data.userId] && userGather[data.userId].avatar) || data.avatar)"
             />
           </template>
-          <a-button v-if="user.role === 'admin'" style="margin-bottom: 5px;" @click="deleteUser(data.userId)" :loading="loading" type="primary">
+          <a-button
+            v-if="user.role === 'admin'"
+            style="margin-bottom: 5px"
+            @click="deleteUser(data.userId)"
+            :loading="loading"
+            type="primary"
+          >
             删除用户
           </a-button>
           <a-button @click="_setActiveRoom(data.userId)" type="primary" v-if="friendGather[data.userId]">发消息</a-button>

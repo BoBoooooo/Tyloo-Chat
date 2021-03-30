@@ -1,7 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import {
-  requestSuccess, requestFail, responseSuccess, responseFail,
-} from './interceptors';
+import { requestSuccess, requestFail, responseSuccess, responseFail } from './interceptors';
 
 const fetch: AxiosInstance = axios.create({
   timeout: 60000, // 超时时间一分钟

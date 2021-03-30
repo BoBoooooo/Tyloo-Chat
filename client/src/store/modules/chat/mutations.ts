@@ -49,7 +49,7 @@ const mutations: MutationTree<ChatState> = {
     }
     // 更新所有群组中该成员在线状态
     (Object.values(state.groupGather) as Group[]).forEach((group) => {
-      const member = group.members!.find(m => m.userId === userId);
+      const member = group.members!.find((m) => m.userId === userId);
       if (member) {
         member.online = 1;
       }
@@ -63,18 +63,21 @@ const mutations: MutationTree<ChatState> = {
     }
     // 更新所有群组中该成员在线状态
     (Object.values(state.groupGather) as Group[]).forEach((group) => {
-      const member = group.members!.find(m => m.userId === userId);
+      const member = group.members!.find((m) => m.userId === userId);
       if (member) {
         member.online = 0;
       }
     });
   },
   // 新增群成员
-  [ADD_GROUP_MEMBER](state, payload: {
-    groupId: string,
-    members: Friend[]
-  }) {
-    const members:Friend[] = payload.members.map(member => ({
+  [ADD_GROUP_MEMBER](
+    state,
+    payload: {
+      groupId: string;
+      members: Friend[];
+    }
+  ) {
+    const members: Friend[] = payload.members.map((member) => ({
       ...member,
       isManager: 0,
     }));
@@ -113,7 +116,7 @@ const mutations: MutationTree<ChatState> = {
         Vue.set(state.friendGather[payload.userId], 'messages', [payload]);
       }
     } else if (state.friendGather[payload.friendId].messages) {
-        state.friendGather[payload.friendId].messages!.push(payload);
+      state.friendGather[payload.friendId].messages!.push(payload);
     } else {
       Vue.set(state.friendGather[payload.friendId], 'messages', [payload]);
     }
@@ -175,7 +178,7 @@ const mutations: MutationTree<ChatState> = {
   [DEL_GROUP_MEMBER](state, payload: GroupMap) {
     const group = state.groupGather[payload.groupId];
     if (group) {
-      group.members = group.members!.filter(member => member.userId !== payload.userId);
+      group.members = group.members!.filter((member) => member.userId !== payload.userId);
     }
   },
 
@@ -201,7 +204,7 @@ const mutations: MutationTree<ChatState> = {
   },
 
   // 消息撤回
-  [REVOKE_MESSAGE](state, payload: FriendMessage & GroupMessage & { username:string }) {
+  [REVOKE_MESSAGE](state, payload: FriendMessage & GroupMessage & { username: string }) {
     // @ts-ignore
     const { userId } = this.getters['app/user'];
     // 撤回的为群消息
@@ -209,18 +212,17 @@ const mutations: MutationTree<ChatState> = {
       const { messages } = state.groupGather[payload.groupId];
       // 将该消息设置为isRevoke,并设置撤回人姓名
       if (messages) {
-        const msg = messages.find(message => message._id === payload._id);
+        const msg = messages.find((message) => message._id === payload._id);
         if (msg) {
           Vue.set(msg, 'isRevoke', true);
           Vue.set(msg, 'revokeUserName', payload.username);
         }
       }
     } else {
-      const { messages } = state.friendGather[payload.friendId === userId
-        ? payload.userId : payload.friendId];
+      const { messages } = state.friendGather[payload.friendId === userId ? payload.userId : payload.friendId];
       // 将该消息设置为isRevoke,并设置撤回人姓名
       if (messages) {
-        const msg = messages.find(message => message._id === payload._id);
+        const msg = messages.find((message) => message._id === payload._id);
         if (msg) {
           Vue.set(msg, 'isRevoke', true);
           Vue.set(msg, 'revokeUserName', payload.username);

@@ -51,7 +51,7 @@
       />
     </a-tooltip>
     <a-icon type="skin" class="tool-skin icon" @click="showBackgroundModal = true" />
-    <a v-if="isDemo" href="https://github.com/BoBoooooo/tyloo-chat" target="_blank" class="tool-github icon"><a-icon type="github"/></a>
+    <a v-if="isDemo" href="https://github.com/BoBoooooo/tyloo-chat" target="_blank" class="tool-github icon"><a-icon type="github" /></a>
     <a-icon class="tool-out icon" type="poweroff" @click="logout" />
     <a-modal title="用户信息" :visible="showUserModal" footer="" @cancel="showUserModal = false">
       <div class="tool-user">
@@ -64,7 +64,7 @@
           <a-avatar :src="apiUrl + user.avatar" class="img" :size="120"></a-avatar>
           <a-upload v-if="showUpload && !uploading" class="tool-user-upload" :show-upload-list="false" :before-upload="beforeUpload">
             <div class="text">
-              <a-icon type="upload" style="margin-right: 4px;" />
+              <a-icon type="upload" style="margin-right: 4px" />
               <span>更换头像</span>
             </div>
           </a-upload>
@@ -84,13 +84,13 @@
     </a-modal>
     <a-modal title="主题" :visible="showBackgroundModal" footer="" @cancel="showBackgroundModal = false">
       <div class="tool-user-info">
-        <div class="tool-user-title" style="width: 65px;">
+        <div class="tool-user-title" style="width: 65px">
           <span>背景图</span>
           <a-tooltip placement="topLeft" arrow-point-at-center>
             <div slot="title">
               <span>输入空格时为默认背景, 支持 jpg, png, gif等格式</span>
             </div>
-            <a-icon type="exclamation-circle" style="margin-left: 5px;" />
+            <a-icon type="exclamation-circle" style="margin-left: 5px" />
           </a-tooltip>
         </div>
         <a-input v-model="background" class="tool-user-input" placeholder="请输入背景图片网址"></a-input>
