@@ -41,12 +41,8 @@
       </template>
       <template slot="footer" slot-scope="props">
         <template v-if="props.direction === 'right'">
-          <a-button type="primary" slot="footer" size="small" style="float:right;margin: 5px" @click="onSubmit">
-            添加
-          </a-button>
-          <a-button slot="footer" size="small" style="float:right;margin: 5px" @click="showContactDialog = false">
-            取消
-          </a-button>
+          <a-button type="primary" slot="footer" size="small" style="float: right; margin: 5px" @click="onSubmit"> 添加 </a-button>
+          <a-button slot="footer" size="small" style="float: right; margin: 5px" @click="showContactDialog = false"> 取消 </a-button>
         </template>
       </template>
     </a-transfer>
@@ -103,16 +99,12 @@ export default class ContactModal extends Vue {
   // 获取联系人列表,按A-Z字母排序
   get contactList() {
     // 获取不在本群中的好友
-    const list = Object.values(this.friendGather).filter(friend => !this.activeRoom.members!.some(member => member.userId === friend.userId));
+    const list = Object.values(this.friendGather).filter(
+      (friend) => !this.activeRoom.members!.some((member) => member.userId === friend.userId)
+    );
     // 此处拿到所有好友拼音首字母,使用cnchar插件
     // https://github.com/theajack/cnchar
-    const charList = list
-      .map(k => cnchar
-        .spell(k.username)
-        .toString()
-        .charAt(0)
-        .toUpperCase())
-      .sort();
+    const charList = list.map((k) => cnchar.spell(k.username).toString().charAt(0).toUpperCase()).sort();
     const contactList = [] as any;
     // eslint-disable-next-line no-restricted-syntax
     for (const char of Array.from(new Set(charList))) {
@@ -122,14 +114,8 @@ export default class ContactModal extends Vue {
         title: char,
         disabled: true,
         children: list
-          .filter(
-            k => cnchar
-              .spell(k.username)
-              .toString()
-              .charAt(0)
-              .toUpperCase() === char,
-          )
-          .map(t => ({
+          .filter((k) => cnchar.spell(k.username).toString().charAt(0).toUpperCase() === char)
+          .map((t) => ({
             key: t.userId,
             title: t.username,
             avatar: t.avatar,

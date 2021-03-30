@@ -4,4 +4,4 @@ declare module '*.vue' {
   export default Vue;
 }
 
-declare module 'v-contextmenu'
+declare module 'v-contextmenu';

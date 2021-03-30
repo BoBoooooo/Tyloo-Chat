@@ -35,13 +35,13 @@
     </div>
 
     <a-modal v-model="visibleAddGroup" footer="" title="创建群聊">
-      <div style="display:flex">
+      <div style="display: flex">
         <a-input v-model="groupName" placeholder="请输入群名字"></a-input>
         <a-button @click="addGroup" :loadig="loading" type="primary">确定</a-button>
       </div>
     </a-modal>
     <a-modal v-model="visibleJoinGroup" footer="" title="搜索群组">
-      <div style="display:flex" v-if="visibleJoinGroup">
+      <div style="display: flex" v-if="visibleJoinGroup">
         <a-select
           show-search
           placeholder="请输入群名字"
@@ -61,7 +61,7 @@
       </div>
     </a-modal>
     <a-modal v-model="visibleAddFriend" footer="" title="创建聊天/搜索用户">
-      <div style="display:flex" v-if="visibleAddFriend">
+      <div style="display: flex" v-if="visibleAddFriend">
         <a-select
           show-search
           placeholder="请输入用户名"
@@ -84,9 +84,7 @@
 </template>
 
 <script lang="ts">
-import {
-  Component, Vue, Watch,
-} from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import { isContainStr, processReturn, nameVerify } from '@/utils/common';
 import * as apis from '@/api/apis';
@@ -249,7 +247,7 @@ export default class Search extends Vue {
     right: 15px;
     top: 13px;
     font-size: 20px;
-    padding: 0 ;
+    padding: 0;
     cursor: pointer;
     line-height: 40px;
     color: gray;

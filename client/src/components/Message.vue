@@ -10,9 +10,7 @@
       <div class="message-header-box">
         <span class="message-header-text"
           >{{ chatName }}
-          <template v-if="groupGather[activeRoom.groupId]">
-            ({{ activeRoom.members.length }})
-          </template>
+          <template v-if="groupGather[activeRoom.groupId]"> ({{ activeRoom.members.length }}) </template>
         </span>
         <a-icon type="sync" spin class="message-header-icon" v-if="dropped" />
         <Panel v-if="groupGather[activeRoom.groupId]" type="group"></Panel>
@@ -24,13 +22,13 @@
         <a-icon type="sync" spin class="message-loading-icon" />
       </div>
     </transition>
-      <!-- 群公告 -->
+    <!-- 群公告 -->
     <template v-if="groupGather[activeRoom.groupId] && messageOpacity">
       <a-alert ref="notification" class="message-notification" banner closable :description="activeRoom.notice" show-icon>
         <a-icon slot="icon" type="notification" />
       </a-alert>
     </template>
-    <div class="message-main" :style="{ opacity: messageOpacity}">
+    <div class="message-main" :style="{ opacity: messageOpacity }">
       <div class="message-content">
         <transition name="noData">
           <div class="message-content-noData" v-if="isNoData">没有更多消息了~</div>
@@ -38,12 +36,8 @@
         <template v-for="item in activeRoom.messages">
           <!-- 消息被撤回 -->
           <div class="message-content-revoke" v-if="item.isRevoke" :key="item.userId + item.time">
-            <span v-if="item.userId === user.userId">
-              你撤回了一条消息
-            </span>
-            <span v-else>
-              {{item.revokeUserName}}撤回了一条消息
-            </span>
+            <span v-if="item.userId === user.userId"> 你撤回了一条消息 </span>
+            <span v-else> {{ item.revokeUserName }}撤回了一条消息 </span>
           </div>
           <!-- 正常消息 -->
           <div v-else class="message-content-message" :key="item.userId + item.time" :class="{ 'text-right': item.userId === user.userId }">
@@ -53,25 +47,23 @@
               <a class="message-content-text" v-if="_isUrl(item.content)" :href="item.content" target="_blank">{{ item.content }}</a>
               <div class="message-content-text" v-text="_parseText(item.content)" v-else-if="item.messageType === 'text'"></div>
               <div class="message-content-image" v-if="item.messageType === 'image'" :style="getImageStyle(item.content)">
-                <viewer style="display:flex;align-items:center;">
+                <viewer style="display: flex; align-items: center">
                   <img :src="apiUrl + '/static/image/' + item.content" alt="" />
                 </viewer>
               </div>
               <!-- 视频格式文件 -->
               <div class="message-content-image" v-if="item.messageType === 'video'">
-                <video :src="apiUrl + '/static/file/' + item.content" controls="controls">
-                  您的浏览器不支持 video 标签。
-                </video>
+                <video :src="apiUrl + '/static/file/' + item.content" controls="controls">您的浏览器不支持 video 标签。</video>
               </div>
               <!-- 附件类型消息 -->
               <div class="message-content-file" v-else-if="item.messageType === 'file'" @click="download(item)">
                 <img class="message-content-icon" :src="getFileIcon(item)" alt="" />
                 <div class="message-content-detail">
                   <div class="file-name">
-                    {{getFileName(item).name}}
+                    {{ getFileName(item).name }}
                   </div>
                   <div class="file-size">
-                    {{getFileName(item).size}}
+                    {{ getFileName(item).size }}
                   </div>
                 </div>
               </div>
@@ -215,7 +207,7 @@ export default class Message extends Vue {
     // 此处后台保存时默认写死  格式为  [date]$[userId]$[size]$[fileName]
     // 例如 fileName = 1606980397047$1a01e20f-3780-4227-84b5-5c69ca766ee5$15.41KB$123.docx
     const fileNameArr = item.content.split('$');
-    const [,, size, name] = fileNameArr;
+    const [, , size, name] = fileNameArr;
     return {
       name,
       size,
@@ -224,7 +216,7 @@ export default class Message extends Vue {
 
   getFileIcon(item: FriendMessage & GroupMessage) {
     const fileNameArr = item.content.split('$');
-    const [,,, name] = fileNameArr;
+    const [, , , name] = fileNameArr;
     console.log(name);
     if (name) {
       const nameArr = name.split('.');
@@ -232,8 +224,11 @@ export default class Message extends Vue {
       console.log(fileExtension);
       // 获取附件图标(项目中预设了几种,如果找不到匹配的附件图标则默认用other.png)
       // eslint-disable-next-line no-nested-ternary
-      const pngName = MIME_TYPE.includes(fileExtension) ? fileExtension : false
-     || IMAGE_TYPE.includes(fileExtension) ? 'img' : false || 'other';
+      const pngName = MIME_TYPE.includes(fileExtension)
+        ? fileExtension
+        : false || IMAGE_TYPE.includes(fileExtension)
+        ? 'img'
+        : false || 'other';
       return `${process.env.BASE_URL}mime/${pngName}.png`;
     }
   }
@@ -298,8 +293,8 @@ export default class Message extends Vue {
       // 新消息来了只有是自己发的消息和消息框本身在底部才会滚动到底部
       const { messages } = this.activeRoom;
       if (
-        (messages.length > 0 && messages[messages.length - 1].userId === this.user.userId)
-        || (this.messageDom && this.messageDom.scrollTop + this.messageDom.offsetHeight + 100 > this.messageContentDom.scrollHeight)
+        (messages.length > 0 && messages[messages.length - 1].userId === this.user.userId) ||
+        (this.messageDom && this.messageDom.scrollTop + this.messageDom.offsetHeight + 100 > this.messageContentDom.scrollHeight)
       ) {
         this.scrollToBottom();
       }
@@ -368,7 +363,7 @@ export default class Message extends Vue {
         userId: this.user.userId,
         current,
         pageSize: this.pageSize,
-      }),
+      })
     );
     if (data) {
       if (!data.messageArr.length || data.messageArr.length < this.pageSize) {
@@ -399,7 +394,7 @@ export default class Message extends Vue {
         friendId,
         current,
         pageSize: this.pageSize,
-      }),
+      })
     );
     if (data) {
       if (!data.messageArr.length || data.messageArr.length < this.pageSize) {
@@ -497,32 +492,32 @@ export default class Message extends Vue {
       margin: 10px auto;
       font-size: 20px;
       padding: 8px;
-      color:#2b2b2b;
+      color: #2b2b2b;
     }
   }
   // 移动端样式
   @media screen and (max-width: 768px) {
-   .message-main {
-      height: calc(100% - 100px)!important;
+    .message-main {
+      height: calc(100% - 100px) !important;
     }
   }
   .message-main {
     overflow: auto;
-      flex:1;
+    flex: 1;
     position: relative;
-    .message-notification{
-      ::v-deep .ant-alert-description{
+    .message-notification {
+      ::v-deep .ant-alert-description {
         text-align: left;
         max-height: 22px;
         overflow: auto;
       }
-  }
+    }
     .message-content {
       .message-content-noData {
         line-height: 50px;
         color: #9d9d9d;
       }
-      .message-content-revoke{
+      .message-content-revoke {
         text-align: center;
         color: #9d9d9d;
         font-size: 14px;
@@ -555,7 +550,7 @@ export default class Message extends Vue {
             max-height: 335px;
           }
         }
-        .message-content-file{
+        .message-content-file {
           cursor: pointer;
           max-width: 600px;
           display: inline-block;
@@ -570,15 +565,15 @@ export default class Message extends Vue {
           border-radius: 5px;
           text-align: left;
           word-break: break-word;
-          .message-content-icon{
+          .message-content-icon {
             width: 50px;
             height: 50px;
             float: left;
           }
-           .message-content-detail{
+          .message-content-detail {
             float: right;
             margin-left: 20px;
-            .file-size{
+            .file-size {
               font-size: 14px;
               margin-top: 10px;
               color: #8e8e8e;
@@ -599,7 +594,7 @@ export default class Message extends Vue {
 //输入框样式
 .ant-input {
   padding: 0 50px 0 50px;
-  &:focus{
+  &:focus {
     box-shadow: none !important;
   }
 }

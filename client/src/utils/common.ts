@@ -46,11 +46,7 @@ export function isUrl(text: string) {
 export function formatTime(time: number) {
   const moment = Vue.prototype.$moment;
   // 大于昨天
-  if (
-    moment()
-      .add(-1, 'days')
-      .startOf('day') > time
-  ) {
+  if (moment().add(-1, 'days').startOf('day') > time) {
     return moment(time).format('M/D HH:mm');
   }
   // 昨天

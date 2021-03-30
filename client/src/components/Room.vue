@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="room" ref="room">
-    <div v-for="(chat) in chatArr" :key="(chat.groupId || chat.userId)">
+    <div v-for="chat in chatArr" :key="chat.groupId || chat.userId">
       <div
         v-if="chat.groupId"
         class="room-card"
@@ -135,7 +135,7 @@ export default class Room extends Vue {
   // 重置滚动条至当前activeRoom位置
   setRoomScrollTop() {
     const { offsetHeight: roomHeight, scrollTop: roomTop } = (document.querySelector('.room') as HTMLElement)!;
-    const activeRommDom = (document.querySelector('.room-card.active')as HTMLElement);
+    const activeRommDom = document.querySelector('.room-card.active') as HTMLElement;
     if (activeRommDom) {
       const { offsetTop: domTop } = activeRommDom!;
       if (domTop - roomHeight >= roomTop) {
@@ -173,7 +173,7 @@ export default class Room extends Vue {
       // 修复重复置顶bug,在已置顶某个窗口的情况下 直接置顶另外一个,需要先取消第一个置顶的窗口
       const topId = await this.$localforage.getItem(`${this.currentUserId}-topChatId`);
       if (topId) {
-        const topRoom = this.chatArr.find(room => ((room as any).groupId || room.userId) === topId);
+        const topRoom = this.chatArr.find((room) => ((room as any).groupId || room.userId) === topId);
         if (topRoom) {
           delete topRoom.isTop;
         }
@@ -225,7 +225,6 @@ export default class Room extends Vue {
     return chat.userId === DEFAULT_ROBOT ? false : !chat.online;
   }
 
-
   // 获取消息列表数据
   async sortChat() {
     const groups = Object.values(this.groupGather);
@@ -235,7 +234,7 @@ export default class Room extends Vue {
     // 此处需要过滤本地已删除的会话
     const deletedChat = (await this.$localforage.getItem(`${this.currentUserId}-deletedChatId`)) as string[];
     if (Array.isArray(deletedChat)) {
-      roomArr = roomArr.filter(chat => !deletedChat.includes((chat as Group).groupId || chat.userId));
+      roomArr = roomArr.filter((chat) => !deletedChat.includes((chat as Group).groupId || chat.userId));
     }
 
     // 对聊天窗进行排序(根据最新消息时间)
@@ -254,10 +253,10 @@ export default class Room extends Vue {
     const topChatId = (await this.$localforage.getItem(`${this.currentUserId}-topChatId`)) as string;
     if (topChatId) {
       // 找到需要置顶的窗口
-      const chat = roomArr.find(c => ((c as Group).groupId || c.userId) === topChatId);
+      const chat = roomArr.find((c) => ((c as Group).groupId || c.userId) === topChatId);
       if (chat) {
         // 移动至第一位
-        roomArr = roomArr.filter(k => ((k as Group).groupId || k.userId) !== topChatId);
+        roomArr = roomArr.filter((k) => ((k as Group).groupId || k.userId) !== topChatId);
         chat.isTop = true;
         roomArr.unshift(chat);
       }

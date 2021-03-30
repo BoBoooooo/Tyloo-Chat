@@ -88,7 +88,7 @@ declare enum MessageType {
   text = 'text',
   image = 'image',
   file = 'file',
-  video = 'video'
+  video = 'video',
 }
 
 // 图片尺寸
@@ -125,8 +125,8 @@ interface PagingResponse {
 }
 
 interface FriendMap {
-  friendId: string,
-  friendUserName: string,
+  friendId: string;
+  friendUserName: string;
 }
 
 // 右键菜单操作烈性
@@ -136,5 +136,5 @@ declare enum ContextMenuType {
   TOP_REVERT = 'TOP_REVERT', // 取消置顶
   TOP = 'TOP', // 置顶
   READ = 'READ', // 一键已读
-  DELETE = 'DELETE' // 删除
+  DELETE = 'DELETE', // 删除
 }
