@@ -1,6 +1,6 @@
 /*
  * @file: 默认群组,需结合后台 (用户新建后默认进入该群组)
- * @copyright: NanJing Anshare Tech .Com
+ * @copyright: BoBo
  * @author: BoBo
  * @Date: 2020年11月05 16:40:11
  */

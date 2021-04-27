@@ -2,7 +2,7 @@
  * @file: 修改socket.io serveClient,避免ncc打包后启动报错
  * https://stackoverflow.com/questions/51914186/cannot-find-module-socket-io-client-dist-socket-io-js-when-starting-express-ap
  * @author: BoBo
- * @copyright: NanJing Anshare Tech .Com
+ * @copyright: BoBo
  * @Date: 2020-11-30 16:04:32
  */
 

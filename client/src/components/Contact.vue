@@ -1,7 +1,7 @@
 <!--
  * @file: 通讯录模块
  * @author: BoBo
- * @copyright: NanJing Anshare Tech .Com
+ * @copyright: BoBo
  * @Date: 2020-11-22 17:32:28
 -->
 <template>

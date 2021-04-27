@@ -1,7 +1,7 @@
 <!--
  * @file: webSocket建立流程思路说明
  * @author: BoBo
- * @copyright: NanJing Anshare Tech .Com
+ * @copyright: BoBo
  * @Date: 2020-12-09 16:28:44
 -->
 - websocket流程

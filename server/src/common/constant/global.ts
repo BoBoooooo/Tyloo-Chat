@@ -1,7 +1,7 @@
 /*
  * @file: 全局变量定义
  * @author: BoBo
- * @copyright: NanJing Anshare Tech .Com
+ * @copyright: BoBo
  * @Date: 2020-11-20 17:40:24
  */
 
