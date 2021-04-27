@@ -1,6 +1,6 @@
 <!--
  * @file: 聊天窗口右上角 删除好友、群聊管理
- * @copyright: NanJing Anshare Tech .Com
+ * @copyright: BoBo
  * @author: BoBo
  * @Date: 2020年11月05 16:40:11
 -->

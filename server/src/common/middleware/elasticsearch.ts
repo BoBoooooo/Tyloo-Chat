@@ -1,7 +1,7 @@
 /*
  * @file: elasticsearch中间件模块,需要先安装es,并启动
  * @author: BoBo
- * @copyright: NanJing Anshare Tech .Com
+ * @copyright: BoBo
  * @Date: 2020-11-19 14:16:37
  */
 

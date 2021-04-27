@@ -1,7 +1,7 @@
 /*
  * @file: 全局ws连接异常捕获
  * @author: BoBo
- * @copyright: NanJing Anshare Tech .Com
+ * @copyright: BoBo
  * @Date: 2020-12-26 13:25:26
  */
 

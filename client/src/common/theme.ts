@@ -1,7 +1,7 @@
 /*
  * @file: 背景图片
  * @author: BoBo
- * @copyright: NanJing Anshare Tech .Com
+ * @copyright: BoBo
  * @Date: 2020-12-02 15:33:37
  */
 export default [
