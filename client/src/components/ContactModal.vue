@@ -1,7 +1,7 @@
 <!--
  * @file: 添加群成员
  * @author: BoBo
- * @copyright: NanJing Anshare Tech .Com
+ * @copyright: BoBo
  * @Date: 2020-12-08 16:15:10
 -->
 <template>
