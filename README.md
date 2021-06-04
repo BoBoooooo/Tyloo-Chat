@@ -14,8 +14,6 @@
 
 ## 🚀 Electron版本客户端已出炉,详见release
 
-## 🚀 欢迎各位大佬提提意见建议/Bug反馈 qq群`289438105`
-
 ## [🏖Tyloo-Chat线上demo地址](http://tyloochat.fun:9999/)
 **tips: 麻烦各位绿色聊天,不要开车,不要上传太大的文件,服务器比较垃圾..**
 
@@ -171,3 +169,8 @@ window.open(`${chatUrl}?userId=${userId}&username=${username}`);
 - `群聊功能继续完善`
 - `微信快捷登陆`
 - `Electron客户端检查更新`
+
+## 交流群
+
+<img src="https://pic.imgdb.cn/item/60b9d8418355f7f718e07995.jpg" width="30%" height="30%" />
+
