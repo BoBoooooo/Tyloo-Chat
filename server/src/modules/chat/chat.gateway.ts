@@ -39,7 +39,6 @@ import { WsJwtGuard } from './../../common/guards/WsJwtGuard'
 const axios = require('axios')
 
 // const axios = require('axios');
-const fs = require('fs')
 
 @WebSocketGateway()
 export class ChatGateway {

@@ -9,8 +9,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
-import { DEFAULT_BACKGROUND } from '@/common';
 import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN';
+import { DEFAULT_BACKGROUND } from '@/common';
 
 const appModule = namespace('app');
 

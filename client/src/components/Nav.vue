@@ -108,9 +108,9 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
+import { namespace } from 'vuex-class';
 import { setUserAvatar } from '@/api/apis';
 import { DEFAULT_BACKGROUND } from '@/common/index';
-import { namespace } from 'vuex-class';
 import * as apis from '@/api/apis';
 import { processReturn, nameVerify, passwordVerify } from '@/utils/common';
 import themes from '@/common/theme';
