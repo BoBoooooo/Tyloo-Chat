@@ -49,8 +49,8 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import { nameVerify, passwordVerify } from '@/utils/common';
 import { namespace } from 'vuex-class';
+import { nameVerify, passwordVerify } from '@/utils/common';
 
 const appModule = namespace('app');
 

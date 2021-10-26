@@ -1,8 +1,8 @@
 import { ActionTree } from 'vuex';
 import io from 'socket.io-client';
 import Vue from 'vue';
-import { DEFAULT_GROUP } from '@/common/index';
 import localforage from 'localforage';
+import { DEFAULT_GROUP } from '@/common/index';
 import { SET_LOADING, CLEAR_USER } from '../app/mutation-types';
 import { ChatState } from './state';
 import { RootState } from '../../index';

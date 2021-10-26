@@ -53,8 +53,8 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import * as api from '@/api/apis';
 import { namespace } from 'vuex-class';
+import * as api from '@/api/apis';
 import { formatTime } from '@/utils/common';
 
 const chatModule = namespace('chat');
