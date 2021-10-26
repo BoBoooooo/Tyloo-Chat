@@ -7,7 +7,6 @@
 
 // 默认群组Id
 
-
 export const DEFAULT_GROUP = 'group';
 
 // 默认机器人Id

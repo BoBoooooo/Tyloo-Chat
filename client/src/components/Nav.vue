@@ -81,8 +81,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
-import { setUserAvatar } from '@/api/apis';
 import { namespace } from 'vuex-class';
+import { setUserAvatar } from '@/api/apis';
 import * as apis from '@/api/apis';
 import { processReturn, nameVerify, passwordVerify } from '@/utils/common';
 

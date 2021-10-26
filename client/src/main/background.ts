@@ -5,15 +5,11 @@
  * @Date: 2020-12-04 10:25:20
  */
 
-
 // 用于支持TypeORM
-import {
-  app, protocol, BrowserWindow, Menu, MenuItemConstructorOptions, globalShortcut,
-} from 'electron';
+import { app, protocol, BrowserWindow, Menu, MenuItemConstructorOptions, globalShortcut } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 
 const log = require('electron-log');
-
 
 process.on('uncaughtException', (err) => {
   log.warn(err);

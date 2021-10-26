@@ -83,8 +83,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
-import * as api from '@/api/apis';
 import { namespace } from 'vuex-class';
+import * as api from '@/api/apis';
 import { isUrl, parseText, processReturn } from '@/utils/common';
 import Avatar from './Avatar.vue';
 import Panel from './Panel.vue';

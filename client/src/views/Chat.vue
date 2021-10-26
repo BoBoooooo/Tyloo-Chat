@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="chat"
-  >
+  <div class="chat">
     <!-- 左侧导航栏 -->
     <div class="chat-part1" v-if="visibleNav">
       <Nav @logout="logout"></Nav>
@@ -45,13 +43,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { namespace } from 'vuex-class';
 import Nav from '@/components/Nav.vue';
 import Login from '@/components/Login.vue';
 import Room from '@/components/Room.vue';
 import Message from '@/components/Message.vue';
 import Search from '@/components/Search.vue';
 import Contact from '@/components/Contact.vue';
-import { namespace } from 'vuex-class';
 
 const appModule = namespace('app');
 const chatModule = namespace('chat');

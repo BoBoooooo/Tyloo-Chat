@@ -5,7 +5,6 @@
  * @Date: 2021-02-01 12:30:18
  */
 
-
 const win = require('electron').remote.getCurrentWindow();
 const { app } = require('electron');
 

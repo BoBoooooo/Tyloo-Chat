@@ -1,8 +1,8 @@
 import { ActionTree } from 'vuex';
 import io from 'socket.io-client';
 import Vue from 'vue';
-import { DEFAULT_GROUP } from '@/common/index';
 import localforage from 'localforage';
+import { DEFAULT_GROUP } from '@/common/index';
 import Notification from '@/main/notification';
 import { SET_LOADING, CLEAR_USER } from '../app/mutation-types';
 import { ChatState } from './state';
@@ -26,7 +26,6 @@ import {
   ADD_GROUP_MEMBER,
   UPDATE_USER_INFO,
 } from './mutation-types';
-
 
 const actions: ActionTree<ChatState, RootState> = {
   // 初始化socket连接和监听socket事件

@@ -1,5 +1,13 @@
+/*
+ * @Author: your name
+ * @Date: 2020-12-31 10:18:18
+ * @LastEditTime: 2021-10-26 17:00:16
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: /Tyloo-Chat/server/src/modules/auth/jwt.strategy.ts
+ */
 import { Strategy, ExtractJwt } from 'passport-jwt'
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { jwtConstants } from './constants'
 import { User } from '../user/entity/user.entity'
