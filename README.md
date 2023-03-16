@@ -5,7 +5,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/BoBoooooo/tyloo-chat/LICENSE)
 [![author](https://img.shields.io/github/stars/BoBoooooo/tyloo-chat?style=social)](https://github.com/BoBoooooo/tyloo-chat)
 
+## 线上访问地址暂时关闭
+
 ## 说明
+
 本项目fork自[genal-chat]('https://github.com/genaller/genal-chat.git')做了优化升级,感谢大佬`Genal`开源提供思路!
 
 目前还在抽空持续优化中,敬请期待!!!
@@ -13,9 +16,6 @@
 觉得还不错的话可以点个Star鼓励一下!!!
 
 ## 🚀 Electron版本客户端已出炉,详见release
-
-## [🏖Tyloo-Chat线上demo地址](http://tyloochat.fun:9999/)
-**tips: 麻烦各位绿色聊天,不要开车,不要上传太大的文件,服务器比较垃圾..**
 
 ## 部分功能截图
 - 整体界面
